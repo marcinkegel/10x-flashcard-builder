@@ -17,7 +17,7 @@ The main hurdle for students using spaced repetition is the high effort of manua
 - **AI Generation:** Transform long notes or book fragments into flashcards in seconds.
 - **Spaced Repetition:** Integrated study sessions based on proven learning algorithms.
 - **Manual Management:** Full CRUD operations for custom flashcards with real-time character limits.
-- **Analytics:** Track your progress and see how much AI is helping your study efficiency.
+- **Analytics:** Tracks progress and see what precentage of the flashcards are made by AI and what percentage of the AI made flashcards are accepted.
 - **User System:** Secure authentication and data privacy (GDPR-compliant account deletion).
 
 ## Tech Stack
