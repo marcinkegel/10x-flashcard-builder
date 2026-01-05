@@ -11,6 +11,19 @@ Dokument zawiera projekt struktury bazy danych dla aplikacji Flashcard Builder, 
 
 ---
 
+### Tabela: `users (auth.users)`
+
+Tabela zarządzana przez Supabase Auth. Nie wymaga ręcznego tworzenia.
+
+Kluczowe pola wykorzystywane w relacjach:
+id: UUID PRIMARY KEY
+email: VARCHAR(255) NOT NULL UNIQUE
+created_at: TIMESTAMPTZ NOT NULL DEFAULT now()
+
+Pozostałe pola: 
+encrypted_password: VARCHAR NOT NULL
+confirmed_at: TIMESTAMPTZ
+
 ### Tabela: `generations`
 Przechowuje metadane i statystyki sesji generowania fiszek przez AI.
 
@@ -19,7 +32,7 @@ Przechowuje metadane i statystyki sesji generowania fiszek przez AI.
 | `id` | `UUID` | `PRIMARY KEY`, `DEFAULT gen_random_uuid()` | Unikalny identyfikator sesji |
 | `user_id` | `UUID` | `NOT NULL`, `REFERENCES auth.users(id) ON DELETE CASCADE` | Właściciel sesji |
 | `source_text_hash` | `CHAR(64)` | `NOT NULL` | Hash SHA-256 tekstu wejściowego |
-| `source_text_length` | `INTEGER` | `NOT NULL`, `CHECK (length BETWEEN 1000 AND 10000)` | Długość tekstu źródłowego |
+| `source_text_length` | `INTEGER` | `NOT NULL`, `CHECK (source_text_length BETWEEN 1000 AND 10000)` | Długość tekstu źródłowego |
 | `model_name` | `VARCHAR` | `NOT NULL` | Nazwa wykorzystanego modelu LLM |
 | `count_generated` | `INTEGER` | `NOT NULL DEFAULT 0` | Liczba wygenerowanych propozycji |
 | `count_accepted_unedited` | `INTEGER` | `NOT NULL DEFAULT 0` | Zaakceptowane bez zmian |
@@ -52,7 +65,9 @@ Tabela audytowa przechowująca logi błędów komunikacji z LLM.
 | :--- | :--- | :--- | :--- |
 | `id` | `UUID` | `PRIMARY KEY`, `DEFAULT gen_random_uuid()` | Unikalny identyfikator logu |
 | `user_id` | `UUID` | `NOT NULL`, `REFERENCES auth.users(id) ON DELETE CASCADE` | Użytkownik, który wywołał akcję |
-| `generation_id` | `UUID` | `NULLABLE`, `REFERENCES generations(id) ON DELETE SET NULL` | Powiązanie z sesją (jeśli powstała) |
+| `source_text_hash` | `CHAR(64)` | `NOT NULL` | Hash SHA-256 tekstu wejściowego |
+| `source_text_length` | `INTEGER` | `NOT NULL`, `CHECK (source_text_length BETWEEN 1000 AND 10000)` | Długość tekstu źródłowego |
+| `model_name` | `VARCHAR` | `NOT NULL` | Nazwa wykorzystanego modelu LLM |
 | `error_code` | `VARCHAR` | `NOT NULL` | Kod błędu (np. API_TIMEOUT, LLM_PARSE_ERROR) |
 | `error_message` | `TEXT` | `NOT NULL` | Pełna treść komunikatu o błędzie |
 | `created_at` | `TIMESTAMPTZ` | `NOT NULL DEFAULT NOW()` | Data wystąpienia błędu |
@@ -65,7 +80,7 @@ Tabela audytowa przechowująca logi błędów komunikacji z LLM.
 2.  **`auth.users` -> `generations`**: 1:N (Jeden użytkownik może przeprowadzić wiele sesji AI).
 3.  **`generations` -> `flashcards`**: 1:N (Jedna sesja generowania może skutkować wieloma fiszkami).
 4.  **`auth.users` -> `generation_error_logs`**: 1:N (Audyt błędów dla użytkownika).
-5.  **`generations` -> `generation_error_logs`**: 1:N (Sesja może posiadać wiele logów błędów).
+5.  **`generations` <-> `generation_error_logs`**: Relacja logiczna via `(user_id, source_text_hash)`.
 
 ---
 
@@ -78,6 +93,7 @@ Tabela audytowa przechowująca logi błędów komunikacji z LLM.
 | `generations` | `user_id` | B-Tree | Pobieranie statystyk użytkownika |
 | `generations` | `user_id`, `source_text_hash` | **UNIQUE** | Zapobieganie powielaniu sesji dla tego samego tekstu |
 | `generation_error_logs` | `user_id` | B-Tree | Analiza błędów użytkownika |
+| `generation_error_logs` | `source_text_hash` | B-Tree | Szybkie wyszukiwanie błędów dla danego tekstu |
 
 ---
 
