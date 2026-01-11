@@ -15,138 +15,6 @@
 
 ## 2. Endpoints
 
-### 2.1 Authentication & User Management
-
-#### POST /api/auth/register
-**Description**: Register a new user and automatically log them in
-
-**Request Body**:
-```json
-{
-  "email": "user@example.com",
-  "password": "SecurePass123!"
-}
-```
-
-**Success Response** (201 Created):
-```json
-{
-  "success": true,
-  "data": {
-    "user": {
-      "id": "uuid-v4",
-      "email": "user@example.com",
-      "created_at": "2026-01-11T12:00:00Z"
-    },
-    "session": {
-      "access_token": "jwt-token",
-      "refresh_token": "refresh-token",
-      "expires_in": 3600
-    }
-  }
-}
-```
-
-**Error Responses**:
-- **400 Bad Request**: Invalid email format or weak password
-  ```json
-  {
-    "success": false,
-    "error": {
-      "code": "VALIDATION_ERROR",
-      "message": "Password must contain uppercase, lowercase, numbers and special characters",
-      "field": "password"
-    }
-  }
-  ```
-- **409 Conflict**: Email already registered
-  ```json
-  {
-    "success": false,
-    "error": {
-      "code": "EMAIL_EXISTS",
-      "message": "An account with this email already exists"
-    }
-  }
-  ```
-
----
-
-#### POST /api/auth/login
-**Description**: Authenticate existing user
-
-**Request Body**:
-```json
-{
-  "email": "user@example.com",
-  "password": "SecurePass123!"
-}
-```
-
-**Success Response** (200 OK):
-```json
-{
-  "success": true,
-  "data": {
-    "user": {
-      "id": "uuid-v4",
-      "email": "user@example.com",
-      "created_at": "2026-01-11T12:00:00Z"
-    },
-    "session": {
-      "access_token": "jwt-token",
-      "refresh_token": "refresh-token",
-      "expires_in": 3600
-    }
-  }
-}
-```
-
-**Error Responses**:
-- **401 Unauthorized**: Invalid credentials
-  ```json
-  {
-    "success": false,
-    "error": {
-      "code": "INVALID_CREDENTIALS",
-      "message": "Invalid login credentials"
-    }
-  }
-  ```
-
----
-
-#### POST /api/auth/logout
-**Description**: End user session
-**Authentication**: Required
-
-**Success Response** (200 OK):
-```json
-{
-  "success": true,
-  "message": "Logged out successfully"
-}
-```
-
----
-
-#### DELETE /api/auth/account
-**Description**: Permanently delete user account and all associated data (GDPR compliance)
-**Authentication**: Required
-
-**Success Response** (200 OK):
-```json
-{
-  "success": true,
-  "message": "Account and all associated data have been permanently deleted"
-}
-```
-
-**Error Responses**:
-- **401 Unauthorized**: Not authenticated
-
----
-
 ### 2.2 Flashcard Management
 
 #### GET /api/flashcards
@@ -218,43 +86,92 @@
 ---
 
 #### POST /api/flashcards
-**Description**: Create a new flashcard manually
+**Description**: Create one or more flashcards in a single request.
 **Authentication**: Required
 
+**Notes**:
+- This endpoint supports both manual and AI-generated flashcard creation (`source`: `'manual'`, `'ai-full'`, or `'ai-edited'`).
+- If `generation_id` is needed (for AI proposals), provide it per flashcard.
+- Returns all created flashcards and reports granular validation errors per item.
+
 **Request Body**:
+Either a single object or an array of objects. Each object requires at least `front`, `back`, and `source` fields.
 ```json
-{
-  "front": "What is TypeScript?",
-  "back": "TypeScript is a strongly typed programming language that builds on JavaScript"
-}
+[
+  {
+    "front": "What is TypeScript?",
+    "back": "TypeScript is a strongly typed programming language that builds on JavaScript",
+    "source": "manual"
+  }
+]
+```
+or for batch/AI usage:
+```json
+[
+  {
+    "front": "What is an interface in TypeScript?",
+    "back": "An interface defines the shape of an object.",
+    "source": "ai-full",
+    "generation_id": "uuid-gen-1"
+  },
+  {
+    "front": "Why use TypeScript?",
+    "back": "It offers static typing for easier maintenance.",
+    "source": "ai-edited",
+    "generation_id": "uuid-gen-1"
+  }
+]
 ```
 
 **Success Response** (201 Created):
+Returns an array of all successfully created flashcards.
 ```json
 {
   "success": true,
-  "data": {
-    "id": "uuid-v4",
-    "front": "What is TypeScript?",
-    "back": "TypeScript is a strongly typed programming language that builds on JavaScript",
-    "source": "manual",
-    "generation_id": null,
-    "created_at": "2026-01-11T12:00:00Z",
-    "updated_at": "2026-01-11T12:00:00Z"
-  },
-  "message": "Flashcard created and added to learning schedule"
+  "data": [
+    {
+      "id": "uuid-v4-1",
+      "front": "What is an interface in TypeScript?",
+      "back": "An interface defines the shape of an object.",
+      "source": "ai-full",
+      "generation_id": "uuid-gen-1",
+      "created_at": "2026-01-11T12:00:00Z",
+      "updated_at": "2026-01-11T12:00:00Z"
+    },
+    {
+      "id": "uuid-v4-2",
+      "front": "What is TypeScript?",
+      "back": "TypeScript is a strongly typed programming language that builds on JavaScript",
+      "source": "manual",
+      "generation_id": null,
+      "created_at": "2026-01-11T12:00:00Z",
+      "updated_at": "2026-01-11T12:00:00Z"
+    }
+  ],
+  "message": "Flashcard(s) created and added to learning schedule"
 }
 ```
 
 **Error Responses**:
-- **400 Bad Request**: Validation error
+- **400 Bad Request**: One or more items failed validation. Valid items will not be partially created; the request is transactional.
   ```json
   {
     "success": false,
     "error": {
       "code": "VALIDATION_ERROR",
-      "message": "Front text exceeds maximum length of 200 characters",
-      "field": "front"
+      "message": "Some flashcards failed validation",
+      "details": [
+        {
+          "index": 1,
+          "field": "front",
+          "message": "Front text exceeds maximum length of 200 characters"
+        },
+        {
+          "index": 2,
+          "field": "source",
+          "message": "Source must be 'manual', 'ai-full', or 'ai-edited'"
+        }
+      ]
     }
   }
   ```
@@ -318,14 +235,14 @@
 
 ### 2.3 AI Generation
 
-#### POST /api/generations/generate
-**Description**: Generate flashcard proposals from source text using LLM
+#### POST /api/generations/
+**Description**: Generate flashcard proposals from source text using LLM. Returns proposals that client can then save using `POST /api/flashcards`.
 **Authentication**: Required
 
 **Request Body**:
 ```json
 {
-  "source_text": "String of 1000-10000 characters containing educational content to generate flashcards from"
+  "source_text": "String of 1000-10000 characters containing content to generate flashcards from"
 }
 ```
 
@@ -369,16 +286,6 @@
   }
   ```
 - **401 Unauthorized**: Not authenticated
-- **409 Conflict**: Duplicate generation attempt
-  ```json
-  {
-    "success": false,
-    "error": {
-      "code": "DUPLICATE_GENERATION",
-      "message": "This text has already been processed. Please use a different text."
-    }
-  }
-  ```
 - **500 Internal Server Error**: LLM API failure
   ```json
   {
@@ -392,94 +299,25 @@
   ```
 - **503 Service Unavailable**: LLM service unavailable
 
+**Usage Flow**:
+1. Client calls this endpoint to generate proposals
+2. Proposals are displayed to user (client-side state)
+3. User can accept/edit/reject proposals (client-side)
+4. Accepted proposals are saved via `POST /api/flashcards` with appropriate `source` and `generation_id`
+5. Rejected proposals are simply discarded (no API call needed)
+
 ---
 
-#### POST /api/generations/:generation_id/accept
-**Description**: Accept an AI-generated flashcard proposal without modifications
+#### PUT /api/generations/:generation_id
+**Description**: Update generation statistics after flashcards are accepted
 **Authentication**: Required
+**Note**: This endpoint is called automatically when flashcards with a `generation_id` are created via `POST /api/flashcards`.
 
 **Request Body**:
 ```json
 {
-  "proposal_id": "temp-uuid-1",
-  "front": "What is the main concept?",
-  "back": "The main concept is..."
-}
-```
-
-**Success Response** (201 Created):
-```json
-{
-  "success": true,
-  "data": {
-    "flashcard": {
-      "id": "uuid-v4",
-      "front": "What is the main concept?",
-      "back": "The main concept is...",
-      "source": "ai-full",
-      "generation_id": "uuid-v4",
-      "created_at": "2026-01-11T12:00:00Z",
-      "updated_at": "2026-01-11T12:00:00Z"
-    }
-  },
-  "message": "Flashcard accepted and added to learning schedule"
-}
-```
-
-**Error Responses**:
-- **400 Bad Request**: Invalid proposal data
-- **401 Unauthorized**: Not authenticated
-- **404 Not Found**: Generation session not found
-
----
-
-#### POST /api/generations/:generation_id/accept-edited
-**Description**: Accept an AI-generated flashcard proposal with user modifications
-**Authentication**: Required
-
-**Request Body**:
-```json
-{
-  "proposal_id": "temp-uuid-1",
-  "front": "What is the main concept? (edited)",
-  "back": "The main concept is... (with user additions)"
-}
-```
-
-**Success Response** (201 Created):
-```json
-{
-  "success": true,
-  "data": {
-    "flashcard": {
-      "id": "uuid-v4",
-      "front": "What is the main concept? (edited)",
-      "back": "The main concept is... (with user additions)",
-      "source": "ai-edited",
-      "generation_id": "uuid-v4",
-      "created_at": "2026-01-11T12:00:00Z",
-      "updated_at": "2026-01-11T12:00:00Z"
-    }
-  },
-  "message": "Edited flashcard accepted and added to learning schedule"
-}
-```
-
-**Error Responses**:
-- **400 Bad Request**: Validation error (exceeds character limits)
-- **401 Unauthorized**: Not authenticated
-- **404 Not Found**: Generation session not found
-
----
-
-#### POST /api/generations/:generation_id/reject
-**Description**: Reject an AI-generated flashcard proposal (action is permanent)
-**Authentication**: Required
-
-**Request Body**:
-```json
-{
-  "proposal_id": "temp-uuid-1"
+  "count_accepted_unedited": 1,
+  "count_accepted_edited": 0
 }
 ```
 
@@ -487,13 +325,19 @@
 ```json
 {
   "success": true,
-  "message": "Proposal rejected"
+  "data": {
+    "id": "uuid-v4",
+    "count_generated": 8,
+    "count_accepted_unedited": 6,
+    "count_accepted_edited": 2,
+    "updated_at": "2026-01-11T12:30:00Z"
+  }
 }
 ```
 
 **Error Responses**:
 - **401 Unauthorized**: Not authenticated
-- **404 Not Found**: Generation session not found
+- **404 Not Found**: Generation not found
 
 ---
 
@@ -524,80 +368,48 @@
 
 ---
 
-### 2.4 Statistics & Analytics
+### 2.4 Generation Error Logging
 
-#### GET /api/stats/overview
-**Description**: Get user's overall statistics
+#### POST /api/generation-errors
+**Description**: Log LLM generation errors for audit and debugging purposes
 **Authentication**: Required
+**Note**: This endpoint is typically called automatically when `POST /api/generations/` fails, but can also be called explicitly by the client.
 
-**Success Response** (200 OK):
+**Request Body**:
+```json
+{
+  "source_text_hash": "sha256-hash-of-source-text",
+  "source_text_length": 5432,
+  "model_name": "anthropic/claude-3.5-sonnet",
+  "error_code": "API_TIMEOUT",
+  "error_message": "Request timed out after 30 seconds"
+}
+```
+
+**Success Response** (201 Created):
 ```json
 {
   "success": true,
   "data": {
-    "total_flashcards": 245,
-    "flashcards_by_source": {
-      "ai-full": 150,
-      "ai-edited": 45,
-      "manual": 50
-    },
-    "ai_adoption_rate": 79.59,
-    "total_generations": 15,
-    "total_ai_proposals": 180,
-    "ai_acceptance_rate": 86.11,
-    "recent_activity": {
-      "flashcards_created_last_7_days": 23,
-      "generations_last_7_days": 3
-    }
-  }
+    "id": "uuid-v4",
+    "created_at": "2026-01-11T12:00:00Z"
+  },
+  "message": "Error logged successfully"
 }
 ```
 
 **Error Responses**:
-- **401 Unauthorized**: Not authenticated
-
----
-
-#### GET /api/stats/generations
-**Description**: Get detailed generation statistics
-**Authentication**: Required
-
-**Query Parameters**:
-- `page` (integer, optional): Page number (default: 1)
-- `limit` (integer, optional): Items per page (default: 20, max: 50)
-
-**Success Response** (200 OK):
-```json
-{
-  "success": true,
-  "data": {
-    "generations": [
-      {
-        "id": "uuid-v4",
-        "model_name": "anthropic/claude-3.5-sonnet",
-        "count_generated": 8,
-        "count_accepted_unedited": 5,
-        "count_accepted_edited": 2,
-        "acceptance_rate": 87.5,
-        "created_at": "2026-01-11T12:00:00Z"
-      }
-    ],
-    "pagination": {
-      "total": 15,
-      "page": 1,
-      "limit": 20,
-      "total_pages": 1
-    }
+- **400 Bad Request**: Invalid request data
+  ```json
+  {
+    "success": false,
+    "error": "error text"
   }
-}
-```
-
-**Error Responses**:
+  ```
 - **401 Unauthorized**: Not authenticated
 
 ---
 
-### 2.5 Learning Sessions
 
 #### GET /api/learning/session
 **Description**: Get flashcards scheduled for current learning session based on spaced repetition algorithm
@@ -728,8 +540,8 @@
 | `/api/auth/account` | Yes | Account owner only |
 | `/api/flashcards/*` | Yes | Owner access via RLS |
 | `/api/generations/*` | Yes | Owner access via RLS |
-| `/api/stats/*` | Yes | Owner stats only |
-| `/api/learning/*` | Yes | Owner data only |
+| `/api/generation-errors` | Yes | Owner access via RLS |
+
 
 ---
 
@@ -741,6 +553,12 @@
 - **front**: Required, 1-200 characters, non-empty after trim
 - **back**: Required, 1-500 characters, non-empty after trim
 - **source**: Must be one of: `'ai-full'`, `'ai-edited'`, `'manual'`
+  - On creation (POST): Any of the three values allowed
+  - On update (PUT): If original source was `'ai-full'`, must change to `'ai-edited'` when edited; if original was `'ai-edited'` or `'manual'`, keep or change to `'manual'` only
+- **generation_id**: 
+  - Required if `source` is `'ai-full'` or `'ai-edited'`, must be a valid UUID
+  - Must be `null` for `source = 'manual'`
+  - Cannot be changed in PUT operations (immutable after creation)
 
 #### Generation Source Text Validation
 - **source_text**: Required, 1000-10000 characters
@@ -759,42 +577,36 @@
 - **rating**: Integer between 1-4 (FSRS standard)
 - **session_id**: Valid UUID format (client-generated for session tracking)
 
+#### Generation Error Logging Validation
+- **source_text_hash**: Required, valid SHA-256 hash (64 character hex string)
+- **source_text_length**: Required, integer between 1000-10000
+- **model_name**: Required, non-empty string
+- **error_code**: Required, non-empty string (e.g., `API_TIMEOUT`, `LLM_PARSE_ERROR`, `RATE_LIMIT_EXCEEDED`)
+- **error_message**: Required, non-empty string with full error details
+
 ---
 
 ### 4.2 Business Logic Implementation
 
 #### AI Generation Flow
-1. **Validate** source text length and uniqueness
+1. **Validate** source text length (1000-10000 characters)
 2. **Hash** source text using SHA-256
-3. **Check** for duplicate hash in `generations` table for user
-4. **Create** generation record with initial counts set to 0
-5. **Call** LLM API via OpenRouter with system prompt for flashcard generation
-6. **Parse** LLM response into structured proposals (front/back pairs)
-7. **Return** proposals to client without persisting
-8. **Log errors** to `generation_error_logs` if LLM call fails
 
-#### Proposal Acceptance Flow (Unedited)
-1. **Validate** proposal data matches expected format
-2. **Create** flashcard with `source = 'ai-full'`
-3. **Link** flashcard to `generation_id`
-4. **Increment** `count_accepted_unedited` in generation record
-5. **Initialize** scheduling data using FSRS algorithm (new card state)
-6. **Return** created flashcard to client
+3. **Create** generation record with initial counts set to 0
+4. **Call** LLM API via OpenRouter with system prompt for flashcard generation
+5. **Parse** LLM response into structured proposals (front/back pairs)
+6. **Return** proposals to client without persisting
+8. **On LLM error**: 
+   - Log error to `generation_error_logs` 
+   - Return error response to client with user-friendly message
+   - Preserve source text so user doesn't lose work
 
-#### Proposal Acceptance Flow (Edited)
-1. **Validate** edited content against character limits
-2. **Verify** content differs from original proposal
-3. **Create** flashcard with `source = 'ai-edited'`
-4. **Link** flashcard to `generation_id`
-5. **Increment** `count_accepted_edited` in generation record
-6. **Initialize** scheduling data using FSRS algorithm (new card state)
-7. **Return** created flashcard to client
-
-#### Proposal Rejection Flow
-1. **Validate** proposal_id exists in client-side cache
-2. **No database action** (rejected proposals are not stored per PRD)
-3. **Return** success confirmation
-4. **Note**: Generation statistics remain unchanged for rejections
+**Client-side workflow after generation**:
+- Display proposals to user
+- User can accept (as-is or edited) or reject each proposal
+- Accepted proposals → saved via `POST /api/flashcards` with `source: 'ai-full'` or `'ai-edited'` and `generation_id`
+- When flashcards are created with a `generation_id`, the `POST /api/flashcards` endpoint automatically updates the generation statistics (`count_accepted_unedited` or `count_accepted_edited`)
+- Rejected proposals → simply discarded (no API call)
 
 #### Manual Flashcard Creation Flow
 1. **Validate** front/back content
@@ -802,13 +614,18 @@
 3. **Initialize** scheduling data using FSRS algorithm (new card state)
 4. **Return** created flashcard to client
 
-#### Learning Review Flow
-1. **Validate** rating value (1-4)
-2. **Fetch** current flashcard scheduling data
-3. **Calculate** next review parameters using FSRS algorithm
-4. **Update** scheduling metadata (stability, difficulty, interval, etc.)
-5. **Record** review timestamp
-6. **Return** updated scheduling information
+#### AI Flashcard Acceptance Flow (via POST /api/flashcards)
+1. **Validate** proposal data (front/back content, source type)
+2. **Verify** generation_id exists if source is AI-related
+3. **Create** flashcard with appropriate source (`'ai-full'` or `'ai-edited'`)
+4. **Link** flashcard to `generation_id`
+5. **Increment** appropriate counter in generation record:
+   - `count_accepted_unedited` if `source = 'ai-full'`
+   - `count_accepted_edited` if `source = 'ai-edited'`
+6. **Return** created flashcard to client
+
+**Note**: The `POST /api/flashcards` endpoint handles both manual and AI-generated flashcard creation in a unified way, with automatic statistics tracking for AI generations.
+
 
 #### Account Deletion Flow (GDPR)
 1. **Verify** user authentication
@@ -816,7 +633,7 @@
    - Delete all `flashcards` (with scheduling data)
    - Delete all `generations`
    - Delete all `generation_error_logs`
-3. **Delete** user record from `auth.users`
+3. **Delete** user record from `auth.users` (auth table handled by SUPABASE)
 4. **Invalidate** all active sessions
 5. **Return** confirmation
 
@@ -844,179 +661,24 @@
 
 #### LLM-Specific Error Handling
 All LLM errors are:
-1. **Logged** to `generation_error_logs` table with:
-   - Error code and message
-   - Model name and source text metadata
-   - Timestamp
-2. **Returned** to client with user-friendly message
+1. **Logged** to `generation_error_logs` table via `POST /api/generation-errors` with:
+   - SHA-256 hash of source text (for correlation, not storage)
+   - Source text length
+   - Model name
+   - Error code (e.g., `API_TIMEOUT`, `LLM_PARSE_ERROR`, `RATE_LIMIT_EXCEEDED`)
+   - Full error message
+   - Timestamp (automatic)
+2. **Returned** to client with user-friendly message and error details
 3. **Allow retry** - client can resubmit request
 4. **Preserve** source text so user doesn't lose work
 
----
-
-### 4.4 Performance Considerations
-
-#### Pagination
-- Default page size: 50 items for flashcards, 20 for generations
-- Maximum page size: 100 items for flashcards, 50 for generations
-- Use offset-based pagination for MVP simplicity
-- Consider cursor-based pagination for future optimization
-
-#### Database Optimization
-- Leverage existing indexes on `user_id`, `generation_id`
-- RLS policies automatically filter by `user_id` - no manual checks needed
-- Use Supabase connection pooling for concurrent requests
-
-#### Caching Strategy (Future)
-- Client-side caching of flashcard list
-- Cache learning session data locally
-- Invalidate cache on CRUD operations
-
-#### Rate Limiting (Future)
-- LLM generation: 10 requests per hour per user
-- Other endpoints: 100 requests per minute per user
-- Implement using Supabase edge functions or middleware
+**Common Error Codes**:
+- `API_TIMEOUT`: LLM API request exceeded timeout limit (>30s)
+- `API_UNAVAILABLE`: LLM service is down or unreachable
+- `RATE_LIMIT_EXCEEDED`: Too many requests to LLM API
+- `LLM_PARSE_ERROR`: Unable to parse LLM response into flashcard format
+- `INVALID_RESPONSE`: LLM returned unexpected or malformed data
+- `INSUFFICIENT_CREDITS`: OpenRouter account has insufficient credits
 
 ---
-
-### 4.5 Security Measures
-
-#### Input Sanitization
-- Trim all text inputs
-- Remove potentially dangerous characters from text fields
-- Validate all UUIDs match proper format
-- Reject oversized payloads (max 1MB request body)
-
-#### SQL Injection Prevention
-- Use Supabase client with parameterized queries
-- Never concatenate user input into SQL strings
-
-#### XSS Prevention
-- Sanitize flashcard content before rendering in UI
-- Use React's built-in XSS protection
-- Implement Content Security Policy (CSP) headers
-
-#### CSRF Protection
-- Supabase JWT tokens provide CSRF protection
-- Use SameSite cookie attributes for session cookies
-- Validate origin headers for sensitive operations
-
-#### Data Privacy (GDPR/RODO)
-- Account deletion removes all user data via CASCADE
-- No data retention after account deletion
-- RLS ensures users can't access others' data
-- Hash source texts (SHA-256) for deduplication without storing originals
-
----
-
-## 5. Response Format Standards
-
-### Success Response Envelope
-```json
-{
-  "success": true,
-  "data": { /* resource data */ },
-  "message": "Optional success message"
-}
-```
-
-### Error Response Envelope
-```json
-{
-  "success": false,
-  "error": {
-    "code": "ERROR_CODE",
-    "message": "Human-readable error message",
-    "field": "fieldName (optional, for validation errors)",
-    "details": "Additional context (optional)"
-  }
-}
-```
-
-### Pagination Envelope
-```json
-{
-  "success": true,
-  "data": {
-    "items": [ /* array of resources */ ],
-    "pagination": {
-      "total": 150,
-      "page": 1,
-      "limit": 50,
-      "total_pages": 3
-    }
-  }
-}
-```
-
----
-
-## 6. API Versioning Strategy
-
-**Current Version**: v1 (implicit in MVP)
-
-- No version prefix in URLs for MVP (`/api/` not `/api/v1/`)
-- Future breaking changes will introduce `/api/v2/` namespace
-- Maintain backward compatibility within v1
-- Deprecation notices in response headers for future changes
-
----
-
-## 7. CORS Configuration
-
-- **Allowed Origins**: Application domain only (configured in environment)
-- **Allowed Methods**: GET, POST, PUT, DELETE, OPTIONS
-- **Allowed Headers**: Content-Type, Authorization
-- **Credentials**: Include (for cookie-based session support)
-- **Max Age**: 86400 seconds (24 hours for preflight caching)
-
----
-
-## 8. Content Type & Encoding
-
-- **Request Content-Type**: `application/json; charset=utf-8`
-- **Response Content-Type**: `application/json; charset=utf-8`
-- **Character Encoding**: UTF-8 throughout the application
-- **Date Format**: ISO 8601 with timezone (`YYYY-MM-DDTHH:mm:ssZ`)
-
----
-
-## 9. Implementation Notes
-
-### Astro API Routes
-- Implement endpoints as Astro API routes in `/src/pages/api/`
-- File structure mirrors endpoint paths
-- Use Astro's built-in request/response handling
-
-### Supabase Integration
-- Use `@supabase/supabase-js` client library
-- Server-side client with service role for admin operations
-- Client-side SDK for RLS-protected operations
-
-### External Dependencies
-- **FSRS Algorithm**: Use `ts-fsrs` or similar library for spaced repetition
-- **OpenRouter Integration**: Use fetch API with proper error handling
-- **Password Validation**: Use `zod` or similar for schema validation
-
-### Environment Variables
-```
-SUPABASE_URL=https://your-project.supabase.co
-SUPABASE_ANON_KEY=your-anon-key
-SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
-OPENROUTER_API_KEY=your-openrouter-key
-OPENROUTER_MODEL=anthropic/claude-3.5-sonnet
-```
-
----
-
-## 10. Future Enhancements (Post-MVP)
-
-- WebSocket support for real-time collaboration
-- Batch operations for bulk flashcard import/export
-- Advanced search and filtering capabilities
-- Analytics dashboard with detailed charts
-- A/B testing different LLM models per user preference
-- Image support in flashcards
-- Audio pronunciation support
-- Mobile app with offline sync capabilities
 
