@@ -8,14 +8,13 @@
 | **Flashcards** | `flashcards` | User-owned flashcard pairs (front/back) with source tracking |
 | **Generations** | `generations` | AI generation sessions with metadata and statistics |
 | **Generation Proposals** | N/A (temporary) | AI-generated flashcard proposals (not persisted until accepted) |
-| **Learning Sessions** | N/A (client-side) | Spaced repetition algorithm state (managed by external library) |
 | **Error Logs** | `generation_error_logs` | Audit logs for LLM API failures |
 
 ---
 
 ## 2. Endpoints
 
-### 2.2 Flashcard Management
+### 2.1 Flashcard Management
 
 #### GET /api/flashcards
 **Description**: Retrieve all flashcards for authenticated user
@@ -233,7 +232,7 @@ Returns an array of all successfully created flashcards.
 
 ---
 
-### 2.3 AI Generation
+### 2.2 AI Generation
 
 #### POST /api/generations/
 **Description**: Generate flashcard proposals from source text using LLM. Returns proposals that client can then save using `POST /api/flashcards`.
@@ -373,7 +372,7 @@ support paggination as needed
 
 ---
 
-### 2.4 Generation Error Logging
+### 2.3 Generation Error Logging
 
 **Note**: LLM errors are logged automatically by the server during `POST /api/generations/`.
 
