@@ -91,19 +91,19 @@
 
 **Notes**:
 - This endpoint supports both manual and AI-generated flashcard creation (`source`: `'manual'`, `'ai-full'`, or `'ai-edited'`).
-- If `generation_id` is needed (for AI proposals), provide it per flashcard.
+- If `generation_id` is provided, the server **automatically increments** the corresponding `generations` table counters (`count_accepted_unedited` or `count_accepted_edited`) in the same transaction.
 - Returns all created flashcards and reports granular validation errors per item.
 
 **Request Body**:
 Either a single object or an array of objects. Each object requires at least `front`, `back`, and `source` fields.
 ```json
-[
+
   {
     "front": "What is TypeScript?",
     "back": "TypeScript is a strongly typed programming language that builds on JavaScript",
     "source": "manual"
   }
-]
+
 ```
 or for batch/AI usage:
 ```json
@@ -239,6 +239,12 @@ Returns an array of all successfully created flashcards.
 **Description**: Generate flashcard proposals from source text using LLM. Returns proposals that client can then save using `POST /api/flashcards`.
 **Authentication**: Required
 
+**Business Logic**:
+1. Server creates a `generations` record.
+2. Server calls LLM API (OpenRouter).
+3. On success, `count_generated` is set in the DB and proposals are returned to the client.
+4. **On failure**, the server logs the error to `generation_error_logs` before returning a 5xx response.
+
 **Request Body**:
 ```json
 {
@@ -308,39 +314,6 @@ Returns an array of all successfully created flashcards.
 
 ---
 
-#### PUT /api/generations/:generation_id
-**Description**: Update generation statistics after flashcards are accepted
-**Authentication**: Required
-**Note**: This endpoint is called automatically when flashcards with a `generation_id` are created via `POST /api/flashcards`.
-
-**Request Body**:
-```json
-{
-  "count_accepted_unedited": 1,
-  "count_accepted_edited": 0
-}
-```
-
-**Success Response** (200 OK):
-```json
-{
-  "success": true,
-  "data": {
-    "id": "uuid-v4",
-    "count_generated": 8,
-    "count_accepted_unedited": 6,
-    "count_accepted_edited": 2,
-    "updated_at": "2026-01-11T12:30:00Z"
-  }
-}
-```
-
-**Error Responses**:
-- **401 Unauthorized**: Not authenticated
-- **404 Not Found**: Generation not found
-
----
-
 #### GET /api/generations/:generation_id
 **Description**: Retrieve generation session details and statistics
 **Authentication**: Required
@@ -368,166 +341,99 @@ Returns an array of all successfully created flashcards.
 
 ---
 
+#### GET /api/generations
+**Description**: Retrieve all generation sessions and statistics for the authenticated user
+**Authentication**: Required
+
+**Query Parameters**:
+support paggination as needed
+
+**Success Response** (200 OK):
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "uuid-v4",
+      "source_text_length": 5432,
+      "model_name": "anthropic/claude-3.5-sonnet",
+      "count_generated": 8,
+      "count_accepted_unedited": 5,
+      "count_accepted_edited": 2,
+      "created_at": "2026-01-11T12:00:00Z",
+      "updated_at": "2026-01-11T12:30:00Z"
+    }
+    // ...additional generations
+  ]
+}
+```
+
+**Error Responses**:
+- **401 Unauthorized**: Not authenticated
+
+---
+
 ### 2.4 Generation Error Logging
 
-#### POST /api/generation-errors
-**Description**: Log LLM generation errors for audit and debugging purposes
+**Note**: LLM errors are logged automatically by the server during `POST /api/generations/`.
+
+#### GET /api/generation-errors
+**Description**: Retrieve generation error logs for the authenticated user
 **Authentication**: Required
-**Note**: This endpoint is typically called automatically when `POST /api/generations/` fails, but can also be called explicitly by the client.
 
-**Request Body**:
-```json
-{
-  "source_text_hash": "sha256-hash-of-source-text",
-  "source_text_length": 5432,
-  "model_name": "anthropic/claude-3.5-sonnet",
-  "error_code": "API_TIMEOUT",
-  "error_message": "Request timed out after 30 seconds"
-}
-```
-
-**Success Response** (201 Created):
-```json
-{
-  "success": true,
-  "data": {
-    "id": "uuid-v4",
-    "created_at": "2026-01-11T12:00:00Z"
-  },
-  "message": "Error logged successfully"
-}
-```
-
-**Error Responses**:
-- **400 Bad Request**: Invalid request data
-  ```json
-  {
-    "success": false,
-    "error": "error text"
-  }
-  ```
-- **401 Unauthorized**: Not authenticated
-
----
-
-
-#### GET /api/learning/session
-**Description**: Get flashcards scheduled for current learning session based on spaced repetition algorithm
-**Authentication**: Required
+**Query Parameters**:
+- `page` (integer, optional): Page number (default: 1)
+- `limit` (integer, optional): Items per page (default: 50)
+- `error_code` (string, optional): Filter by specific error code
 
 **Success Response** (200 OK):
 ```json
 {
   "success": true,
   "data": {
-    "session_id": "temp-session-uuid",
-    "flashcards": [
+    "logs": [
       {
         "id": "uuid-v4",
-        "front": "What is TypeScript?",
-        "back": "TypeScript is a strongly typed programming language...",
-        "scheduling_data": {
-          "due_date": "2026-01-11T12:00:00Z",
-          "stability": 5.2,
-          "difficulty": 3.1,
-          "elapsed_days": 2,
-          "scheduled_days": 5,
-          "reps": 3,
-          "lapses": 0,
-          "state": "Review",
-          "last_review": "2026-01-06T12:00:00Z"
-        }
+        "source_text_hash": "sha256...",
+        "source_text_length": 5432,
+        "model_name": "anthropic/claude-3.5-sonnet",
+        "error_code": "LLM_PARSE_ERROR",
+        "error_message": "Unexpected JSON format",
+        "created_at": "2026-01-11T12:00:00Z"
       }
     ],
-    "session_metadata": {
-      "total_due": 12,
-      "new_cards": 3,
-      "review_cards": 9
+    "pagination": {
+      "total": 5,
+      "page": 1,
+      "limit": 50,
+      "total_pages": 1
     }
   }
 }
-```
 
 **Error Responses**:
 - **401 Unauthorized**: Not authenticated
-
----
-
-#### POST /api/learning/review
-**Description**: Record user's review rating for a flashcard during learning session
-**Authentication**: Required
-
-**Request Body**:
-```json
-{
-  "flashcard_id": "uuid-v4",
-  "rating": 3,
-  "session_id": "temp-session-uuid"
-}
+- **403 : Forbidden if acces is restricted to admin users
 ```
 
-**Notes**: 
-- `rating` values follow FSRS algorithm: 1 = Again, 2 = Hard, 3 = Good, 4 = Easy
-- Server updates scheduling data using external spaced repetition library
 
-**Success Response** (200 OK):
-```json
-{
-  "success": true,
-  "data": {
-    "flashcard_id": "uuid-v4",
-    "next_review_date": "2026-01-16T12:00:00Z",
-    "updated_scheduling_data": {
-      "stability": 8.7,
-      "difficulty": 2.9,
-      "elapsed_days": 5,
-      "scheduled_days": 10,
-      "reps": 4,
-      "lapses": 0,
-      "state": "Review",
-      "last_review": "2026-01-11T12:00:00Z"
-    }
-  },
-  "message": "Review recorded successfully"
-}
-```
-
-**Error Responses**:
-- **400 Bad Request**: Invalid rating value
-  ```json
-  {
-    "success": false,
-    "error": {
-      "code": "VALIDATION_ERROR",
-      "message": "Rating must be between 1 and 4",
-      "field": "rating"
-    }
-  }
-  ```
-- **401 Unauthorized**: Not authenticated
-- **404 Not Found**: Flashcard not found
 
 ---
 
 ## 3. Authentication & Authorization
 
 ### Authentication Mechanism
-**Supabase Auth with JWT Tokens**
+**Supabase Auth **
 
-- **Implementation**: Supabase handles authentication and issues JWT tokens
-- **Token Type**: JWT access tokens with refresh token capability
-- **Token Lifetime**: Access tokens expire in 1 hour, refresh tokens in 7 days
-- **Token Transmission**: Bearer token in `Authorization` header
-  ```
-  Authorization: Bearer <jwt-token>
-  ```
+- **Implementation**: Supabase handles authentication 
+
 
 ### Authorization Strategy
 **Row Level Security (RLS)**
 
 - All database operations are automatically filtered by `user_id` through Supabase RLS policies
 - API endpoints verify authentication status before processing requests
-- User can only access their own resources (flashcards, generations, stats)
+- User can only access their own resources (flashcards, generations, generation_errors)
 - Account deletion cascades to all user-owned data (GDPR compliance)
 
 ### Endpoint Protection Levels
@@ -565,25 +471,6 @@ Returns an array of all successfully created flashcards.
 - **Validation**: Reject if identical hash exists for user (deduplication)
 - **Sanitization**: Trim whitespace, remove control characters
 
-#### Authentication Validation
-- **email**: Valid email format (RFC 5322), max 255 characters
-- **password**: Minimum 8 characters, must contain:
-  - At least one uppercase letter
-  - At least one lowercase letter
-  - At least one digit
-  - At least one special character (!@#$%^&*()_+-=[]{}|;:,.<>?)
-
-#### Learning Session Validation
-- **rating**: Integer between 1-4 (FSRS standard)
-- **session_id**: Valid UUID format (client-generated for session tracking)
-
-#### Generation Error Logging Validation
-- **source_text_hash**: Required, valid SHA-256 hash (64 character hex string)
-- **source_text_length**: Required, integer between 1000-10000
-- **model_name**: Required, non-empty string
-- **error_code**: Required, non-empty string (e.g., `API_TIMEOUT`, `LLM_PARSE_ERROR`, `RATE_LIMIT_EXCEEDED`)
-- **error_message**: Required, non-empty string with full error details
-
 ---
 
 ### 4.2 Business Logic Implementation
@@ -592,11 +479,14 @@ Returns an array of all successfully created flashcards.
 1. **Validate** source text length (1000-10000 characters)
 2. **Hash** source text using SHA-256
 
-3. **Create** generation record with initial counts set to 0
-4. **Call** LLM API via OpenRouter with system prompt for flashcard generation
-5. **Parse** LLM response into structured proposals (front/back pairs)
-6. **Return** proposals to client without persisting
-8. **On LLM error**: 
+3. **Check** for existing successful generation for user + hash (deduplication)
+4. **Create** generation record with initial counts set to 0
+5. **Call** LLM API via OpenRouter with system prompt for flashcard generation
+6. **On LLM success**:
+   - Update `count_generated` in the `generations` record
+   - Parse LLM response into structured proposals (front/back pairs)
+   - Return proposals to client without persisting them individually
+7. **On LLM error**: 
    - Log error to `generation_error_logs` 
    - Return error response to client with user-friendly message
    - Preserve source text so user doesn't lose work
@@ -619,7 +509,7 @@ Returns an array of all successfully created flashcards.
 2. **Verify** generation_id exists if source is AI-related
 3. **Create** flashcard with appropriate source (`'ai-full'` or `'ai-edited'`)
 4. **Link** flashcard to `generation_id`
-5. **Increment** appropriate counter in generation record:
+5. **Increment** appropriate counter in generation record **atomically**:
    - `count_accepted_unedited` if `source = 'ai-full'`
    - `count_accepted_edited` if `source = 'ai-edited'`
 6. **Return** created flashcard to client
@@ -661,7 +551,7 @@ Returns an array of all successfully created flashcards.
 
 #### LLM-Specific Error Handling
 All LLM errors are:
-1. **Logged** to `generation_error_logs` table via `POST /api/generation-errors` with:
+1. **Logged** automatically server side to  `generation_error_logs` with:
    - SHA-256 hash of source text (for correlation, not storage)
    - Source text length
    - Model name
