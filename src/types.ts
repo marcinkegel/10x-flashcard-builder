@@ -51,11 +51,13 @@ export type CreateFlashcardCommand = Pick<
 
 /**
  * Model polecenia dla aktualizacji istniejącej fiszki.
- * Zgodnie z planem API, użytkownik może edytować tylko treść frontu i tyłu.
+ * Zgodnie z planem API, użytkownik może edytować treść frontu i tyłu.
+ * Pole 'source' jest opcjonalne, aby umożliwić zmianę statusu ('ai-full' -> 'ai-edited').
+ 
  */
 export type UpdateFlashcardCommand = Pick<
   TablesUpdate<"flashcards">,
-  "front" | "back"
+  "front" | "back" | "source"
 >;
 
 /**

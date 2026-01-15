@@ -458,12 +458,16 @@ support paggination as needed
 - **front**: Required, 1-200 characters, non-empty after trim
 - **back**: Required, 1-500 characters, non-empty after trim
 - **source**: Must be one of: `'ai-full'`, `'ai-edited'`, `'manual'`
-  - On creation (POST): Any of the three values allowed
-  - On update (PUT): If original source was `'ai-full'`, must change to `'ai-edited'` when edited; if original was `'ai-edited'` or `'manual'`, keep or change to `'manual'` only
+  - On creation (POST): Any of the three values allowed.
+  - On update (PUT): 
+    - If original source was `'ai-full'`, can only stay `'ai-full'` (if content unchanged) or change to `'ai-edited'` (if content changed).
+    - If original source was `'ai-edited'`, must stay `'ai-edited'`.
+    - If original source was `'manual'`, must stay `'manual'`.
+    - Transition to/from `'manual'` is forbidden.
 - **generation_id**: 
-  - Required if `source` is `'ai-full'` or `'ai-edited'`, must be a valid UUID
-  - Must be `null` for `source = 'manual'`
-  - Cannot be changed in PUT operations (immutable after creation)
+  - Required if `source` is `'ai-full'` or `'ai-edited'`, must be a valid UUID.
+  - Must be `null` for `source = 'manual'`.
+  - Immutable after creation (cannot be changed in PUT).
 
 #### Generation Source Text Validation
 - **source_text**: Required, 1000-10000 characters
@@ -515,6 +519,15 @@ support paggination as needed
 
 **Note**: The `POST /api/flashcards` endpoint handles both manual and AI-generated flashcard creation in a unified way, with automatic statistics tracking for AI generations.
 
+
+#### Flashcard Update Flow (via PUT /api/flashcards/:id)
+1. **Validate** front/back content and source transition rules.
+2. **If** source changes from `'ai-full'` to `'ai-edited'` and `generation_id` is present:
+   - Decrement `count_accepted_unedited` in the linked `generations` record.
+   - Increment `count_accepted_edited` in the linked `generations` record.
+   - *Note*: This operation should be atomic (transactional).
+3. **Update** the flashcard record.
+4. **Return** updated flashcard.
 
 #### Account Deletion Flow (GDPR)
 1. **Verify** user authentication
