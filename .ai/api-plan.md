@@ -324,7 +324,7 @@ Returns an array of all successfully created flashcards.
   "data": {
     "id": "uuid-v4",
     "source_text_length": 5432,
-    "model_name": "anthropic/claude-3.5-sonnet",
+    "model_name": "GPT-4o mini",
     "count_generated": 8,
     "count_accepted_unedited": 5,
     "count_accepted_edited": 2,
@@ -395,7 +395,7 @@ support paggination as needed
         "id": "uuid-v4",
         "source_text_hash": "sha256...",
         "source_text_length": 5432,
-        "model_name": "anthropic/claude-3.5-sonnet",
+        "model_name": "gemini-3-flash",
         "error_code": "LLM_PARSE_ERROR",
         "error_message": "Unexpected JSON format",
         "created_at": "2026-01-11T12:00:00Z"
