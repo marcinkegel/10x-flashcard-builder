@@ -108,7 +108,7 @@ Tytuł: Ręczne tworzenie fiszek
 Opis: Jako użytkownik chcę samodzielnie stworzyć fiszkę, aby dodać specyficzną informację do nauki.
 Kryteria akceptacji:
 
-1. W widoku dodawania/generowania fiszek dostępny jest przycisk pozwalający na manualne utworzenie fiszki. Kliknięcie go pokazuje formularz manualnego dodawania.
+1. W widoku dodawania/generowania fiszek dostępna jest zakładka pozwalający na manualne utworzenie fiszki. Kliknięcie jej pokazuje formularz manualnego dodawania.
 2. Dostępny formularz z polami Przód (max 200 znaków) i Tył (max 500 znaków).
 3. Liczniki znaków pokazują pozostałe miejsce pod każdym polem.
 4. Przycisk Zapisz jest nieaktywny, jeśli pola są puste lub przekraczają limity.
@@ -120,10 +120,9 @@ Opis: Jako użytkownik chcę przeglądać i edytować moje fiszki, aby utrzymać
 Kryteria akceptacji:
 
 1. Widok Moje fiszki wyświetla listę wszystkich zapisanych kart - przód i tył każdej fiszki.
-2. Kliknięcie w kartę powoduje wejście w tryb edycji.
-3. Każda karta ma przyciski Usuń.
-4. Usunięcie fiszki wymaga potwierdzenia w modalu.
-5. Edycja podlega tym samym limitom znaków co tworzenie manualne.
+2. Każda karta ma przyciski Edytuj i Usuń.
+3. Usunięcie fiszki wymaga potwierdzenia w modalu.
+4. Edycja podlega tym samym limitom znaków co tworzenie manualne.
 
 ID: US-007
 Tytuł: Sesja nauki z algorytmem powtórek
