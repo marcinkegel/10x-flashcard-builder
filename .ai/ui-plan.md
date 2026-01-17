@@ -16,8 +16,8 @@ Aplikacja Flashcard Builder MVP została zaprojektowana jako nowoczesna aplikacj
     - Ukrywanie szczegółów błędów logowania (bezpieczeństwo).
     - Automatyczne logowanie po rejestracji.
 
-### Widok: Dashboard (Generowanie i Tworzenie)
-- **Ścieżka**: `/dashboard`
+### Widok tworzenia fiszek (Generowanie i Tworzenie)
+- **Ścieżka**: `/generate`
 - **Główny cel**: Centralny punkt tworzenia treści – automatycznie przez AI lub ręcznie.
 - **Kluczowe informacje**: Zakładki (Tabs) między AI a Manual, pole tekstowe źródłowe, lista propozycji AI.
 - **Kluczowe komponenty**: 
@@ -33,17 +33,17 @@ Aplikacja Flashcard Builder MVP została zaprojektowana jako nowoczesna aplikacj
 ### Widok: Moje fiszki (Biblioteka)
 - **Ścieżka**: `/flashcards`
 - **Główny cel**: Przeglądanie, edycja i usuwanie zapisanych fiszek.
-- **Kluczowe informacje**: Lista wszystkich kart (przód i tył widoczne jednocześnie), statystyki zbioru.
+- **Kluczowe informacje**: Lista wszystkich kart (przód i tył widoczne jednocześnie).
 - **Kluczowe komponenty**: 
     - `DataView`: Grid/Lista kart.
     - `Dialog`: Formularz edycji istniejącej fiszki.
     - `AlertDialog`: Potwierdzenie usunięcia fiszki.
 - **UX, dostępność i bezpieczeństwo**:
     - Brak animacji obracania (szybki skan wzrokowy treści).
-    - Filtrowanie po źródle (Manual/AI).
+
 
 ### Widok: Sesja nauki
-- **Ścieżka**: `/study`
+- **Ścieżka**: `/session`
 - **Główny cel**: Aktywna nauka metodą spaced repetition (FSRS).
 - **Kluczowe informacje**: Licznik postępu, karta 3D, przyciski oceny algorytmu.
 - **Kluczowe komponenty**: 
@@ -57,16 +57,15 @@ Aplikacja Flashcard Builder MVP została zaprojektowana jako nowoczesna aplikacj
 ### Widok: Profil i Ustawienia
 - **Ścieżka**: `/profile`
 - **Główny cel**: Zarządzanie kontem i bezpieczeństwem danych.
-- **Kluczowe informacje**: Dane użytkownika, zmiana hasła, statystyki generowania AI.
+- **Kluczowe informacje**: Dane użytkownika, zmiana hasła, usuwanie konta.
 - **Kluczowe komponenty**: 
-    - `StatsOverview`: Wizualizacja wskaźnika akceptacji AI.
     - `AlertDialog`: Potwierdzenie usunięcia konta (RODO).
 - **UX, dostępność i bezpieczeństwo**:
     - Jasne ostrzeżenia o nieodwracalności usunięcia danych.
 
 ## 3. Mapa podróży użytkownika
 
-1.  **Start**: Użytkownik loguje się i trafia na `/dashboard`.
+1.  **Start**: Użytkownik loguje się i trafia na `/generate`.
 2.  **Tworzenie (AI)**:
     - Wkleja tekst (np. 5000 znaków).
     - Klika "Generuj" -> Widzi Skeleton -> Otrzymuje listę 8 propozycji.
@@ -82,14 +81,13 @@ Aplikacja Flashcard Builder MVP została zaprojektowana jako nowoczesna aplikacj
 5.  **Nauka**:
     - Klika "Sesja nauki".
     - Przechodzi przez 10 kart, używając skrótów klawiaturowych.
-    - Po zakończeniu widzi podsumowanie (opcjonalne) lub wraca do Dashboard.
+    - Po zakończeniu widzi podsumowanie (opcjonalne) lub wraca do Generate.
 
 ## 4. Układ i struktura nawigacji
 
 ### Topbar (Desktop)
 - **Pozycja**: `sticky top-0`, `z-50`, `backdrop-blur`.
 - **Elementy**: 
-    - Logo (link do `/dashboard`).
     - Menu: Generuj, Moje fiszki, Sesja nauki, Profil.
     - Przycisk: Wyloguj.
 
@@ -100,8 +98,9 @@ Aplikacja Flashcard Builder MVP została zaprojektowana jako nowoczesna aplikacj
 
 ## 5. Kluczowe komponenty
 
-1.  **`FlashcardProposal`**: Karta używana w procesie recenzji AI. Zawiera dwa stany: wyświetlanie i edycja inline. Obsługuje przyciski Akceptuj/Edytuj/Odrzuć.
+1.  **`FlashcardProposal`**: Karta używana w procesie recenzji AI. Zawiera dwa stany: wyświetlanie i edycja inline. Obsługuje przyciski Akceptuj/Edytuj/Odrzuć. Znajduje sie w `/generate` w domyślnej zakładce AI, poniżej formularza generacji. 
 2.  **`CharacterCounter`**: Mały komponent tekstowy pod polami `input/textarea`, zmieniający kolor na czerwony po przekroczeniu limitu (200 dla frontu, 500 dla tyłu).
 3.  **`StudyCard`**: Zaawansowany komponent CSS 3D obsługujący stan `isFlipped`. Zapewnia płynną animację i czytelność tekstu po obu stronach.
-4.  **`StatusToast`**: Globalny system powiadomień o sukcesach (np. "Zapisano 7 fiszek") i błędach (np. "Błąd połączenia z AI").
-5.  **`BulkActionToolbar`**: Pasek narzędziowy widoczny pod listą propozycji AI, zawierający przyciski "Zapisz wszystkie" i statystyki sesji generowania.
+4.  **`StatusToast`**: Globalny system powiadomień o sukcesach (np. "Zapisano 7 fiszek"),
+błędy wyświetlana inline.
+5.  **`BulkActionToolbar`**: Pasek narzędziowy widoczny pod listą propozycji AI, zawierający przyciski "Zapisz wszystkie" i "Zapisz zatwierdzone".
