@@ -22,7 +22,7 @@ Głównym problemem osób korzystających z metody spaced repetition jest wysoki
 * Formularz tworzenia nowej fiszki z limitami: 200 znaków na przód i 500 znaków na tył.
 * Liczniki znaków widoczne w czasie rzeczywistym podczas wpisywania tekstu.
 * Pełna funkcjonalność CRUD (Create, Read, Update, Delete) dla wszystkich fiszek użytkownika.
-* Widok listy Moje fiszki z funkcją odwracania kart (podgląd przód/tył).
+* Widok listy Moje fiszki (podgląd przód/tył).
 
 3. System użytkowników i bezpieczeństwo
 
