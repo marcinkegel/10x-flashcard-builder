@@ -88,20 +88,24 @@ Kryteria akceptacji:
 
 1. Pole tekstowe przyjmuje od 1 000 do 10 000 znaków.
 2. Przycisk generowania jest aktywny tylko po spełnieniu limitu znaków.
-3. Podczas oczekiwania na odpowiedź z API wyświetlany jest wskaźnik ładowania.
-4. Wyniki od LLM pojawiają się jako lista kart.
+3. Podczas oczekiwania na odpowiedź z API wyświetlany jest wskaźnik ładowania skeleton.
+4. Wyniki od LLM pojawiają się jako lista propozycji fiszek.
 
 ID: US-004
 Tytuł: Recenzja propozycji AI
-Opis: Jako użytkownik chcę zdecydować, które z wygenerowanych fiszek chcę zachować.
+Opis: Jako użytkownik chcę zdecydować, które z wygenerowanych propozycji fiszek chcę zachować.
 Kryteria akceptacji:
 
-1. Każda propozycja posiada przyciski: Akceptuj, Edytuj, Odrzuć.
+1. Każda propozycja posiada przyciski: Zatwierdź, Edytuj, Odrzuć.
 2. Dla każdej propozycji wyświetlany jest przód i tył fiszki. 
-3. Kliknięcie Akceptuj zapisuje fiszkę i pokazuje Toast z potwierdzeniem dodania do harmonogramu.
-4. Kliknięcie Odrzuć wymaga potwierdzenia w modalu (akcja bezzwrotna).
-5. Kliknięcie Edytuj otwiera formularz z możliwością zmiany treści przed zapisem.
-6. Zaakceptowana lub odrzucona fiszka znika z listy propozycji.
+3. Kliknięcie Zatwierdź zmienia kolor karty na delikatny zielony i ustawia status w ViewModel na `status: 'accepted'`.
+4. Kliknięcie Odrzuć zmienia kolor karty na delikatny czerwony i ustawia status w ViewModel na `status: 'rejected'`. Akcja ta nie wymaga potwierdzenia w modalu, ale statusy 'accepted' i 'rejected' wzajemnie się wykluczają.
+5. Kliknięcie Edytuj pozwala na edycję treści każdej ze stron fiszki inline przed zapisem. Wejście w tryb edycji lub zmiana treści automatycznie ustawia pole `source` na `'ai-edited'`. Wyjście z edycji wymaga spłnienia warunków limitu ilości znaków dla przodu (200) i tyłu (500) propozycji fiszki. 
+6. Poniżej listy propozycji dostępne są przyciski zapisu zbiorczego:
+    - **Zapisz zatwierdzone**: Zapisuje do bazy danych tylko propozycje ze statusem `'accepted'`.
+    - **Zapisz nieodrzucone**: Zapisuje do bazy danych propozycje ze statusem `'accepted'` oraz `'pending'` (jeszcze nieprzejrzane).
+7. Po wykonaniu zapisu zbiorczego, zapisane fiszki są dodawane do bazy, a wszystkie propozycje (w tym odrzucone) są usuwane z widoku i z `sessionStorage`.
+8. Zaakceptowana lub odrzucona fiszka pozostaje na liście aż do momentu wykonania zapisu zbiorczego lub odświeżenia sesji, zmieniając jedynie swój wygląd (kolor).
 
 ID: US-005
 Tytuł: Ręczne tworzenie fiszek

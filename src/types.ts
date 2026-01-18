@@ -95,7 +95,7 @@ export interface FlashcardProposalViewModel {
   front: string;
   back: string;
   source: "ai-full" | "ai-edited";
-  accepted: boolean;
+  status: "pending" | "accepted" | "rejected";
   isEditing: boolean;
 }
 

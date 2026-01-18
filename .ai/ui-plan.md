@@ -23,12 +23,12 @@ Aplikacja Flashcard Builder MVP została zaprojektowana jako nowoczesna aplikacj
 - **Kluczowe komponenty**: 
     - `Tabs`: Przełączanie trybu pracy.
     - `Textarea`: Z licznikami znaków (1k-10k dla AI).
-    - `AIProposalList`: Dynamiczna lista kart z trybem edycji inline.
+    - `AIProposalList`: Dynamiczna lista kart z trybem edycji inline. Karty zmieniają kolory w zależności od statusu (zielony dla zatwierdzonych, czerwony dla odrzuconych).
     - `Skeleton`: Stan ładowania podczas pracy LLM.
 - **UX, dostępność i bezpieczeństwo**:
     - Synchronizacja propozycji AI z `sessionStorage` (ochrona przed odświeżeniem).
     - `beforeunload`: Ostrzeżenie przed wyjściem z niezapisanymi fiszkami.
-    - Blokada zapisu zbiorczego (`Bulk Save`) podczas aktywnej edycji inline.
+    - Blokada przycisków zapisu bulk podczas aktywnej edycji inline. Po edycji propozycja fiszki wciąz musi spełniać wymógl liczby znaków - do 200 dla przodu i 500 dla tyłu fiszki. 
 
 ### Widok: Moje fiszki (Biblioteka)
 - **Ścieżka**: `/flashcards`
@@ -69,8 +69,8 @@ Aplikacja Flashcard Builder MVP została zaprojektowana jako nowoczesna aplikacj
 2.  **Tworzenie (AI)**:
     - Wkleja tekst (np. 5000 znaków).
     - Klika "Generuj" -> Widzi Skeleton -> Otrzymuje listę 8 propozycji.
-    - Przegląda propozycje: jedną odrzuca, jedną edytuje inline (textarea wewnątrz karty).
-    - Klika "Zapisz wszystkie" -> Otrzymuje Toast z potwierdzeniem -> Propozycje znikają z `sessionStorage`.
+    - Przegląda propozycje: jedną odrzuca (karta staje się czerwona), jedną zatwierdza (karta staje się zielona), jedną edytuje inline.
+    - Klika "Zapisz nieodrzucone" -> Otrzymuje Toast z potwierdzeniem -> Nieodrzucone propozycje zostają zapisane, a wszystkie znikają z listy (odrzucone są usuwane).
 3.  **Tworzenie (Manual)**:
     - Przełącza zakładkę na "Ręczne".
     - Wpisuje przód i tył z widocznym licznikiem znaków.
@@ -102,5 +102,5 @@ Aplikacja Flashcard Builder MVP została zaprojektowana jako nowoczesna aplikacj
 2.  **`CharacterCounter`**: Mały komponent tekstowy pod polami `input/textarea`, zmieniający kolor na czerwony po przekroczeniu limitu (200 dla frontu, 500 dla tyłu).
 3.  **`StudyCard`**: Zaawansowany komponent CSS 3D obsługujący stan `isFlipped`. Zapewnia płynną animację i czytelność tekstu po obu stronach.
 4.  **`StatusToast`**: Globalny system powiadomień o sukcesach (np. "Zapisano 7 fiszek"),
-błędy wyświetlana inline.
-5.  **`BulkActionToolbar`**: Pasek narzędziowy widoczny pod listą propozycji AI, zawierający przyciski "Zapisz wszystkie" i "Zapisz zatwierdzone".
+błędy wyświetlane inline.
+5.  **`BulkActionToolbar`**: Pasek narzędziowy widoczny pod listą propozycji AI, zawierający przyciski "Zapisz nieodrzucone" (zapisuje status `accepted` i `pending`) oraz "Zapisz zatwierdzone" (zapisuje tylko status `accepted`).
