@@ -188,7 +188,8 @@ Dedykowany hook `useGenerationSession` powinien zarządzać całą logiką "AI S
 5.  **UI - Tryb AI - Lista**: Zaimplementuj `ProposalList` i `BulkActionToolbar`.
 6.  **UI - Kontener**: Złóż wszystko w `CreateFlashcardsContainer`.
 7.  **Integracja**: Podłącz hook pod komponenty.
-8.  **Weryfikacja**:
+8.  **Refaktoryzacja**: Finalny code review i refaktoryzacja przed wdrożeniem.
+9.  **Weryfikacja**:
     - Sprawdź limity znaków.
     - Sprawdź poprawność zmiany statusu na `ai-edited` po edycji.
     - Sprawdź zapis masowy.
