@@ -497,7 +497,7 @@ support paggination as needed
 **Client-side workflow after generation**:
 - Display proposals to user
 - User can accept (as-is or edited) or reject each proposal
-- Accepted proposals → saved via `POST /api/flashcards` with `source: 'ai-full'` or `'ai-edited'` and `generation_id`
+- Selected proposals → saved via `POST /api/flashcards` with `source: 'ai-full'` or `'ai-edited'` and `generation_id`
 - When flashcards are created with a `generation_id`, the `POST /api/flashcards` endpoint automatically updates the generation statistics (`count_accepted_unedited` or `count_accepted_edited`)
 - Rejected proposals → simply discarded (no API call)
 

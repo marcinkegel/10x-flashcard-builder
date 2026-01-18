@@ -98,7 +98,7 @@ Aplikacja Flashcard Builder MVP została zaprojektowana jako nowoczesna aplikacj
 
 ## 5. Kluczowe komponenty
 
-1.  **`FlashcardProposal`**: Karta używana w procesie recenzji AI. Wykorzystuje model `FlashcardProposalViewModel` do zarządzania stanem akceptacji i edycji. Zawiera dwa stany: wyświetlanie i edycja inline. Obsługuje przyciski Akceptuj/Edytuj/Odrzuć. Znajduje sie w `/generate` w domyślnej zakładce AI, poniżej formularza generacji. 
+1.  **`FlashcardProposal`**: Karta używana w procesie recenzji AI. Wykorzystuje model `FlashcardProposalViewModel` do zarządzania stanem akceptacji i edycji. Zawiera dwa stany: wyświetlanie i edycja inline. Obsługuje przyciski Zatwierdź/Edytuj/Odrzuć. Znajduje sie w `/generate` w domyślnej zakładce AI, poniżej formularza generacji. 
 2.  **`CharacterCounter`**: Mały komponent tekstowy pod polami `input/textarea`, zmieniający kolor na czerwony po przekroczeniu limitu (200 dla frontu, 500 dla tyłu).
 3.  **`StudyCard`**: Zaawansowany komponent CSS 3D obsługujący stan `isFlipped`. Zapewnia płynną animację i czytelność tekstu po obu stronach.
 4.  **`StatusToast`**: Globalny system powiadomień o sukcesach (np. "Zapisano 7 fiszek"),
