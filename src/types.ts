@@ -87,6 +87,19 @@ export interface GenerationProposalDTO {
 }
 
 /**
+ * Rozszerzony model reprezentujący stan propozycji fiszki w UI.
+ * Umożliwia dynamiczne zarządzanie stanem akceptacji i edycji przed zapisem do DB.
+ */
+export interface FlashcardProposalViewModel {
+  id: string; // Mapowane z proposal_id
+  front: string;
+  back: string;
+  source: "ai-full" | "ai-edited";
+  accepted: boolean;
+  isEditing: boolean;
+}
+
+/**
  * Odpowiedź z endpointu generowania, zawierająca propozycje i metadane sesji.
  */
 export interface GenerationResponseDTO {
