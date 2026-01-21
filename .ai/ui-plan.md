@@ -22,13 +22,16 @@ Aplikacja Flashcard Builder MVP została zaprojektowana jako nowoczesna aplikacj
 - **Kluczowe informacje**: Zakładki (Tabs) między AI a Manual, pole tekstowe źródłowe, lista propozycji AI.
 - **Kluczowe komponenty**: 
     - `Tabs`: Przełączanie trybu pracy.
-    - `Textarea`: Z licznikami znaków (1k-10k dla AI).
+    - `Textarea`: Z licznikami znaków (1k-10k dla AI). Pole posiada max wysokość (400px) i scroll.
     - `AIProposalList`: Dynamiczna lista kart z trybem edycji inline. Karty zmieniają kolory w zależności od statusu (zielony dla zatwierdzonych, czerwony dla odrzuconych).
     - `Skeleton`: Stan ładowania podczas pracy LLM.
+    - `BulkActionToolbar`: Przyklejony pasek akcji masowych (zapis wg strategii, usuwanie sesji).
 - **UX, dostępność i bezpieczeństwo**:
-    - Synchronizacja propozycji AI z `sessionStorage` (ochrona przed odświeżeniem).
-    - `beforeunload`: Ostrzeżenie przed wyjściem z niezapisanymi fiszkami.
-    - Blokada przycisków zapisu bulk podczas aktywnej edycji inline. Po edycji propozycja fiszki wciąz musi spełniać wymógl liczby znaków - do 200 dla przodu i 500 dla tyłu fiszki. 
+    - **Walidacja inline**: Błędy i ostrzeżenia wyświetlane pod polami (nad przyciskiem), czerwone ramki po `blur` lub overflow.
+    - **Autoscroll**: Automatyczne przewijanie do komunikatów o błędach/informacjach.
+    - **Blokada generowania**: Nowa sesja AI możliwa dopiero po zapisie/usunięciu obecnych propozycji (informacja inline).
+    - **Persystencja**: Synchronizacja propozycji AI z `sessionStorage`.
+    - **Ostrzeżenie**: `beforeunload` przy próbie wyjścia z niezapisanymi danymi.
 
 ### Widok: Moje fiszki (Biblioteka)
 - **Ścieżka**: `/flashcards`

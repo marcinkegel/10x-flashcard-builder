@@ -42,10 +42,12 @@ src/pages/generate.astro
 ### `AIGenerationForm`
 - **Rola**: Pobiera tekst źródłowy do generowania.
 - **Elementy**: `Textarea` (min 1000, max 10000 znaków), `Button` (Generuj).
-- **Walidacja**: Przycisk nieaktywny, jeśli długość tekstu poza zakresem lub trwa ładowanie.
+- **Walidacja**: Przycisk nieaktywny, jeśli długość tekstu poza zakresem, trwa ładowanie lub istnieją aktywne propozycje.
+- **UX**: Max wysokość textarea (400px) ze scrollem. Czerwona ramka i błędy inline wyświetlane pod licznikiem znaków po `blur` lub przekroczeniu limitu. Autoscroll do błędów. Komunikat informacyjny o aktywnej sesji blokującej nowe generowanie.
 - **Propsy**:
-    - `onGenerate: (text: string) => Promise<void>`
+    - `onGenerate: (text: string) => Promise<{ success: boolean; error?: string }>`
     - `isGenerating: boolean`
+    - `hasActiveProposals: boolean`
 
 ### `ProposalList`
 - **Rola**: Wyświetla listę propozycji zwróconych przez AI.
@@ -75,16 +77,19 @@ src/pages/generate.astro
     - `onUpdate`: Callback aktualizujący stan w rodzicu.
 
 ### `BulkActionToolbar`
-- **Rola**: Pasek akcji masowych.
+- **Rola**: Pasek akcji masowych (sticky).
 - **Elementy**:
     - Przycisk "Zapisz zatwierdzone" (`saveAccepted`).
-    - Przycisk "Zapisz nieodrzucone" (`saveNonRejected` - domyślna, preferowana akcja).
+    - Przycisk "Zapisz nieodrzucone" (`saveNonRejected`).
+    - Przycisk "Usuń niezapisane" (czyści sesję).
+- **Layout**: Pionowy na mobile (`flex-col`), poziomy na desktopie.
 - **Walidacja**: Przyciski zablokowane, jeśli jakakolwiek fiszka jest w trybie edycji (`isEditing === true`).
+- **Propsy**:
+    - `onSave`, `onClear`, `isSaving`, `anyEditing`, `acceptedCount`, `nonRejectedCount`.
 
 ### `ManualFlashcardForm`
 - **Rola**: Formularz dodawania pojedynczej fiszki.
-- **Elementy**: Textarea Front, Textarea Back, Button Zapisz.
-- **Walidacja**: Front (1-200), Back (1-500).
+- **UX**: Czerwone ramki pól i błędy inline po `blur`. Autoscroll do błędów.
 - **Logika**: Po zapisie czyści formularz i pokazuje Toast sukcesu.
 
 ## 5. Typy

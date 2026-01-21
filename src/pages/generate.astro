@@ -1,0 +1,12 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CreateFlashcardsContainer from "../components/features/flashcards/CreateFlashcardsContainer";
+
+export const prerender = false;
+---
+
+<Layout title="Generuj Fiszki | 10x Flashcard Builder">
+  <main class="min-h-screen bg-background">
+    <CreateFlashcardsContainer client:only="react" />
+  </main>
+</Layout>

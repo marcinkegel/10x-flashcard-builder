@@ -86,10 +86,12 @@ Tytuł: Generowanie fiszek przez AI
 Opis: Jako użytkownik chcę wkleić tekst, aby AI przygotowało dla mnie propozycje fiszek.
 Kryteria akceptacji:
 
-1. Pole tekstowe przyjmuje od 1 000 do 10 000 znaków.
-2. Przycisk generowania jest aktywny tylko po spełnieniu limitu znaków.
-3. Podczas oczekiwania na odpowiedź z API wyświetlany jest wskaźnik ładowania skeleton.
-4. Wyniki od LLM pojawiają się jako lista propozycji fiszek.
+1. Pole tekstowe przyjmuje od 1 000 do 10 000 znaków. Posiada ograniczenie wysokości (400px) z wewnętrznym przewijaniem, aby zachować widoczność przycisku generowania.
+2. Przycisk generowania jest aktywny tylko po spełnieniu limitu znaków i braku aktywnej sesji propozycji.
+3. Walidacja długości tekstu jest wizualizowana czerwoną ramką oraz komunikatem inline poniżej pola (nad przyciskiem) po wyjściu z pola (`blur`) lub przekroczeniu limitu.
+4. System automatycznie przewija widok do komunikatów o błędach/informacjach (autoscroll).
+5. Podczas oczekiwania na odpowiedź z API wyświetlany jest wskaźnik ładowania skeleton.
+6. Wyniki od LLM pojawiają się jako lista propozycji fiszek.
 
 ID: US-004
 Tytuł: Recenzja propozycji AI
@@ -101,22 +103,24 @@ Kryteria akceptacji:
 3. Kliknięcie Zatwierdź zmienia kolor karty na delikatny zielony i ustawia status w ViewModel na `status: 'accepted'`.
 4. Kliknięcie Odrzuć zmienia kolor karty na delikatny czerwony i ustawia status w ViewModel na `status: 'rejected'`. Akcja ta nie wymaga potwierdzenia w modalu, ale statusy 'accepted' i 'rejected' wzajemnie się wykluczają.
 5. Kliknięcie Edytuj pozwala na edycję treści każdej ze stron fiszki inline przed zapisem. Wejście w tryb edycji lub zmiana treści automatycznie ustawia pole `source` na `'ai-edited'`. Wyjście z edycji wymaga spłnienia warunków limitu ilości znaków dla przodu (200) i tyłu (500) propozycji fiszki. 
-6. Poniżej listy propozycji dostępne są przyciski zapisu zbiorczego:
-    - **Zapisz zatwierdzone**: Zapisuje do bazy danych tylko propozycje ze statusem `'accepted'`.
-    - **Zapisz nieodrzucone**: Zapisuje do bazy danych propozycje ze statusem `'accepted'` oraz `'pending'` (jeszcze nieprzejrzane).
-7. Po wykonaniu zapisu zbiorczego, zapisane fiszki są dodawane do bazy, a wszystkie propozycje (w tym odrzucone) są usuwane z widoku i z `sessionStorage`.
-8. Zaakceptowana lub odrzucona fiszka pozostaje na liście aż do momentu wykonania zapisu zbiorczego lub odświeżenia sesji, zmieniając jedynie swój wygląd (kolor).
+6. Poniżej listy propozycji dostępne są przyciski zapisu zbiorczego w przyklejonym pasku (BulkActionToolbar). Na urządzeniach mobilnych przyciski są ułożone pionowo.
+7. Dostępne akcje masowe:
+    - **Zapisz zatwierdzone**: Zapisuje tylko propozycje ze statusem `'accepted'`.
+    - **Zapisz nieodrzucone**: Zapisuje propozycje ze statusem `'accepted'` oraz `'pending'`.
+    - **Usuń niezapisane**: Czyści całą sesję propozycji po potwierdzeniu przez użytkownika.
+8. Po wykonaniu zapisu zbiorczego, zapisane fiszki są dodawane do bazy, a wszystkie pozostałe propozycje z tej sesji (w tym odrzucone) są usuwane z widoku i z `sessionStorage`.
+9. Jeśli lista propozycji nie jest pusta, próba wygenerowania nowych fiszek jest blokowana komunikatem: "Aby wygenerować kolejne propozycje, najpierw zapisz lub usuń wszystkie propozycje z poprzedniej sesji."
 
 ID: US-005
 Tytuł: Ręczne tworzenie fiszek
 Opis: Jako użytkownik chcę samodzielnie stworzyć fiszkę, aby dodać specyficzną informację do nauki.
 Kryteria akceptacji:
 
-1. W widoku dodawania/generowania fiszek dostępna jest zakładka pozwalający na manualne utworzenie fiszki. Kliknięcie jej pokazuje formularz manualnego dodawania.
+1. W widoku dodawania/generowania fiszek dostępna jest zakładka pozwalający na manualne utworzenie fiszki.
 2. Dostępny formularz z polami Przód (max 200 znaków) i Tył (max 500 znaków).
-3. Liczniki znaków pokazują pozostałe miejsce pod każdym polem.
-4. Przycisk Zapisz jest nieaktywny, jeśli pola są puste lub przekraczają limity.
-5. Po zapisie wyświetla się potwierdzenie dodanie do zapisanych fiszek.
+3. Walidacja pól (puste lub przekroczone limity) objawia się czerwoną ramką pola i komunikatem inline po wyjściu z pola (`blur`).
+4. System automatycznie przewija widok do komunikatów o błędach (autoscroll).
+5. Po poprawnym zapisie wyświetla się potwierdzenie Toast, a pola formularza są czyszczone.
 
 ID: US-006
 Tytuł: Zarządzanie istniejącymi fiszkami
