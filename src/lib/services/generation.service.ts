@@ -7,13 +7,19 @@ import type {
   ApiError
 } from "../../types";
 import { createHash } from "node:crypto";
+import { 
+  OpenRouterService, 
+  FLASHCARD_SYSTEM_PROMPT, 
+  FLASHCARD_RESPONSE_SCHEMA 
+} from "./openrouter.service";
 
 /**
  * Service responsible for managing the flashcard generation process.
- * Handles deduplication, database logging, and coordination with AI models (currently mocked).
+ * Handles deduplication, database logging, and coordination with AI models.
  */
 export class GenerationService {
-  private static MOCK_MODEL_NAME = "mock-gemini-3-flash";
+  private static readonly openRouter = new OpenRouterService();
+  private static readonly MODEL_NAME = "openai/gpt-4o-mini";
 
   /**
    * Generates an MD5 hash from the source text.
@@ -76,7 +82,7 @@ export class GenerationService {
       user_id: userId,
       error_code: errorData.error_code,
       error_message: errorData.error_message,
-      model_name: this.MOCK_MODEL_NAME,
+      model_name: GenerationService.MODEL_NAME,
       source_text_hash: errorData.source_text_hash,
       source_text_length: errorData.source_text_length,
     });
@@ -92,7 +98,7 @@ export class GenerationService {
    * Steps:
    * 1. Check for duplicates using MD5 hash.
    * 2. Create an initial generation record in DB.
-   * 3. Call AI model (mocked) to get proposals.
+   * 3. Call OpenRouter API to get proposals.
    * 4. Update the DB record with the results.
    * 5. Handle and log any errors that occur during the process.
    * 
@@ -127,7 +133,7 @@ export class GenerationService {
         user_id: userId,
         source_text_hash: sourceTextHash,
         source_text_length: sourceTextLength,
-        model_name: this.MOCK_MODEL_NAME,
+        model_name: GenerationService.MODEL_NAME,
         count_generated: 0,
         count_accepted_edited: 0,
         count_accepted_unedited: 0,
@@ -149,27 +155,18 @@ export class GenerationService {
     }
 
     try {
-      // 3. Mock LLM Logic
-      console.log(`[GenerationService] Starting mock generation for user ${userId}, hash ${sourceTextHash}`);
+      // 3. Call OpenRouter
+      console.log(`[GenerationService] Starting generation for user ${userId}, hash ${sourceTextHash}`);
       
-      // Simulate delay
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      const result = await this.openRouter.generateChatCompletion<{ proposals: GenerationProposalDTO[] }>({
+        systemPrompt: FLASHCARD_SYSTEM_PROMPT,
+        userPrompt: `Przeanalizuj poniższy materiał edukacyjny i wygeneruj na jego podstawie propozycje fiszek:\n\n${sourceText}`,
+        responseSchema: FLASHCARD_RESPONSE_SCHEMA
+      });
 
-      // Simulate potential timeout/error (10% chance for 503)
-      if (Math.random() < 0.1) {
-        console.warn(`[GenerationService] Simulated mock timeout for hash ${sourceTextHash}`);
-        throw {
-          code: "MOCK_TIMEOUT",
-          message: "Serwis czasowo niedostępny (symulacja).",
-        } as ApiError;
-      }
-
-      // Generate mock proposals based on length
-      const countToGenerate = Math.min(Math.floor(sourceTextLength / 500), 10) || 3;
-      const proposals: GenerationProposalDTO[] = Array.from({ length: countToGenerate }).map((_, i) => ({
-        proposal_id: `temp-${i + 1}`,
-        front: `Pytanie ${i + 1} dotyczące tekstu (${sourceTextHash.slice(0, 8)})`,
-        back: `Odpowiedź ${i + 1} wygenerowana przez AI na podstawie dostarczonej treści.`,
+      const proposals = result.proposals.map((p, i) => ({
+        ...p,
+        proposal_id: `ai-${generation.id.slice(0, 4)}-${i + 1}`
       }));
 
       // 4. Update generation record with success
@@ -180,7 +177,6 @@ export class GenerationService {
 
       if (updateError) {
         console.error(`[GenerationService] Error updating generation count for ${generation.id}:`, updateError);
-        // We don't throw here as the generation actually succeeded in producing proposals
       }
 
       console.log(`[GenerationService] Successfully generated ${proposals.length} proposals for ${generation.id}`);
@@ -189,21 +185,34 @@ export class GenerationService {
         generation_id: generation.id,
         proposals,
         metadata: {
-          model_name: this.MOCK_MODEL_NAME,
+          model_name: GenerationService.MODEL_NAME,
           source_text_length: sourceTextLength,
           count_generated: proposals.length,
         },
       };
     } catch (err: any) {
       console.error(`[GenerationService] Critical error during generation:`, err);
-      const apiError = err as ApiError;
+      
+      // Determine error code and message
+      let errorCode = "AI_GENERATION_ERROR";
+      let errorMessage = err.message || "Błąd podczas generowania fiszek.";
+
+      if (errorMessage.includes("401")) errorCode = "AI_AUTH_ERROR";
+      if (errorMessage.includes("402")) errorCode = "AI_PAYMENT_ERROR";
+      if (errorMessage.includes("429")) errorCode = "AI_RATE_LIMIT_ERROR";
+      if (errorMessage.includes("Validation Error")) errorCode = "AI_VALIDATION_ERROR";
+
       await this.logError(supabase, userId, {
-        error_code: apiError.code || "AI_GENERATION_ERROR",
-        error_message: apiError.message || "Błąd podczas generowania fiszek.",
+        error_code: errorCode,
+        error_message: errorMessage,
         source_text_hash: sourceTextHash,
         source_text_length: sourceTextLength,
       });
-      throw apiError;
+
+      throw {
+        code: errorCode,
+        message: errorMessage,
+      } as ApiError;
     }
   }
 }

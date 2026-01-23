@@ -16,7 +16,7 @@ class OpenRouterService {
 
   constructor(config?: { model?: string }) {
     this.apiKey = import.meta.env.OPENROUTER_API_KEY;
-    this.defaultModel = config?.model || "google/gemini-flash-1.5";
+    this.defaultModel = config?.model || "openai/gpt-4o-mini";
     
     if (!this.apiKey) {
       throw new Error("Missing OPENROUTER_API_KEY in environment variables");
@@ -133,7 +133,7 @@ Poniżej znajdują się konkretne przykłady implementacji kluczowych parametró
 4. **Nazwa modelu i parametry (Model & Parameters)**:
    ```typescript
    const payload = {
-     model: "google/gemini-flash-1.5",
+     model: "openai/gpt-4o-mini",
      messages: [
        { role: "system", content: systemPrompt },
        { role: "user", content: userPrompt }

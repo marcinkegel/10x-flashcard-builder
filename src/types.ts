@@ -113,6 +113,62 @@ export interface GenerationResponseDTO {
 }
 
 /**
+ * OPENROUTER API
+ */
+
+export interface OpenRouterMessage {
+  role: "system" | "user" | "assistant";
+  content: string;
+}
+
+export interface OpenRouterResponseFormat {
+  type: "json_schema";
+  json_schema: {
+    name: string;
+    strict: boolean;
+    schema: object;
+  };
+}
+
+export interface OpenRouterRequest {
+  model: string;
+  messages: OpenRouterMessage[];
+  response_format?: OpenRouterResponseFormat;
+  temperature?: number;
+  max_tokens?: number;
+  top_p?: number;
+}
+
+export interface OpenRouterResponse {
+  id: string;
+  choices: {
+    message: {
+      role: string;
+      content: string;
+    };
+    finish_reason: string;
+  }[];
+  usage?: {
+    prompt_tokens: number;
+    completion_tokens: number;
+    total_tokens: number;
+  };
+  error?: {
+    message: string;
+    code: number;
+    metadata?: any;
+  };
+}
+
+export interface CompletionParams {
+  systemPrompt: string;
+  userPrompt: string;
+  responseSchema: object;
+  model?: string;
+  temperature?: number;
+}
+
+/**
  * ERROR LOGGING
  */
 
