@@ -59,8 +59,10 @@ export const onRequest = defineMiddleware(
         });
       }
       
-      // Redirect to login for protected web routes
-      return redirect('/login');
+      // Redirect to login for protected web routes, keeping the original path
+      const loginUrl = new URL('/login', url.origin);
+      loginUrl.searchParams.set('redirectTo', url.pathname);
+      return redirect(loginUrl.toString());
     }
 
     return next();

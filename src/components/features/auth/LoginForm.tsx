@@ -31,14 +31,20 @@ export function LoginForm() {
         throw new Error(data.error || "Wystąpił błąd podczas logowania");
       }
 
-      // Success: hard redirect to app
-      window.location.href = "/generate";
+      // Success: redirect to app or the requested path
+      const params = new URLSearchParams(window.location.search);
+      const redirectTo = params.get("redirectTo") || "/generate";
+      window.location.href = redirectTo;
     } catch (err) {
       setError(err instanceof Error ? err.message : "Wystąpił nieoczekiwany błąd");
     } finally {
       setIsLoading(false);
     }
   };
+
+  const params = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : null;
+  const redirectTo = params?.get("redirectTo");
+  const registerUrl = redirectTo ? `/register?redirectTo=${encodeURIComponent(redirectTo)}` : "/register";
 
   return (
     <Card className="w-full">
@@ -94,7 +100,7 @@ export function LoginForm() {
           </Button>
           <div className="text-sm text-center text-muted-foreground">
             Nie masz jeszcze konta?{" "}
-            <a href="/register" className="font-medium text-primary hover:underline">
+            <a href={registerUrl} className="font-medium text-primary hover:underline">
               Zarejestruj się
             </a>
           </div>

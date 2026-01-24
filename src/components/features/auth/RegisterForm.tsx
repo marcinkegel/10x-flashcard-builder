@@ -12,6 +12,10 @@ export function RegisterForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const params = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : null;
+  const redirectTo = params?.get("redirectTo");
+  const loginUrl = redirectTo ? `/login?redirectTo=${encodeURIComponent(redirectTo)}` : "/login";
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -45,8 +49,10 @@ export function RegisterForm() {
         throw new Error(data.error || "Wystąpił błąd podczas rejestracji");
       }
 
-      // Success: redirect to generate page (user is auto-logged in by Supabase Auth)
-      window.location.href = "/generate";
+      // Success: redirect to app or the requested path
+      const params = new URLSearchParams(window.location.search);
+      const redirectTo = params.get("redirectTo") || "/generate";
+      window.location.href = redirectTo;
     } catch (err) {
       setError(err instanceof Error ? err.message : "Wystąpił nieoczekiwany błąd");
     } finally {
@@ -111,7 +117,7 @@ export function RegisterForm() {
           </Button>
           <div className="text-sm text-center text-muted-foreground">
             Masz już konto?{" "}
-            <a href="/login" className="font-medium text-primary hover:underline">
+            <a href={loginUrl} className="font-medium text-primary hover:underline">
               Zaloguj się
             </a>
           </div>
