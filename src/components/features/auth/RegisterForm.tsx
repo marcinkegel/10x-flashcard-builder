@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { AlertCircle } from "lucide-react";
 
 export function RegisterForm() {
   const [email, setEmail] = useState("");
@@ -28,9 +29,29 @@ export function RegisterForm() {
     }
 
     setIsLoading(true);
-    // Placeholder for future implementation
-    console.log("Register submitted:", { email, password });
-    setTimeout(() => setIsLoading(false), 1000);
+
+    try {
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Wystąpił błąd podczas rejestracji");
+      }
+
+      // Success: redirect to generate page (user is auto-logged in by Supabase Auth)
+      window.location.href = "/generate";
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Wystąpił nieoczekiwany błąd");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -43,6 +64,12 @@ export function RegisterForm() {
       </CardHeader>
       <form onSubmit={handleSubmit}>
         <CardContent className="space-y-4">
+          {error && (
+            <div className="bg-destructive/15 text-destructive text-sm p-3 rounded-md flex items-center gap-2 animate-in fade-in slide-in-from-top-1">
+              <AlertCircle className="h-4 w-4" />
+              <p>{error}</p>
+            </div>
+          )}
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <Input
@@ -77,11 +104,6 @@ export function RegisterForm() {
               disabled={isLoading}
             />
           </div>
-          {error && (
-            <div className="p-3 text-sm font-medium text-destructive bg-destructive/10 border border-destructive/20 rounded-md">
-              {error}
-            </div>
-          )}
         </CardContent>
         <CardFooter className="flex flex-col space-y-4">
           <Button type="submit" className="w-full" disabled={isLoading}>
