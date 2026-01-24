@@ -12,8 +12,6 @@ export const supabaseClient = createClient<Database>(supabaseUrl, supabaseAnonKe
 
 export type SupabaseClient = typeof supabaseClient;
 
-export const DEFAULT_USER_ID = "e32624f2-08c7-47c8-bba7-1aaecac0f918"
-
 export const cookieOptions: CookieOptionsWithName = {
   path: '/',
   secure: true,
@@ -51,6 +49,19 @@ export const createSupabaseServerInstance = (context: {
   );
 
   return supabase;
+};
+
+export const createSupabaseAdminInstance = () => {
+  return createClient<Database>(
+    import.meta.env.SUPABASE_URL,
+    import.meta.env.SUPABASE_SERVICE_ROLE_KEY,
+    {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+      },
+    }
+  );
 };
 
 

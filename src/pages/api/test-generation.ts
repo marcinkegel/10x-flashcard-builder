@@ -18,8 +18,14 @@ export const GET: APIRoute = async ({ locals }) => {
   try {
     console.log("[TestEndpoint] Starting test generation...");
     
+    const user = locals.user;
+    if (!user) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
+    }
+
     const result = await GenerationService.generateFlashcards(
       locals.supabase,
+      user.id,
       { source_text: sampleText }
     );
 

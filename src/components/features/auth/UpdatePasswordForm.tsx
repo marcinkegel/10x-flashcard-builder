@@ -28,27 +28,51 @@ export function UpdatePasswordForm() {
     }
 
     setIsLoading(true);
-    // Placeholder for future implementation
-    console.log("Update password submitted");
-    setTimeout(() => {
-      setIsLoading(false);
+    
+    try {
+      const response = await fetch("/api/auth/update-password", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Wystąpił błąd podczas aktualizacji hasła");
+      }
+
       setIsSuccess(true);
-    }, 1000);
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   if (isSuccess) {
+    const isProfilePage = typeof window !== "undefined" && window.location.pathname === "/profile";
+
     return (
       <Card className="w-full">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center">Hasło zaktualizowane</CardTitle>
           <CardDescription className="text-center">
-            Twoje hasło zostało pomyślnie zmienione. Możesz się teraz zalogować.
+            Twoje hasło zostało pomyślnie zmienione.
           </CardDescription>
         </CardHeader>
         <CardFooter>
-          <Button className="w-full" asChild>
-            <a href="/login">Zaloguj się</a>
-          </Button>
+          {isProfilePage ? (
+            <Button className="w-full" onClick={() => setIsSuccess(false)}>
+              Powrót do profilu
+            </Button>
+          ) : (
+            <Button className="w-full" asChild>
+              <a href="/login">Zaloguj się</a>
+            </Button>
+          )}
         </CardFooter>
       </Card>
     );
@@ -92,7 +116,7 @@ export function UpdatePasswordForm() {
             </div>
           )}
         </CardContent>
-        <CardFooter>
+        <CardFooter className="pt-4">
           <Button type="submit" className="w-full" disabled={isLoading}>
             {isLoading ? "Aktualizacja..." : "Zapisz nowe hasło"}
           </Button>

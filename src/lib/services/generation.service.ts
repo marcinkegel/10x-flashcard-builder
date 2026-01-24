@@ -1,5 +1,4 @@
 import type { SupabaseClient } from "../../db/supabase.client";
-import { DEFAULT_USER_ID } from "../../db/supabase.client";
 import type { 
   GenerateFlashcardsCommand, 
   GenerationResponseDTO, 
@@ -103,15 +102,16 @@ export class GenerationService {
    * 5. Handle and log any errors that occur during the process.
    * 
    * @param supabase - Supabase client instance from context.locals
+   * @param userId - ID of the authenticated user
    * @param command - Object containing the source text
    * @throws ApiError if validation fails, duplicate is found, or DB/AI error occurs
    * @returns GenerationResponseDTO containing proposals and metadata
    */
   public static async generateFlashcards(
     supabase: SupabaseClient,
+    userId: string,
     command: GenerateFlashcardsCommand
   ): Promise<GenerationResponseDTO> {
-    const userId = DEFAULT_USER_ID;
     const sourceText = command.source_text;
     const sourceTextLength = sourceText.length;
     const sourceTextHash = await this.generateHash(sourceText);

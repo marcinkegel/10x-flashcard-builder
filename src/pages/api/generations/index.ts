@@ -26,7 +26,20 @@ const generateSchema = z.object({
  */
 export const POST: APIRoute = async ({ request, locals }) => {
   try {
-    // 1. Authenticate user (Skipped for now, using DEFAULT_USER_ID)
+    // 1. Authenticate user
+    const user = locals.user;
+    if (!user) {
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: {
+            code: "UNAUTHORIZED",
+            message: "Musisz być zalogowany, aby generować fiszki.",
+          },
+        } as ApiResponse<never>),
+        { status: 401 }
+      );
+    }
     
     // 2. Parse and validate request body
     const body = await request.json();
@@ -49,6 +62,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     // 3. Call generation service
     const generationData = await GenerationService.generateFlashcards(
       locals.supabase,
+      user.id,
       result.data
     );
 

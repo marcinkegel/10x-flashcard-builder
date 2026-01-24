@@ -1,7 +1,6 @@
 import type { APIRoute } from "astro";
 import { z } from "zod";
 import { FlashcardService } from "../../../lib/services/flashcard.service";
-import { DEFAULT_USER_ID } from "../../../db/supabase.client";
 import type { ApiResponse, FlashcardDTO, ApiError } from "../../../types";
 
 export const prerender = false;
@@ -49,9 +48,20 @@ const requestSchema = z.union([
 export const POST: APIRoute = async ({ request, locals }) => {
   try {
     // 1. Authenticate user
-    // In a real app, we'd get this from the session. 
-    // Following existing pattern in GenerationService:
-    const userId = DEFAULT_USER_ID;
+    const user = locals.user;
+    if (!user) {
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: {
+            code: "UNAUTHORIZED",
+            message: "Musisz być zalogowany, aby tworzyć fiszki.",
+          },
+        } as ApiResponse<never>),
+        { status: 401 }
+      );
+    }
+    const userId = user.id;
 
     // 2. Parse and validate request body
     const body = await request.json();

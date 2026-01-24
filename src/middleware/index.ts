@@ -20,6 +20,8 @@ export const onRequest = defineMiddleware(
       headers: request.headers,
     });
 
+    locals.supabase = supabase;
+
     // IMPORTANT: Always get user session first before any other operations
     const {
       data: { user },
@@ -47,7 +49,17 @@ export const onRequest = defineMiddleware(
         return redirect('/generate');
       }
     } else if (!isPublicPath) {
-      // Redirect to login for protected routes
+      // For API routes, return 401 instead of redirecting
+      if (url.pathname.startsWith('/api/')) {
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+          status: 401,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+      }
+      
+      // Redirect to login for protected web routes
       return redirect('/login');
     }
 

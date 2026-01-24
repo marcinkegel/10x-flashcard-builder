@@ -1,0 +1,17 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { ProfileView } from "@/components/features/auth/ProfileView";
+
+// Page is protected by middleware, but we can double check
+const { user } = Astro.locals;
+
+if (!user) {
+  return Astro.redirect("/login");
+}
+
+export const prerender = false;
+---
+
+<Layout title="Profil - Flashcard Builder">
+  <ProfileView user={user} client:load />
+</Layout>

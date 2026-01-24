@@ -60,7 +60,7 @@ Aplikacja Flashcard Builder MVP została zaprojektowana jako nowoczesna aplikacj
 ### Widok: Profil i Ustawienia
 - **Ścieżka**: `/profile`
 - **Główny cel**: Zarządzanie kontem i bezpieczeństwem danych.
-- **Kluczowe informacje**: Dane użytkownika, zmiana hasła, usuwanie konta.
+- **Kluczowe informacje**: zmiana hasła, usuwanie konta.
 - **Kluczowe komponenty**: 
     - `AlertDialog`: Potwierdzenie usunięcia konta (RODO).
 - **UX, dostępność i bezpieczeństwo**:

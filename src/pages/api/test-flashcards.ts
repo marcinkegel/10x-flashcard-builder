@@ -1,5 +1,4 @@
 import type { APIRoute } from "astro";
-import { DEFAULT_USER_ID } from "../../db/supabase.client";
 import type { ApiResponse } from "../../types";
 
 export const prerender = false;
@@ -14,13 +13,18 @@ export const GET: APIRoute = async ({ request, locals }) => {
   const url = new URL(request.url);
   const baseUrl = `${url.protocol}//${url.host}`;
   const apiEndpoint = `${baseUrl}/api/flashcards`;
+  const user = locals.user;
+
+  if (!user) {
+    return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
+  }
 
   try {
     // 1. Pobierz ID istniejącej generacji do testów AI
     const { data: generation } = await locals.supabase
       .from("generations")
       .select("id")
-      .eq("user_id", DEFAULT_USER_ID)
+      .eq("user_id", user.id)
       .limit(1)
       .maybeSingle();
 
