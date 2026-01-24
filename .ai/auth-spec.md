@@ -1,7 +1,7 @@
 # Specyfikacja Architektury Autentykacji i Zarządzania Użytkownikami (US-001, US-002)
 
 ## Cel
-Wdrożenie kompletnego systemu rejestracji, logowania i odzyskiwania hasła w oparciu o Supabase Auth, zintegrowanego z frameworkiem Astro (SSR) i biblioteką komponentów React. System ma charakter "zamknięty" – dostęp do funkcjonalności aplikacji możliwy jest wyłącznie dla zalogowanych użytkowników.
+Wdrożenie kompletnego systemu rejestracji, logowania i odzyskiwania hasła w oparciu o Supabase Auth, zintegrowanego z frameworkiem Astro (SSR) i biblioteką komponentów React. System ma charakter "zamknięty" – dostęp do funkcjonalności aplikacji możliwy jest wyłącznie dla zalogowanych użytkowników. Rejestracja nie wymaga potwierdzenia e-mail, a użytkownik po poprawnej rejestracji jest automatycznie logowany i przekierowany do aplikacji.
 
 ## 1. Architektura Interfejsu Użytkownika (UI)
 
@@ -49,7 +49,12 @@ Formularze renderowane jako "islands" (`client:load`).
     *   **Redirect:** Po sukcesie "twarde" przekierowanie (`window.location.href` lub `Astro.redirect` po stronie serwera akcji) na `/generate`.
 2.  **`RegisterForm.tsx`**, **`ForgotPasswordForm.tsx`**, **`UpdatePasswordForm.tsx`**:
     *   Zgodne ze standardem Supabase Auth.
-    *   Walidacja Zod (format email, siła hasła).
+    *   **Rejestracja bez potwierdzeń e-mail:** Wyłączona w projekcie Supabase, aby automatyczne logowanie było możliwe.
+    *   **Redirect po rejestracji:** Po sukcesie przekierowanie na `/generate` (auto-login).
+    *   Walidacja Zod:
+        *   format e-mail,
+        *   minimalna długość hasła,
+        *   wymagane: małe i wielkie litery, cyfry oraz znaki specjalne.
 
 ## 2. Logika Backendowa i Middleware
 
