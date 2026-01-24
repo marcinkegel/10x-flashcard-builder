@@ -91,7 +91,7 @@ Aplikacja Flashcard Builder MVP została zaprojektowana jako nowoczesna aplikacj
 ### Topbar (Desktop)
 - **Pozycja**: `sticky top-0`, `z-50`, `backdrop-blur`.
 - **Elementy**: 
-    - Menu: Generuj, Moje fiszki, Sesja nauki, Profil.
+    - Menu: Generuj, Moje fiszki, Sesja nauki, ustawienia.
     - Przycisk: Wyloguj.
 
 ### Navigation Drawer (Mobile)
