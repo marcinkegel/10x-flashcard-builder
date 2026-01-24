@@ -69,17 +69,20 @@ Kryteria akceptacji:
 
 1. Formularz wymaga podania poprawnego e-maila i hasła.
 2. Walidacja po stronie klienta sprawdza format e-maila i minimalną długość hasła. Hasło musi zawierać małe i wielkie litery, cyfry oraz znaki specjalne (np. !, @, #, $).
-3. Po kliknięciu Zarejestruj użytkownik jest automatycznie logowany i przekierowany do panelu głównego.
+3. Po kliknięciu Zarejestruj użytkownik jest automatycznie logowany i przekierowany do widoku generacji.
 4. System wyświetla komunikat o błędzie, jeśli e-mail jest już zajęty lub hasło nie spełnia wymagań.
 
 ID: US-002
 Tytuł: Logowanie do systemu
 Opis: Jako zarejestrowany użytkownik chcę się zalogować, aby uzyskać dostęp do moich danych.
 Kryteria akceptacji:
-
-1. Formularz logowania przyjmuje e-mail i hasło.
-2. Po podaniu prawidłowych danych logowania użytkownik zostaje przekierowany do widoku dodawania/generowania fiszek.
-3. Błędne dane logowania skutkują wyświetleniem komunikatu o niepowodzeniu bez zdradzania, które pole jest błędne.
+1. Formularz logowania i rejestracji jest pierwszą stroną otwierającą się użytkownikowi. 
+2. Formularz logowania przyjmuje e-mail i hasło.
+3. Po podaniu prawidłowych danych logowania użytkownik zostaje przekierowany do widoku dodawania/generowania fiszek.
+4. Błędne dane logowania skutkują wyświetleniem komunikatu o niepowodzeniu bez zdradzania, które pole jest błędne.
+5. Użytkownik NIE MOŻE korzystać z funkcji aplikacji bez logowania się do systemu.
+6. Odzyskiwanie hasła powinno być możliwe.
+7. Użytkownik może się wylogować z systemu poprzez przycisk w prawym górnym rogu aplikacji.
 
 ID: US-003
 Tytuł: Generowanie fiszek przez AI
