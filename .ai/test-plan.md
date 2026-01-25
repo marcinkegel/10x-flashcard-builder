@@ -1,13 +1,14 @@
 # Plan Testów - Flashcard Builder MVP
 
 ## 1. Wprowadzenie i cele testowania
-Celem niniejszego planu jest zapewnienie jakości aktualnie zaimplementowanych modułów aplikacji Flashcard Builder MVP. Skupiamy się na weryfikacji fundamentów systemu: autentykacji, generowania fiszek przez AI oraz manualnego tworzenia fiszek. Plan zostanie rozszerzony w miarę implementacji kolejnych funkcji (sesja nauki, zarządzanie biblioteką).
+Celem niniejszego planu jest zapewnienie jakości aktualnie zaimplementowanych modułów aplikacji Flashcard Builder MVP. Skupiamy się na weryfikacji fundamentów systemu: autentykacji, generowania fiszek przez AI, manualnego tworzenia fiszek oraz zarządzania biblioteką fiszek. Plan zostanie rozszerzony w miarę implementacji kolejnych funkcji (sesja nauki).
 
 **Cele szczegółowe:**
 - Weryfikacja poprawności integracji z OpenRouter API i stabilności generowania treści przez LLM.
-- Zapewnienie bezpieczeństwa danych użytkowników (izolacja danych przez Supabase RLS przy zapisie).
-- Potwierdzenie poprawnego działania formularzy manualnego tworzenia fiszek.
-- Gwarancja responsywności kluczowych widoków (Logowanie, Rejestracja, Panel Generowania).
+- Zapewnienie bezpieczeństwa danych użytkowników (izolacja danych przez Supabase RLS przy odczycie, zapisie, edycji i usuwaniu).
+- Potwierdzenie poprawnego działania formularzy manualnego tworzenia i edycji fiszek.
+- Gwarancja responsywności kluczowych widoków (Logowanie, Rejestracja, Panel Generowania, Biblioteka).
+- Weryfikacja poprawności paginacji i synchronizacji stanu w widoku biblioteki.
 
 ## 2. Zakres testów
 ### Funkcje objęte testami (Zaimplementowane):
@@ -16,11 +17,11 @@ Celem niniejszego planu jest zapewnienie jakości aktualnie zaimplementowanych m
 - Proces generowania fiszek przez AI (walidacja tekstu, parsowanie odpowiedzi, edycja propozycji przed zapisem).
 - Masowe operacje na propozycjach AI (BulkActionToolbar - akceptacja, odrzucanie, zapis zbiorczy).
 - Ręczne tworzenie nowych fiszek (formularz z licznikami znaków).
+- Zarządzanie biblioteką fiszek (przeglądanie listy z paginacją, edycja treści, usuwanie).
 - Procedura trwałego usuwania konta.
 
 ### Funkcje wyłączone z zakresu (Jeszcze niezaimplementowane):
 - **Sesja nauki (Spaced Repetition):** Brak widoku sesji i integracji z algorytmem.
-- **Zarządzanie biblioteką:** Brak widoku listy wszystkich fiszek, edycji i usuwania już zapisanych kart.
 - **Statystyki:** Brak widoku podsumowującego efektywność AI dla użytkownika.
 - Importowanie plików zewnętrznych (PDF, DOCX).
 
@@ -49,7 +50,14 @@ Celem niniejszego planu jest zapewnienie jakości aktualnie zaimplementowanych m
 - **Kroki:** Próba wysłania żądania POST do `/api/flashcards` z danymi innego użytkownika w body (jeśli API by na to pozwalało) lub bez autentykacji.
 - **Oczekiwany rezultat:** Odrzucenie żądania przez API (401 Unauthorized) lub zablokowanie zapisu przez polityki RLS w Supabase (brak uprawnień do zapisu dla innego `user_id`).
 
-### ST-03: Procedura usuwania konta (RODO)
+### ST-03: Zarządzanie biblioteką (Edycja i Usuwanie)
+- **Warunek wstępny:** Użytkownik posiada zapisane fiszki w bibliotece.
+- **Kroki:** Wejście w "Moje fiszki" -> Kliknięcie ikony edycji na karcie -> Zmiana treści przodu/tyłu -> Zapisz. Następnie kliknięcie ikony usuwania -> Potwierdzenie.
+- **Oczekiwany rezultat:** 
+  - Po edycji: Lokalny stan karty aktualizuje się natychmiast, pojawia się Toast sukcesu. Jeśli fiszka była `ai-full`, jej źródło zmienia się na `ai-edited` w DB.
+  - Po usunięciu: Karta znika z listy, pojawia się Toast sukcesu. Paginacja przelicza się poprawnie.
+
+### ST-04: Procedura usuwania konta (RODO)
 - **Kroki:** Wejście w profil -> Kliknięcie "Usuń konto" -> Potwierdzenie w modalu.
 - **Oczekiwany rezultat:** Wszystkie dane użytkownika (w tym fiszki) zostają usunięte. Przekierowanie na stronę logowania. Brak możliwości ponownego zalogowania na to samo konto.
 
