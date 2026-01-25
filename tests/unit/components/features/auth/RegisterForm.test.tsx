@@ -39,7 +39,7 @@ describe("RegisterForm", () => {
   });
 
   it("poprawnie rejestruje użytkownika i przekierowuje", async () => {
-    (fetch as any).mockResolvedValueOnce({
+    vi.mocked(fetch).mockResolvedValueOnce({
       ok: true,
       json: async () => ({ success: true }),
     });
@@ -62,7 +62,7 @@ describe("RegisterForm", () => {
   });
 
   it("obsługuje błędy z API", async () => {
-    (fetch as any).mockResolvedValueOnce({
+    vi.mocked(fetch).mockResolvedValueOnce({
       ok: false,
       json: async () => ({ error: "Email already exists" }),
     });

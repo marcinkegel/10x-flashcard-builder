@@ -12,53 +12,53 @@ Głównym problemem osób korzystających z metody spaced repetition jest wysoki
 
 1. Automatyczne generowanie fiszek przez AI
 
-* System pozwala na wklejenie tekstu źródłowego o długości od 1 000 do 10 000 znaków.
-* Po wywołaniu API LLM, system prezentuje listę proponowanych fiszek (przód i tył).
-* Użytkownik ma możliwość akceptacji, edycji lub trwałego odrzucenia każdej propozycji.
-* Zaakceptowane fiszki są automatycznie dodawane do bazy użytkownika i harmonogramu powtórek.
+- System pozwala na wklejenie tekstu źródłowego o długości od 1 000 do 10 000 znaków.
+- Po wywołaniu API LLM, system prezentuje listę proponowanych fiszek (przód i tył).
+- Użytkownik ma możliwość akceptacji, edycji lub trwałego odrzucenia każdej propozycji.
+- Zaakceptowane fiszki są automatycznie dodawane do bazy użytkownika i harmonogramu powtórek.
 
 2. Ręczne zarządzanie fiszkami
 
-* Formularz tworzenia nowej fiszki z limitami: 200 znaków na przód i 500 znaków na tył.
-* Liczniki znaków widoczne w czasie rzeczywistym podczas wpisywania tekstu.
-* Pełna funkcjonalność CRUD (Create, Read, Update, Delete) dla wszystkich fiszek użytkownika.
-* Widok listy Moje fiszki (podgląd przód/tył).
+- Formularz tworzenia nowej fiszki z limitami: 200 znaków na przód i 500 znaków na tył.
+- Liczniki znaków widoczne w czasie rzeczywistym podczas wpisywania tekstu.
+- Pełna funkcjonalność CRUD (Create, Read, Update, Delete) dla wszystkich fiszek użytkownika.
+- Widok listy Moje fiszki (podgląd przód/tył).
 
 3. System użytkowników i bezpieczeństwo
 
-* Rejestracja i logowanie za pomocą adresu e-mail i hasła.
-* Automatyczne logowanie po poprawnej rejestracji. Po rejestracji użytkownik jest od razu logowany (bez potwierdzeń e-mail).
-* Walidacja formularzy po stronie klienta z czytelnymi komunikatami o błędach.
-* Możliwość usunięcia konta wraz ze wszystkimi powiązanymi danymi zgodnie z RODO.
+- Rejestracja i logowanie za pomocą adresu e-mail i hasła.
+- Automatyczne logowanie po poprawnej rejestracji. Po rejestracji użytkownik jest od razu logowany (bez potwierdzeń e-mail).
+- Walidacja formularzy po stronie klienta z czytelnymi komunikatami o błędach.
+- Możliwość usunięcia konta wraz ze wszystkimi powiązanymi danymi zgodnie z RODO.
 
 4. Integracja z algorytmem powtórek
 
-* Wykorzystanie zewnętrznej biblioteki open-source do zarządzania harmonogramem nauki.
-* Automatyczne przypisywanie nowych fiszek do harmonogramu po ich utworzeniu (manualnym lub przez AI).
-* Brak zaawansowanych powiadomień w wersji MVP.
+- Wykorzystanie zewnętrznej biblioteki open-source do zarządzania harmonogramem nauki.
+- Automatyczne przypisywanie nowych fiszek do harmonogramu po ich utworzeniu (manualnym lub przez AI).
+- Brak zaawansowanych powiadomień w wersji MVP.
 
 5. Statystyki i analityka
 
-* Zliczanie wygenerowanych propozycji AI (generated\_count).
-* Zliczanie zaakceptowanych fiszek AI (accepted\_count).
-* Zliczenie procentowego udziału fiszek AI w całym zbiorze oraz wskaźnika akceptacji propozycji AI.
+- Zliczanie wygenerowanych propozycji AI (generated_count).
+- Zliczanie zaakceptowanych fiszek AI (accepted_count).
+- Zliczenie procentowego udziału fiszek AI w całym zbiorze oraz wskaźnika akceptacji propozycji AI.
 
 6. Obsługa błędów
 
-* Wyświetlanie czytelnych komunikatów w przypadku awarii API LLM lub problemów z połączeniem.
-* Brak mechanizmów automatycznego ponawiania prób (retry) w MVP.
+- Wyświetlanie czytelnych komunikatów w przypadku awarii API LLM lub problemów z połączeniem.
+- Brak mechanizmów automatycznego ponawiania prób (retry) w MVP.
 
 ## 4\. Granice produktu
 
 W zakres MVP NIE wchodzą następujące elementy:
 
-* Import plików zewnętrznych (PDF, DOCX, obrazy).
-* Zaawansowane algorytmy powtórek (własna implementacja).
-* Współdzielenie zestawów fiszek między użytkownikami.
-* Integracja z platformami trzecimi (Anki, Quizlet itp.).
-* Aplikacje mobilne (dostępność wyłącznie przez przeglądarkę internetową).
-* System powiadomień push lub e-mail o nadchodzących powtórkach.
-* Przechowywanie historii odrzuconych propozycji AI.
+- Import plików zewnętrznych (PDF, DOCX, obrazy).
+- Zaawansowane algorytmy powtórek (własna implementacja).
+- Współdzielenie zestawów fiszek między użytkownikami.
+- Integracja z platformami trzecimi (Anki, Quizlet itp.).
+- Aplikacje mobilne (dostępność wyłącznie przez przeglądarkę internetową).
+- System powiadomień push lub e-mail o nadchodzących powtórkach.
+- Przechowywanie historii odrzuconych propozycji AI.
 
 ## 5\. Historyjki użytkowników
 
@@ -76,7 +76,8 @@ ID: US-002
 Tytuł: Logowanie do systemu
 Opis: Jako zarejestrowany użytkownik chcę się zalogować, aby uzyskać dostęp do moich danych.
 Kryteria akceptacji:
-1. Formularz logowania i rejestracji jest pierwszą stroną otwierającą się użytkownikowi. 
+
+1. Formularz logowania i rejestracji jest pierwszą stroną otwierającą się użytkownikowi.
 2. Formularz logowania przyjmuje e-mail i hasło.
 3. Po podaniu prawidłowych danych logowania użytkownik zostaje przekierowany do widoku dodawania/generowania fiszek.
 4. Błędne dane logowania skutkują wyświetleniem komunikatu o niepowodzeniu bez zdradzania, które pole jest błędne.
@@ -102,15 +103,15 @@ Opis: Jako użytkownik chcę zdecydować, które z wygenerowanych propozycji fis
 Kryteria akceptacji:
 
 1. Każda propozycja posiada przyciski: Zatwierdź, Edytuj, Odrzuć.
-2. Dla każdej propozycji wyświetlany jest przód i tył fiszki. 
+2. Dla każdej propozycji wyświetlany jest przód i tył fiszki.
 3. Kliknięcie Zatwierdź zmienia kolor karty na delikatny zielony i ustawia status w ViewModel na `status: 'accepted'`.
 4. Kliknięcie Odrzuć zmienia kolor karty na delikatny czerwony i ustawia status w ViewModel na `status: 'rejected'`. Akcja ta nie wymaga potwierdzenia w modalu, ale statusy 'accepted' i 'rejected' wzajemnie się wykluczają.
-5. Kliknięcie Edytuj pozwala na edycję treści każdej ze stron fiszki inline przed zapisem. Wejście w tryb edycji lub zmiana treści automatycznie ustawia pole `source` na `'ai-edited'`. Wyjście z edycji wymaga spłnienia warunków limitu ilości znaków dla przodu (200) i tyłu (500) propozycji fiszki. 
+5. Kliknięcie Edytuj pozwala na edycję treści każdej ze stron fiszki inline przed zapisem. Wejście w tryb edycji lub zmiana treści automatycznie ustawia pole `source` na `'ai-edited'`. Wyjście z edycji wymaga spłnienia warunków limitu ilości znaków dla przodu (200) i tyłu (500) propozycji fiszki.
 6. Poniżej listy propozycji dostępne są przyciski zapisu zbiorczego w przyklejonym pasku (BulkActionToolbar). Na urządzeniach mobilnych przyciski są ułożone pionowo.
 7. Dostępne akcje masowe:
-    - **Zapisz zatwierdzone**: Zapisuje tylko propozycje ze statusem `'accepted'`.
-    - **Zapisz nieodrzucone**: Zapisuje propozycje ze statusem `'accepted'` oraz `'pending'`.
-    - **Usuń niezapisane**: Czyści całą sesję propozycji po potwierdzeniu przez użytkownika.
+   - **Zapisz zatwierdzone**: Zapisuje tylko propozycje ze statusem `'accepted'`.
+   - **Zapisz nieodrzucone**: Zapisuje propozycje ze statusem `'accepted'` oraz `'pending'`.
+   - **Usuń niezapisane**: Czyści całą sesję propozycji po potwierdzeniu przez użytkownika.
 8. Po wykonaniu zapisu zbiorczego, zapisane fiszki są dodawane do bazy, a wszystkie pozostałe propozycje z tej sesji (w tym odrzucone) są usuwane z widoku i z `sessionStorage`.
 9. Jeśli lista propozycji nie jest pusta, próba wygenerowania nowych fiszek jest blokowana komunikatem: "Aby wygenerować kolejne propozycje, najpierw zapisz lub usuń wszystkie propozycje z poprzedniej sesji."
 

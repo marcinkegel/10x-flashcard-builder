@@ -15,11 +15,7 @@ export function ProposalList({ proposals, onUpdateProposal }: ProposalListProps)
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {proposals.map((proposal) => (
-        <ProposalItem
-          key={proposal.id}
-          proposal={proposal}
-          onUpdate={onUpdateProposal}
-        />
+        <ProposalItem key={proposal.id} proposal={proposal} onUpdate={onUpdateProposal} />
       ))}
     </div>
   );

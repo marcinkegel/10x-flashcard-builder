@@ -32,12 +32,13 @@ export function ManualFlashcardForm() {
 
   const canSave = !isFrontInvalid && !isBackInvalid && !isSaving;
 
+  const hasError = !!error;
   // Scroll to error when any error becomes visible
   useEffect(() => {
-    if ((shouldShowFrontError || shouldShowBackError || error) && errorRef.current) {
+    if ((shouldShowFrontError || shouldShowBackError || hasError) && errorRef.current) {
       errorRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
     }
-  }, [shouldShowFrontError, shouldShowBackError, !!error]);
+  }, [shouldShowFrontError, shouldShowBackError, hasError]);
 
   const handleSave = async () => {
     if (!canSave) {
@@ -72,7 +73,7 @@ export function ManualFlashcardForm() {
       } else {
         setError(result.error?.message || "Błąd podczas tworzenia fiszki.");
       }
-    } catch (err) {
+    } catch {
       setError("Wystąpił błąd sieciowy.");
     } finally {
       setIsSaving(false);
@@ -132,8 +133,8 @@ export function ManualFlashcardForm() {
       </div>
 
       <div className="flex justify-end pt-2">
-        <Button 
-          onClick={handleSave} 
+        <Button
+          onClick={handleSave}
           disabled={!canSave && (isTouchedFront || isTouchedBack)}
           className="w-full md:w-auto"
         >

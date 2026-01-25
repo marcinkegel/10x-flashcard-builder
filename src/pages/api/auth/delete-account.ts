@@ -1,11 +1,14 @@
-import type { APIRoute } from 'astro';
-import { createSupabaseAdminInstance } from '@/db/supabase.client';
+import type { APIRoute } from "astro";
+import { createSupabaseAdminInstance } from "@/db/supabase.client";
 
 export const POST: APIRoute = async ({ locals }) => {
   const supabase = locals.supabase;
 
   // 1. Verify user is logged in and get their ID
-  const { data: { user }, error: userError } = await supabase.auth.getUser();
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
 
   if (userError || !user) {
     return new Response(JSON.stringify({ error: "Nieautoryzowany dostęp" }), {
@@ -17,20 +20,21 @@ export const POST: APIRoute = async ({ locals }) => {
 
   // 2. Use Admin instance to delete user data and the user
   const supabaseAdmin = createSupabaseAdminInstance();
-  
+
   // Explicitly delete user data first to ensure GDPR compliance if cascades fail
   // We do this in parallel for better performance
   const [flashcardsDelete, generationsDelete, logsDelete] = await Promise.all([
-    supabaseAdmin.from('flashcards').delete().eq('user_id', userId),
-    supabaseAdmin.from('generations').delete().eq('user_id', userId),
-    supabaseAdmin.from('generation_error_logs').delete().eq('user_id', userId),
+    supabaseAdmin.from("flashcards").delete().eq("user_id", userId),
+    supabaseAdmin.from("generations").delete().eq("user_id", userId),
+    supabaseAdmin.from("generation_error_logs").delete().eq("user_id", userId),
   ]);
 
   if (flashcardsDelete.error || generationsDelete.error || logsDelete.error) {
-    console.error("Error deleting user data:", { 
-      flashcards: flashcardsDelete.error, 
+    // eslint-disable-next-line no-console
+    console.error("Error deleting user data:", {
+      flashcards: flashcardsDelete.error,
       generations: generationsDelete.error,
-      logs: logsDelete.error 
+      logs: logsDelete.error,
     });
     // We continue anyway to try and delete the user account
   }
@@ -38,6 +42,7 @@ export const POST: APIRoute = async ({ locals }) => {
   const { error: deleteError } = await supabaseAdmin.auth.admin.deleteUser(userId);
 
   if (deleteError) {
+    // eslint-disable-next-line no-console
     console.error("Error deleting user account:", deleteError);
     return new Response(JSON.stringify({ error: "Wystąpił błąd podczas usuwania konta" }), {
       status: 500,

@@ -83,11 +83,7 @@ export function ProposalItem({ proposal, onUpdate }: ProposalItemProps) {
             {isEditing && <CharacterCounter current={front.length} max={200} />}
           </div>
           {isEditing ? (
-            <Textarea
-              value={front}
-              onChange={(e) => setFront(e.target.value)}
-              className="min-h-[80px] resize-none"
-            />
+            <Textarea value={front} onChange={(e) => setFront(e.target.value)} className="min-h-[80px] resize-none" />
           ) : (
             <p className="text-sm min-h-[40px] whitespace-pre-wrap">{proposal.front}</p>
           )}
@@ -99,11 +95,7 @@ export function ProposalItem({ proposal, onUpdate }: ProposalItemProps) {
             {isEditing && <CharacterCounter current={back.length} max={500} />}
           </div>
           {isEditing ? (
-            <Textarea
-              value={back}
-              onChange={(e) => setBack(e.target.value)}
-              className="min-h-[100px] resize-none"
-            />
+            <Textarea value={back} onChange={(e) => setBack(e.target.value)} className="min-h-[100px] resize-none" />
           ) : (
             <p className="text-sm min-h-[40px] whitespace-pre-wrap">{proposal.back}</p>
           )}
@@ -113,12 +105,7 @@ export function ProposalItem({ proposal, onUpdate }: ProposalItemProps) {
       <CardFooter className="flex justify-between bg-muted/30 pt-4 pb-4">
         {isEditing ? (
           <div className="flex gap-2 w-full">
-            <Button
-              size="sm"
-              variant="outline"
-              className="flex-1"
-              onClick={handleCancelEdit}
-            >
+            <Button size="sm" variant="outline" className="flex-1" onClick={handleCancelEdit}>
               <RotateCcw className="w-4 h-4 mr-2" />
               Anuluj
             </Button>
@@ -133,9 +120,7 @@ export function ProposalItem({ proposal, onUpdate }: ProposalItemProps) {
               <Button
                 size="sm"
                 variant={proposal.status === "accepted" ? "default" : "outline"}
-                className={cn(
-                  proposal.status === "accepted" && "bg-green-600 hover:bg-green-700"
-                )}
+                className={cn(proposal.status === "accepted" && "bg-green-600 hover:bg-green-700")}
                 onClick={() => handleStatusChange("accepted")}
               >
                 <Check className="w-4 h-4 mr-2" />

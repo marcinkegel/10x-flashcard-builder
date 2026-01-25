@@ -64,9 +64,7 @@ export function RegisterForm() {
     <Card className="w-full">
       <CardHeader className="space-y-1">
         <CardTitle className="text-2xl font-bold text-center">Utwórz konto</CardTitle>
-        <CardDescription className="text-center">
-          Wprowadź swoje dane, aby stworzyć nowe konto
-        </CardDescription>
+        <CardDescription className="text-center">Wprowadź swoje dane, aby stworzyć nowe konto</CardDescription>
       </CardHeader>
       <form onSubmit={handleSubmit}>
         <CardContent className="space-y-4">

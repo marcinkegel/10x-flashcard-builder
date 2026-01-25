@@ -20,7 +20,7 @@ export function FlashcardItem({ flashcard, onUpdate, onDelete, index = 0 }: Flas
 
   return (
     <>
-      <Card 
+      <Card
         className={cn(
           "h-full flex flex-col group transition-all duration-200 hover:shadow-md border-2 border-transparent hover:border-primary/20",
           "animate-in fade-in zoom-in-95 duration-300 fill-mode-both"
@@ -30,16 +30,12 @@ export function FlashcardItem({ flashcard, onUpdate, onDelete, index = 0 }: Flas
         <CardContent className="pt-6 space-y-4 flex-grow">
           <div className="space-y-2">
             <h4 className="text-xs font-semibold uppercase text-muted-foreground tracking-tight">Przód</h4>
-            <p className="text-sm font-medium leading-relaxed whitespace-pre-wrap">
-              {flashcard.front}
-            </p>
+            <p className="text-sm font-medium leading-relaxed whitespace-pre-wrap">{flashcard.front}</p>
           </div>
 
           <div className="space-y-2">
             <h4 className="text-xs font-semibold uppercase text-muted-foreground tracking-tight">Tył</h4>
-            <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap">
-              {flashcard.back}
-            </p>
+            <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap">{flashcard.back}</p>
           </div>
         </CardContent>
 

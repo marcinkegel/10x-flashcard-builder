@@ -14,16 +14,16 @@ describe("LogoutButton", () => {
   });
 
   it("wywołuje API wylogowania i przekierowuje do strony logowania", async () => {
-    (fetch as any).mockResolvedValueOnce({
+    vi.mocked(fetch).mockResolvedValueOnce({
       ok: true,
-    });
+    } as Response);
 
     render(<LogoutButton />);
-    
+
     fireEvent.click(screen.getByRole("button"));
-    
+
     expect(screen.getByText(/Wyloguj/i)).toBeInTheDocument();
-    
+
     await waitFor(() => {
       expect(fetch).toHaveBeenCalledWith("/api/auth/logout", { method: "POST" });
     });
@@ -34,19 +34,19 @@ describe("LogoutButton", () => {
   });
 
   it("obsługuje błąd wylogowania (console.error)", async () => {
-    const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-    (fetch as any).mockResolvedValueOnce({
+    const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    vi.mocked(fetch).mockResolvedValueOnce({
       ok: false,
-    });
+    } as Response);
 
     render(<LogoutButton />);
-    
+
     fireEvent.click(screen.getByRole("button"));
-    
+
     await waitFor(() => {
       expect(consoleSpy).toHaveBeenCalledWith("Logout failed");
     });
-    
+
     consoleSpy.mockRestore();
   });
 });

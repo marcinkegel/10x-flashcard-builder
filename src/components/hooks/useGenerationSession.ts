@@ -30,8 +30,8 @@ export function useGenerationSession() {
     if (savedProposals) {
       try {
         setProposals(JSON.parse(savedProposals));
-      } catch (e) {
-        console.error("Failed to parse saved proposals", e);
+      } catch {
+        // Silent error for malformed storage
       }
     }
     if (savedGenId) {
@@ -72,29 +72,27 @@ export function useGenerationSession() {
       const result: ApiResponse<GenerationResponseDTO> = await response.json();
 
       if (result.success && result.data) {
-        const newProposals: FlashcardProposalViewModel[] = result.data.proposals.map(
-          (p) => ({
-            id: p.proposal_id,
-            front: p.front,
-            back: p.back,
-            source: "ai-full",
-            status: "pending",
-            isEditing: false,
-          })
-        );
+        const newProposals: FlashcardProposalViewModel[] = result.data.proposals.map((p) => ({
+          id: p.proposal_id,
+          front: p.front,
+          back: p.back,
+          source: "ai-full",
+          status: "pending",
+          isEditing: false,
+        }));
         setProposals(newProposals);
         setGenerationId(result.data.generation_id);
         return { success: true };
       } else {
-        return { 
-          success: false, 
-          error: result.error?.message || "Generowanie nie powiodło się." 
+        return {
+          success: false,
+          error: result.error?.message || "Generowanie nie powiodło się.",
         };
       }
-    } catch (err) {
-      return { 
-        success: false, 
-        error: "Wystąpił błąd sieciowy podczas generowania." 
+    } catch {
+      return {
+        success: false,
+        error: "Wystąpił błąd sieciowy podczas generowania.",
       };
     } finally {
       setIsGenerating(false);
@@ -104,13 +102,8 @@ export function useGenerationSession() {
   /**
    * Updates a single proposal in the state.
    */
-  const updateProposal = (
-    id: string,
-    partialChanges: Partial<FlashcardProposalViewModel>
-  ) => {
-    setProposals((prev) =>
-      prev.map((p) => (p.id === id ? { ...p, ...partialChanges } : p))
-    );
+  const updateProposal = (id: string, partialChanges: Partial<FlashcardProposalViewModel>) => {
+    setProposals((prev) => prev.map((p) => (p.id === id ? { ...p, ...partialChanges } : p)));
   };
 
   /**
@@ -149,27 +142,25 @@ export function useGenerationSession() {
 
       if (result.success) {
         // Przy dokonywaniu zapisu bulk, odrzucone fiszki również są usuwane z widoku
-        const remainingProposals = proposals.filter((p) => 
-          p.status === "pending" && strategy === "accepted_only"
-        );
-        
+        const remainingProposals = proposals.filter((p) => p.status === "pending" && strategy === "accepted_only");
+
         setProposals(remainingProposals);
-        
+
         if (remainingProposals.length === 0) {
           setGenerationId(null);
         }
-        
+
         return { success: true, count: toSave.length };
       } else {
-        return { 
-          success: false, 
-          error: result.error?.message || "Błąd podczas zapisywania fiszek." 
+        return {
+          success: false,
+          error: result.error?.message || "Błąd podczas zapisywania fiszek.",
         };
       }
-    } catch (err) {
-      return { 
-        success: false, 
-        error: "Wystąpił błąd sieciowy podczas zapisywania." 
+    } catch {
+      return {
+        success: false,
+        error: "Wystąpił błąd sieciowy podczas zapisywania.",
       };
     } finally {
       setIsSaving(false);

@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { ForgotPasswordForm } from "@/components/features/auth/ForgotPasswordForm";
 
@@ -8,10 +8,10 @@ describe("ForgotPasswordForm", () => {
   });
 
   it("wyświetla komunikat o sukcesie po wysłaniu maila", async () => {
-    (fetch as any).mockResolvedValueOnce({
+    vi.mocked(fetch).mockResolvedValueOnce({
       ok: true,
       json: async () => ({ success: true }),
-    });
+    } as Response);
 
     render(<ForgotPasswordForm />);
 
@@ -23,10 +23,10 @@ describe("ForgotPasswordForm", () => {
   });
 
   it("obsługuje błędy z API", async () => {
-    (fetch as any).mockResolvedValueOnce({
+    vi.mocked(fetch).mockResolvedValueOnce({
       ok: false,
       json: async () => ({ error: "User not found" }),
-    });
+    } as Response);
 
     render(<ForgotPasswordForm />);
 

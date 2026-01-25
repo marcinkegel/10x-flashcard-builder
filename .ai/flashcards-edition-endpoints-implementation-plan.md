@@ -3,7 +3,9 @@
 Ten plan opisuje wdrożenie punktów końcowych API niezbędnych do przeglądania, edycji i usuwania fiszek, zgodnie ze specyfikacją projektu.
 
 ## 1. Przegląd punktu końcowego
+
 Wdrożenie obejmuje cztery główne funkcjonalności:
+
 - **Pobieranie listy fiszek**: Z obsługą paginacji i filtrowania.
 - **Pobieranie szczegółów fiszki**: Dostęp do pojedynczego zasobu.
 - **Aktualizacja fiszki**: Modyfikacja treści i zarządzanie statusem źródła (AI vs Manual).
@@ -12,6 +14,7 @@ Wdrożenie obejmuje cztery główne funkcjonalności:
 ## 2. Szczegóły żądania
 
 ### 2.1 GET /api/flashcards (Lista)
+
 - **Metoda**: `GET`
 - **URL**: `/api/flashcards`
 - **Parametry (Query)**:
@@ -23,12 +26,14 @@ Wdrożenie obejmuje cztery główne funkcjonalności:
     - `order` (enum: `asc`, `desc`, default: `desc`)
 
 ### 2.2 GET /api/flashcards/:id (Pojedyncza)
+
 - **Metoda**: `GET`
 - **URL**: `/api/flashcards/[id]`
 - **Parametry**:
   - Wymagane: `id` (UUID v4)
 
 ### 2.3 PUT /api/flashcards/:id (Aktualizacja)
+
 - **Metoda**: `PUT`
 - **URL**: `/api/flashcards/[id]`
 - **Request Body**:
@@ -41,18 +46,21 @@ Wdrożenie obejmuje cztery główne funkcjonalności:
   ```
 
 ### 2.4 DELETE /api/flashcards/:id (Usuwanie)
+
 - **Metoda**: `DELETE`
 - **URL**: `/api/flashcards/[id]`
 - **Parametry**:
   - Wymagane: `id` (UUID v4)
 
 ## 3. Wykorzystywane typy
+
 - `FlashcardDTO`: Model danych fiszki z bazy danych.
 - `PaginatedData<FlashcardDTO>`: Struktura odpowiedzi dla listy.
 - `UpdateFlashcardCommand`: Model danych dla żądania aktualizacji.
 - `ApiResponse<T>`: Standardowa struktura odpowiedzi API.
 
 ## 4. Szczegóły odpowiedzi
+
 - **200 OK**: Dla pomyślnego odczytu (`GET`), aktualizacji (`PUT`) i usunięcia (`DELETE`).
 - **400 Bad Request**: Błędy walidacji danych wejściowych lub niedozwolone reguły biznesowe (np. błędna zmiana źródła).
 - **401 Unauthorized**: Brak uwierzytelnienia użytkownika.
@@ -60,6 +68,7 @@ Wdrożenie obejmuje cztery główne funkcjonalności:
 - **500 Internal Server Error**: Błąd serwera lub bazy danych.
 
 ## 5. Przepływ danych
+
 1. **API Layer**:
    - Przechwycenie żądania w Astro Server Endpoint.
    - Weryfikacja sesji użytkownika (`locals.user`).
@@ -73,18 +82,21 @@ Wdrożenie obejmuje cztery główne funkcjonalności:
    - Wykorzystanie Supabase RLS do izolacji danych użytkowników.
 
 ## 6. Względy bezpieczeństwa
+
 - **Autoryzacja**: Każde żądanie musi zawierać ważną sesję. `user_id` jest zawsze pobierany z bezpiecznego kontekstu `locals`.
 - **IDOR Protection**: Nawet jeśli użytkownik zna UUID fiszki innego użytkownika, zapytania do bazy danych zawsze zawierają `.eq('user_id', userId)`, co uniemożliwia nieuprawniony dostęp.
 - **Input Sanitization**: Wszystkie dane tekstowe są przycinane (`trim()`) i walidowane pod kątem długości przed zapisem.
 
 ## 7. Obsługa błędów
+
 - **Błędy walidacji**: Zwracanie tablicy szczegółów błędów (pole, wiadomość).
 - **Logowanie**: Błędy krytyczne (DB, 500) logowane do konsoli serwera z kontekstem (ID użytkownika, metoda).
-- **Reguły biznesowe (PUT)**: 
+- **Reguły biznesowe (PUT)**:
   - Jeśli próba aktualizacji dotyczy fiszki `manual` i próbuje zmienić źródło na AI -> błąd 400.
   - Jeśli próba aktualizacji dotyczy fiszki `ai-full` i tekst uległ zmianie bez jawnego ustawienia `source: ai-edited`, usługa powinna automatycznie obsłużyć zmianę statusu.
 
 ## 8. Wydajność
+
 - **Paginacja**: Wymuszona na poziomie API, aby uniknąć pobierania tysięcy rekordów na raz.
 - **Indeksy**: Wykorzystanie istniejących indeksów B-Tree na kolumnach `user_id` i `created_at`.
 - **Atomowość**: Operacje aktualizacji fiszki i statystyk generowania powinny być wykonywane w miarę możliwości w sposób spójny.

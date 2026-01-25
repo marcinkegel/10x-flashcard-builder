@@ -1,6 +1,6 @@
-import { http, HttpResponse } from 'msw';
-import { setupServer } from 'msw/node';
-import { beforeAll, afterEach, afterAll } from 'vitest';
+import { http, HttpResponse } from "msw";
+import { setupServer } from "msw/node";
+import { beforeAll, afterEach, afterAll } from "vitest";
 
 /**
  * Mock handlers for API endpoints
@@ -8,13 +8,13 @@ import { beforeAll, afterEach, afterAll } from 'vitest';
  */
 export const handlers = [
   // Example: Mock flashcards API
-  http.get('/api/flashcards', () => {
+  http.get("/api/flashcards", () => {
     return HttpResponse.json({
       data: [
         {
-          id: '1',
-          question: 'What is TypeScript?',
-          answer: 'A typed superset of JavaScript',
+          id: "1",
+          question: "What is TypeScript?",
+          answer: "A typed superset of JavaScript",
           created_at: new Date().toISOString(),
         },
       ],
@@ -25,18 +25,18 @@ export const handlers = [
   }),
 
   // Example: Mock OpenRouter API
-  http.post('https://openrouter.ai/api/v1/chat/completions', () => {
+  http.post("https://openrouter.ai/api/v1/chat/completions", () => {
     return HttpResponse.json({
-      id: 'gen-123',
+      id: "gen-123",
       choices: [
         {
           message: {
-            role: 'assistant',
+            role: "assistant",
             content: JSON.stringify({
               flashcards: [
                 {
-                  question: 'What is AI?',
-                  answer: 'Artificial Intelligence',
+                  question: "What is AI?",
+                  answer: "Artificial Intelligence",
                 },
               ],
             }),
@@ -59,7 +59,7 @@ export const server = setupServer(...handlers);
 export function setupMSW() {
   // Start server before all tests
   beforeAll(() => {
-    server.listen({ onUnhandledRequest: 'warn' });
+    server.listen({ onUnhandledRequest: "warn" });
   });
 
   // Reset handlers after each test

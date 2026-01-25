@@ -29,7 +29,7 @@ export function UpdatePasswordForm() {
     }
 
     setIsLoading(true);
-    
+
     try {
       const response = await fetch("/api/auth/update-password", {
         method: "POST",
@@ -46,8 +46,9 @@ export function UpdatePasswordForm() {
       }
 
       setIsSuccess(true);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      const errorObj = err as Error;
+      setError(errorObj.message);
     } finally {
       setIsLoading(false);
     }
@@ -60,9 +61,7 @@ export function UpdatePasswordForm() {
       <Card className="w-full">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center">Hasło zaktualizowane</CardTitle>
-          <CardDescription className="text-center">
-            Twoje hasło zostało pomyślnie zmienione.
-          </CardDescription>
+          <CardDescription className="text-center">Twoje hasło zostało pomyślnie zmienione.</CardDescription>
         </CardHeader>
         <CardFooter>
           {isProfilePage ? (
@@ -83,9 +82,7 @@ export function UpdatePasswordForm() {
     <Card className="w-full">
       <CardHeader className="space-y-1">
         <CardTitle className="text-2xl font-bold text-center">Nowe hasło</CardTitle>
-        <CardDescription className="text-center">
-          Wprowadź swoje nowe hasło poniżej
-        </CardDescription>
+        <CardDescription className="text-center">Wprowadź swoje nowe hasło poniżej</CardDescription>
       </CardHeader>
       <form onSubmit={handleSubmit}>
         <CardContent className="space-y-4">

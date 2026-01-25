@@ -1,13 +1,16 @@
 # Plan implementacji widoku tworzenia fiszek (Generate View)
 
 ## 1. Przegląd
+
 Widok `/generate` służy jako centralny punkt tworzenia nowych fiszek. Umożliwia użytkownikom:
+
 1.  **Generowanie AI**: Tworzenie wielu fiszek na podstawie długiego tekstu źródłowego, ich recenzję (akceptacja/odrzucenie/edycja) oraz masowy zapis.
 2.  **Tworzenie Ręczne**: Tradycyjne dodawanie pojedynczych fiszek za pomocą formularza.
 
 Widok wykorzystuje hybrydowe podejście Astro (routing/layout) i React (interaktywność, zarządzanie stanem sesji).
 
 ## 2. Routing widoku
+
 - **Ścieżka**: `/generate`
 - **Plik strony**: `src/pages/generate.astro`
 - **Główny komponent**: `src/components/features/flashcards/CreateFlashcardsContainer.tsx` (ładowany z dyrektywą `client:only="react"`)
@@ -35,59 +38,65 @@ src/pages/generate.astro
 ## 4. Szczegóły komponentów
 
 ### `CreateFlashcardsContainer`
+
 - **Rola**: Główny wrapper. Inicjuje hook `useGenerationSession`. Obsługuje `beforeunload` (ostrzeżenie przed utratą niezapisanych danych).
 - **Elementy**: `Tabs`, `TabsList`, `TabsTrigger`, `TabsContent`.
 - **Propsy**: Brak.
 
 ### `AIGenerationForm`
+
 - **Rola**: Pobiera tekst źródłowy do generowania.
 - **Elementy**: `Textarea` (min 1000, max 10000 znaków), `Button` (Generuj).
 - **Walidacja**: Przycisk nieaktywny, jeśli długość tekstu poza zakresem, trwa ładowanie lub istnieją aktywne propozycje.
 - **UX**: Max wysokość textarea (400px) ze scrollem. Czerwona ramka i błędy inline wyświetlane pod licznikiem znaków po `blur` lub przekroczeniu limitu. Autoscroll do błędów. Komunikat informacyjny o aktywnej sesji blokującej nowe generowanie.
 - **Propsy**:
-    - `onGenerate: (text: string) => Promise<{ success: boolean; error?: string }>`
-    - `isGenerating: boolean`
-    - `hasActiveProposals: boolean`
+  - `onGenerate: (text: string) => Promise<{ success: boolean; error?: string }>`
+  - `isGenerating: boolean`
+  - `hasActiveProposals: boolean`
 
 ### `ProposalList`
+
 - **Rola**: Wyświetla listę propozycji zwróconych przez AI.
 - **Elementy**: Mapuje listę `proposals` na komponenty `ProposalItem`.
 - **Propsy**:
-    - `proposals: FlashcardProposalViewModel[]`
-    - `onStatusChange`: funkcja do zmiany statusu (accepted/rejected).
-    - `onContentChange`: funkcja do zapisu edycji propozycji.
+  - `proposals: FlashcardProposalViewModel[]`
+  - `onStatusChange`: funkcja do zmiany statusu (accepted/rejected).
+  - `onContentChange`: funkcja do zapisu edycji propozycji.
 
 ### `ProposalItem`
+
 - **Rola**: Wyświetla pojedynczą fiszkę z możliwością edycji inline.
 - **Stany**:
-    - `isEditing`: boolean (zarządzane w ViewModel lub lokalnie w komponencie, jeśli chcemy izolacji)
+  - `isEditing`: boolean (zarządzane w ViewModel lub lokalnie w komponencie, jeśli chcemy izolacji)
 - **Wygląd (View Mode)**:
-    - Status `pending`: Styl domyślny (neutralny).
-    - Status `accepted`: Zielona poświata/ramka.
-    - Status `rejected`: Czerwona poświata/ramka, zmniejszone krycie (opacity).
+  - Status `pending`: Styl domyślny (neutralny).
+  - Status `accepted`: Zielona poświata/ramka.
+  - Status `rejected`: Czerwona poświata/ramka, zmniejszone krycie (opacity).
 - **Akcje**:
-    - **Zatwierdź**: Ustawia `status: 'accepted'`.
-    - **Odrzuć**: Ustawia `status: 'rejected'`.
-    - **Edytuj**: Włącza tryb edycji (`isEditing = true`).
+  - **Zatwierdź**: Ustawia `status: 'accepted'`.
+  - **Odrzuć**: Ustawia `status: 'rejected'`.
+  - **Edytuj**: Włącza tryb edycji (`isEditing = true`).
 - **Logika Edycji**:
-    - Zmiana treści aktualizuje lokalny stan formularza.
-    - Zapisanie edycji: Walidacja długości -> Aktualizacja ViewModel -> Ustawia `source: 'ai-edited'` -> Karta robi się zielona `status: 'accepted`. Wyłącza edycję.
+  - Zmiana treści aktualizuje lokalny stan formularza.
+  - Zapisanie edycji: Walidacja długości -> Aktualizacja ViewModel -> Ustawia `source: 'ai-edited'` -> Karta robi się zielona `status: 'accepted`. Wyłącza edycję.
 - **Propsy**:
-    - `proposal`: Obiekt ViewModel (`FlashcardProposalViewModel`).
-    - `onUpdate`: Callback aktualizujący stan w rodzicu.
+  - `proposal`: Obiekt ViewModel (`FlashcardProposalViewModel`).
+  - `onUpdate`: Callback aktualizujący stan w rodzicu.
 
 ### `BulkActionToolbar`
+
 - **Rola**: Pasek akcji masowych (sticky).
 - **Elementy**:
-    - Przycisk "Zapisz zatwierdzone" (`saveAccepted`).
-    - Przycisk "Zapisz nieodrzucone" (`saveNonRejected`).
-    - Przycisk "Usuń niezapisane" (czyści sesję).
+  - Przycisk "Zapisz zatwierdzone" (`saveAccepted`).
+  - Przycisk "Zapisz nieodrzucone" (`saveNonRejected`).
+  - Przycisk "Usuń niezapisane" (czyści sesję).
 - **Layout**: Pionowy na mobile (`flex-col`), poziomy na desktopie.
 - **Walidacja**: Przyciski zablokowane, jeśli jakakolwiek fiszka jest w trybie edycji (`isEditing === true`).
 - **Propsy**:
-    - `onSave`, `onClear`, `isSaving`, `anyEditing`, `acceptedCount`, `nonRejectedCount`.
+  - `onSave`, `onClear`, `isSaving`, `anyEditing`, `acceptedCount`, `nonRejectedCount`.
 
 ### `ManualFlashcardForm`
+
 - **Rola**: Formularz dodawania pojedynczej fiszki.
 - **UX**: Czerwone ramki pól i błędy inline po `blur`. Autoscroll do błędów.
 - **Logika**: Po zapisie czyści formularz i pokazuje Toast sukcesu.
@@ -95,13 +104,15 @@ src/pages/generate.astro
 ## 5. Typy
 
 Wykorzystujemy typy zdefiniowane w `src/types.ts`:
+
 - `FlashcardProposalViewModel` (dla stanu listy)
 - `CreateFlashcardCommand` (dla payloadu do API)
 - `GenerateFlashcardsCommand` (dla payloadu generowania)
 
 Należy dodać lokalnie typ dla strategii zapisu:
+
 ```typescript
-export type SaveStrategy = 'accepted_only' | 'non_rejected';
+export type SaveStrategy = "accepted_only" | "non_rejected";
 ```
 
 ## 6. Zarządzanie stanem
@@ -109,6 +120,7 @@ export type SaveStrategy = 'accepted_only' | 'non_rejected';
 Dedykowany hook `useGenerationSession` powinien zarządzać całą logiką "AI Session".
 
 ### Stan hooka:
+
 - `sourceText` (string)
 - `generationId` (string | null) - przechowywane osobno, łączy się z fiszkami przy zapisie
 - `proposals` (FlashcardProposalViewModel[])
@@ -116,6 +128,7 @@ Dedykowany hook `useGenerationSession` powinien zarządzać całą logiką "AI S
 - `isSaving` (boolean)
 
 ### Funkcjonalności hooka:
+
 1.  **Persystencja**: Użycie `sessionStorage` do zapisu stanu `proposals` i `generationId`. Dzięki temu odświeżenie strony nie usuwa wygenerowanych wyników.
 2.  **Generowanie**:
     - Woła `POST /api/generations`.
@@ -132,11 +145,13 @@ Dedykowany hook `useGenerationSession` powinien zarządzać całą logiką "AI S
 ## 7. Integracja API
 
 ### Generowanie
+
 - **Endpoint**: `POST /api/generations`
 - **Request**: `GenerateFlashcardsCommand`
 - **Response**: `ApiResponse<GenerationResponseDTO>`
 
 ### Tworzenie Fiszek (Manualne i AI)
+
 - **Endpoint**: `POST /api/flashcards`
 - **Request**: `CreateFlashcardCommand[]`
 - **Response**: `ApiResponse<FlashcardDTO[]>`
@@ -162,6 +177,7 @@ Dedykowany hook `useGenerationSession` powinien zarządzać całą logiką "AI S
 ## 9. Warunki i walidacja
 
 ### Walidacja Danych
+
 1.  **Tekst Źródłowy**: Długość [1000, 10000].
 2.  **Fiszka**:
     - `front`: [1, 200] znaków.
@@ -169,6 +185,7 @@ Dedykowany hook `useGenerationSession` powinien zarządzać całą logiką "AI S
     - Nie może być pusta (trim).
 
 ### Walidacja Stanu UI
+
 1.  **Blokada Generowania**: Jeśli `text.length` poza limitem LUB `isGenerating === true`.
 2.  **Blokada Zapisu (AI)**: Jeśli którakolwiek karta jest w trybie edycji (`isEditing === true`), przyciski "Zapisz..." są nieaktywne (`disabled`).
 3.  **Status Source**: Przy wyjściu z edycji (Zapisz Edycję), pole `source` w ViewModelu ustawiane jest na `'ai-edited'`.

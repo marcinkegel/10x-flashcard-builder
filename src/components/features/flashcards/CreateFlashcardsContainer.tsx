@@ -28,12 +28,8 @@ export default function CreateFlashcardsContainer() {
   return (
     <div className="container py-8 max-w-6xl mx-auto px-4">
       <div className="flex flex-col space-y-2 mb-8 text-center md:text-left">
-        <h1 className="text-3xl font-extrabold tracking-tight lg:text-4xl">
-          Twórz nowe fiszki
-        </h1>
-        <p className="text-muted-foreground text-lg">
-          Wybierz metodę tworzenia i zacznij budować swoją bazę wiedzy.
-        </p>
+        <h1 className="text-3xl font-extrabold tracking-tight lg:text-4xl">Twórz nowe fiszki</h1>
+        <p className="text-muted-foreground text-lg">Wybierz metodę tworzenia i zacznij budować swoją bazę wiedzy.</p>
       </div>
 
       <Tabs defaultValue="ai" className="space-y-6">
@@ -52,7 +48,7 @@ export default function CreateFlashcardsContainer() {
           <ManualCreationView />
         </TabsContent>
       </Tabs>
-      
+
       <Toaster position="top-right" closeButton richColors />
     </div>
   );

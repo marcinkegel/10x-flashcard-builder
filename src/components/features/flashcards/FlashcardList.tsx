@@ -9,12 +9,7 @@ interface FlashcardListProps {
   onDelete: (id: string) => void;
 }
 
-export function FlashcardList({
-  flashcards,
-  isLoading,
-  onUpdate,
-  onDelete,
-}: FlashcardListProps) {
+export function FlashcardList({ flashcards, isLoading, onUpdate, onDelete }: FlashcardListProps) {
   if (isLoading) {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -28,13 +23,7 @@ export function FlashcardList({
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
       {flashcards.map((flashcard, index) => (
-        <FlashcardItem
-          key={flashcard.id}
-          flashcard={flashcard}
-          onUpdate={onUpdate}
-          onDelete={onDelete}
-          index={index}
-        />
+        <FlashcardItem key={flashcard.id} flashcard={flashcard} onUpdate={onUpdate} onDelete={onDelete} index={index} />
       ))}
     </div>
   );

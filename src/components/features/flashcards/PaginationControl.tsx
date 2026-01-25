@@ -8,12 +8,7 @@ interface PaginationControlProps {
   disabled?: boolean;
 }
 
-export function PaginationControl({
-  currentPage,
-  totalPages,
-  onPageChange,
-  disabled = false,
-}: PaginationControlProps) {
+export function PaginationControl({ currentPage, totalPages, onPageChange, disabled = false }: PaginationControlProps) {
   if (totalPages <= 1) return null;
 
   const renderPageButtons = () => {

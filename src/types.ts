@@ -14,7 +14,7 @@ export interface ApiResponse<T> {
 export interface ApiError {
   code: string;
   message: string;
-  details?: any;
+  details?: unknown;
   field?: string;
 }
 
@@ -44,10 +44,7 @@ export type FlashcardDTO = Tables<"flashcards">;
  * Model polecenia dla tworzenia nowej fiszki (manualnie lub z AI).
  * Wybieramy kluczowe pola z TableInsert, upewniając się, że spełniamy wymagania walidacji API.
  */
-export type CreateFlashcardCommand = Pick<
-  TablesInsert<"flashcards">,
-  "front" | "back" | "source" | "generation_id"
->;
+export type CreateFlashcardCommand = Pick<TablesInsert<"flashcards">, "front" | "back" | "source" | "generation_id">;
 
 /**
  * Model polecenia dla aktualizacji istniejącej fiszki.
@@ -55,10 +52,7 @@ export type CreateFlashcardCommand = Pick<
  * Pole 'source' jest opcjonalne, aby umożliwić zmianę statusu ('ai-full' -> 'ai-edited').
  
  */
-export type UpdateFlashcardCommand = Pick<
-  TablesUpdate<"flashcards">,
-  "front" | "back" | "source"
->;
+export type UpdateFlashcardCommand = Pick<TablesUpdate<"flashcards">, "front" | "back" | "source">;
 
 /**
  * AI GENERATION
@@ -156,7 +150,7 @@ export interface OpenRouterResponse {
   error?: {
     message: string;
     code: number;
-    metadata?: any;
+    metadata?: unknown;
   };
 }
 
@@ -182,4 +176,3 @@ export type GenerationErrorLogDTO = Tables<"generation_error_logs">;
  */
 
 export type FlashcardSourceType = Database["public"]["Enums"]["flashcard_source_type"];
-

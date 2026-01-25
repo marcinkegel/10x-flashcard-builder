@@ -14,12 +14,12 @@ const updateFlashcardSchema = z.object({
 
 /**
  * GET /api/flashcards/[id]
- * 
+ *
  * API endpoint to retrieve details of a single flashcard.
- * 
+ *
  * Path parameters:
  * - id: string (UUID)
- * 
+ *
  * Response: ApiResponse<FlashcardDTO>
  */
 export const GET: APIRoute = async ({ params, locals }) => {
@@ -55,7 +55,8 @@ export const GET: APIRoute = async ({ params, locals }) => {
       } as ApiResponse<FlashcardDTO>),
       { status: 200, headers: { "Content-Type": "application/json" } }
     );
-  } catch (error: any) {
+  } catch (error) {
+    // eslint-disable-next-line no-console
     console.error(`API Error in GET /api/flashcards/${params.id}:`, error);
     const apiError = error as ApiError;
     const status = apiError.code === "NOT_FOUND" ? 404 : 500;
@@ -75,17 +76,17 @@ export const GET: APIRoute = async ({ params, locals }) => {
 
 /**
  * PUT /api/flashcards/[id]
- * 
+ *
  * API endpoint to update an existing flashcard.
- * 
+ *
  * Path parameters:
  * - id: string (UUID)
- * 
+ *
  * Request body (UpdateFlashcardCommand):
  * - front?: string (1-200)
  * - back?: string (1-500)
  * - source?: "ai-full" | "ai-edited" | "manual"
- * 
+ *
  * Response: ApiResponse<FlashcardDTO>
  */
 export const PUT: APIRoute = async ({ request, params, locals }) => {
@@ -129,12 +130,7 @@ export const PUT: APIRoute = async ({ request, params, locals }) => {
       );
     }
 
-    const updatedFlashcard = await FlashcardService.updateFlashcard(
-      locals.supabase,
-      user.id,
-      id,
-      result.data
-    );
+    const updatedFlashcard = await FlashcardService.updateFlashcard(locals.supabase, user.id, id, result.data);
 
     return new Response(
       JSON.stringify({
@@ -144,7 +140,8 @@ export const PUT: APIRoute = async ({ request, params, locals }) => {
       } as ApiResponse<FlashcardDTO>),
       { status: 200, headers: { "Content-Type": "application/json" } }
     );
-  } catch (error: any) {
+  } catch (error) {
+    // eslint-disable-next-line no-console
     console.error(`API Error in PUT /api/flashcards/${params.id}:`, error);
     const apiError = error as ApiError;
     let status = 500;
@@ -166,12 +163,12 @@ export const PUT: APIRoute = async ({ request, params, locals }) => {
 
 /**
  * DELETE /api/flashcards/[id]
- * 
+ *
  * API endpoint to delete a flashcard.
- * 
+ *
  * Path parameters:
  * - id: string (UUID)
- * 
+ *
  * Response: ApiResponse<void>
  */
 export const DELETE: APIRoute = async ({ params, locals }) => {
@@ -207,7 +204,8 @@ export const DELETE: APIRoute = async ({ params, locals }) => {
       } as ApiResponse<void>),
       { status: 200, headers: { "Content-Type": "application/json" } }
     );
-  } catch (error: any) {
+  } catch (error) {
+    // eslint-disable-next-line no-console
     console.error(`API Error in DELETE /api/flashcards/${params.id}:`, error);
     const apiError = error as ApiError;
     const status = apiError.code === "NOT_FOUND" ? 404 : 500;

@@ -10,9 +10,7 @@ export function ManualCreationView() {
       <Card>
         <CardHeader>
           <CardTitle>Ręczne tworzenie fiszki</CardTitle>
-          <CardDescription>
-            Dodaj nową fiszkę wpisując treść pytania i odpowiedzi.
-          </CardDescription>
+          <CardDescription>Dodaj nową fiszkę wpisując treść pytania i odpowiedzi.</CardDescription>
         </CardHeader>
         <CardContent>
           <ManualFlashcardForm />

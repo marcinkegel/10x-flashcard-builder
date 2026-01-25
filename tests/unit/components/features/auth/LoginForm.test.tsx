@@ -14,10 +14,10 @@ describe("LoginForm", () => {
   });
 
   it("poprawnie loguje użytkownika i przekierowuje", async () => {
-    (fetch as any).mockResolvedValueOnce({
+    vi.mocked(fetch).mockResolvedValueOnce({
       ok: true,
       json: async () => ({ success: true }),
-    });
+    } as Response);
 
     render(<LoginForm />);
 
@@ -36,10 +36,10 @@ describe("LoginForm", () => {
   });
 
   it("obsługuje błędy logowania", async () => {
-    (fetch as any).mockResolvedValueOnce({
+    vi.mocked(fetch).mockResolvedValueOnce({
       ok: false,
       json: async () => ({ error: "Invalid credentials" }),
-    });
+    } as Response);
 
     render(<LoginForm />);
 

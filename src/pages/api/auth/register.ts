@@ -1,11 +1,11 @@
-import type { APIRoute } from 'astro';
-import { z } from 'zod';
+import type { APIRoute } from "astro";
+import { z } from "zod";
 
 export const prerender = false;
 
 const registerSchema = z.object({
-  email: z.string().email('Niepoprawny format adresu e-mail'),
-  password: z.string().min(8, 'Hasło musi mieć co najmniej 8 znaków'),
+  email: z.string().email("Niepoprawny format adresu e-mail"),
+  password: z.string().min(8, "Hasło musi mieć co najmniej 8 znaków"),
 });
 
 export const POST: APIRoute = async ({ request, locals }) => {
@@ -48,10 +48,10 @@ export const POST: APIRoute = async ({ request, locals }) => {
       }),
       { status: 201 }
     );
-  } catch (error) {
+  } catch {
     return new Response(
       JSON.stringify({
-        error: 'Wystąpił błąd podczas rejestracji. Spróbuj ponownie później.',
+        error: "Wystąpił błąd podczas rejestracji. Spróbuj ponownie później.",
       }),
       { status: 500 }
     );

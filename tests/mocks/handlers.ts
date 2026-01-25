@@ -1,4 +1,4 @@
-import { http, HttpResponse } from 'msw';
+import { http, HttpResponse } from "msw";
 
 /**
  * Mock handlers for browser environment
@@ -6,13 +6,13 @@ import { http, HttpResponse } from 'msw';
  */
 export const handlers = [
   // Example: Mock flashcards API
-  http.get('/api/flashcards', () => {
+  http.get("/api/flashcards", () => {
     return HttpResponse.json({
       data: [
         {
-          id: '1',
-          question: 'What is TypeScript?',
-          answer: 'A typed superset of JavaScript',
+          id: "1",
+          question: "What is TypeScript?",
+          answer: "A typed superset of JavaScript",
           created_at: new Date().toISOString(),
         },
       ],
@@ -22,7 +22,7 @@ export const handlers = [
     });
   }),
 
-  http.post('/api/flashcards', async ({ request }) => {
+  http.post("/api/flashcards", async ({ request }) => {
     const body = await request.json();
     return HttpResponse.json(
       {
@@ -37,19 +37,19 @@ export const handlers = [
   }),
 
   // Example: Mock generations API
-  http.post('/api/generations', () => {
+  http.post("/api/generations", () => {
     return HttpResponse.json({
       data: {
-        session_id: 'session-123',
-        status: 'completed',
+        session_id: "session-123",
+        status: "completed",
         flashcards: [
           {
-            question: 'What is AI?',
-            answer: 'Artificial Intelligence',
+            question: "What is AI?",
+            answer: "Artificial Intelligence",
           },
           {
-            question: 'What is ML?',
-            answer: 'Machine Learning',
+            question: "What is ML?",
+            answer: "Machine Learning",
           },
         ],
       },

@@ -20,7 +20,7 @@ export function FlashcardsLibrary() {
     setError(null);
     try {
       const response = await fetch(`/api/flashcards?page=${page}&limit=12`);
-      
+
       if (response.status === 401) {
         window.location.href = "/login";
         return;
@@ -36,6 +36,7 @@ export function FlashcardsLibrary() {
         setError(errorMsg);
       }
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.error("Error fetching flashcards:", err);
       setError("Wystąpił problem z połączeniem z serwerem. Sprawdź swoje połączenie internetowe i spróbuj ponownie.");
     } finally {
@@ -49,9 +50,7 @@ export function FlashcardsLibrary() {
   }, [currentPage, fetchFlashcards]);
 
   const handleUpdate = (updated: FlashcardDTO) => {
-    setFlashcards((prev) =>
-      prev.map((f) => (f.id === updated.id ? updated : f))
-    );
+    setFlashcards((prev) => prev.map((f) => (f.id === updated.id ? updated : f)));
   };
 
   const handleDelete = (id: string) => {
@@ -80,8 +79,12 @@ export function FlashcardsLibrary() {
         <FlashcardList
           flashcards={[]}
           isLoading={true}
-          onUpdate={() => {}}
-          onDelete={() => {}}
+          onUpdate={() => {
+            /* noop */
+          }}
+          onDelete={() => {
+            /* noop */
+          }}
         />
       </div>
     );
@@ -95,12 +98,7 @@ export function FlashcardsLibrary() {
           <AlertTitle>Błąd</AlertTitle>
           <AlertDescription className="flex flex-col gap-4">
             <p>{error}</p>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => fetchFlashcards(currentPage)}
-              className="w-fit"
-            >
+            <Button variant="outline" size="sm" onClick={() => fetchFlashcards(currentPage)} className="w-fit">
               <RefreshCw className="w-4 h-4 mr-2" />
               Spróbuj ponownie
             </Button>

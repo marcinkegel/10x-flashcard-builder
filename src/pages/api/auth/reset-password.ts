@@ -1,4 +1,4 @@
-import type { APIRoute } from 'astro';
+import type { APIRoute } from "astro";
 
 export const POST: APIRoute = async ({ request, locals }) => {
   try {
@@ -11,7 +11,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     }
 
     const supabase = locals.supabase;
-    
+
     // Construct the redirect URL for the password reset link
     // The link will first go to /auth/callback to exchange the code for a session
     // and then redirect to /update-password
@@ -31,7 +31,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     return new Response(JSON.stringify({ message: "Link do resetowania hasła został wysłany" }), {
       status: 200,
     });
-  } catch (error) {
+  } catch {
     return new Response(JSON.stringify({ error: "Wystąpił nieoczekiwany błąd" }), {
       status: 500,
     });

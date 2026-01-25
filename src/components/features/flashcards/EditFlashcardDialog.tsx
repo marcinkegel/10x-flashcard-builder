@@ -21,12 +21,7 @@ interface EditFlashcardDialogProps {
   onSuccess: (updated: FlashcardDTO) => void;
 }
 
-export function EditFlashcardDialog({
-  flashcard,
-  isOpen,
-  onClose,
-  onSuccess,
-}: EditFlashcardDialogProps) {
+export function EditFlashcardDialog({ flashcard, isOpen, onClose, onSuccess }: EditFlashcardDialogProps) {
   const [front, setFront] = useState("");
   const [back, setBack] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -46,7 +41,7 @@ export function EditFlashcardDialog({
     if (front.length > 200) newErrors.front = "Maksymalnie 200 znaków.";
     if (!back.trim()) newErrors.back = "Pole tył nie może być puste.";
     if (back.length > 500) newErrors.back = "Maksymalnie 500 znaków.";
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -59,7 +54,7 @@ export function EditFlashcardDialog({
       // Determine source update: ai-full -> ai-edited if changed
       let newSource = flashcard.source;
       const contentChanged = front.trim() !== flashcard.front || back.trim() !== flashcard.back;
-      
+
       if (flashcard.source === "ai-full" && contentChanged) {
         newSource = "ai-edited";
       }
@@ -86,6 +81,7 @@ export function EditFlashcardDialog({
         toast.error(result.error?.message || "Nie udało się zaktualizować fiszki.");
       }
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error("Error updating flashcard:", error);
       toast.error("Wystąpił nieoczekiwany błąd.");
     } finally {
@@ -138,10 +134,7 @@ export function EditFlashcardDialog({
           <Button variant="outline" onClick={onClose} disabled={isSubmitting}>
             Anuluj
           </Button>
-          <Button 
-            onClick={handleSubmit} 
-            disabled={isSubmitting || !hasChanges}
-          >
+          <Button onClick={handleSubmit} disabled={isSubmitting || !hasChanges}>
             {isSubmitting ? "Zapisywanie..." : "Zapisz zmiany"}
           </Button>
         </DialogFooter>

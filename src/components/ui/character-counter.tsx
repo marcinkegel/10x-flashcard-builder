@@ -10,12 +10,7 @@ interface CharacterCounterProps {
 /**
  * A simple component to display character count with validation status.
  */
-export function CharacterCounter({
-  current,
-  min,
-  max,
-  className,
-}: CharacterCounterProps) {
+export function CharacterCounter({ current, min, max, className }: CharacterCounterProps) {
   const isOver = current > max;
   const isUnder = min !== undefined && current < min && current > 0;
   const isInvalid = isOver || isUnder;
@@ -29,9 +24,7 @@ export function CharacterCounter({
       )}
     >
       {current} / {max}
-      {min !== undefined && current < min && current > 0 && (
-        <span className="ml-1">(min {min})</span>
-      )}
+      {min !== undefined && current < min && current > 0 && <span className="ml-1">(min {min})</span>}
     </div>
   );
 }

@@ -14,14 +14,14 @@ const generateSchema = z.object({
 
 /**
  * POST /api/generations
- * 
+ *
  * API endpoint to trigger automatic flashcard generation from source text.
- * 
+ *
  * Request body:
  * {
  *   "source_text": string (1000 - 10000 characters)
  * }
- * 
+ *
  * Response: ApiResponse<GenerationResponseDTO>
  */
 export const POST: APIRoute = async ({ request, locals }) => {
@@ -40,7 +40,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
         { status: 401 }
       );
     }
-    
+
     // 2. Parse and validate request body
     const body = await request.json();
     const result = generateSchema.safeParse(body);
@@ -60,11 +60,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     }
 
     // 3. Call generation service
-    const generationData = await GenerationService.generateFlashcards(
-      locals.supabase,
-      user.id,
-      result.data
-    );
+    const generationData = await GenerationService.generateFlashcards(locals.supabase, user.id, result.data);
 
     // 4. Return success response
     const response: ApiResponse<GenerationResponseDTO> = {
@@ -78,15 +74,12 @@ export const POST: APIRoute = async ({ request, locals }) => {
         "Content-Type": "application/json",
       },
     });
-
-  } catch (error: any) {
+  } catch (error) {
+    // eslint-disable-next-line no-console
     console.error("API Error in /api/generations:", error);
 
     const apiError = error as ApiError;
-    const status = 
-      apiError.code === "DUPLICATE_GENERATION" ? 400 :
-      apiError.code === "MOCK_TIMEOUT" ? 503 :
-      500;
+    const status = apiError.code === "DUPLICATE_GENERATION" ? 400 : apiError.code === "MOCK_TIMEOUT" ? 503 : 500;
 
     const response: ApiResponse<never> = {
       success: false,

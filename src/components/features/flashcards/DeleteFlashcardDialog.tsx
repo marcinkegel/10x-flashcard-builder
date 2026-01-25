@@ -19,12 +19,7 @@ interface DeleteFlashcardDialogProps {
   onSuccess: () => void;
 }
 
-export function DeleteFlashcardDialog({
-  flashcardId,
-  isOpen,
-  onClose,
-  onSuccess,
-}: DeleteFlashcardDialogProps) {
+export function DeleteFlashcardDialog({ flashcardId, isOpen, onClose, onSuccess }: DeleteFlashcardDialogProps) {
   const [isDeleting, setIsDeleting] = useState(false);
 
   const handleDelete = async () => {
@@ -46,6 +41,7 @@ export function DeleteFlashcardDialog({
         toast.error(result.error?.message || "Nie udało się usunąć fiszki.");
       }
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error("Error deleting flashcard:", error);
       toast.error("Wystąpił nieoczekiwany błąd.");
     } finally {

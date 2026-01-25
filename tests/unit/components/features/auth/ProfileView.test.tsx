@@ -12,7 +12,7 @@ vi.mock("sonner", () => ({
 
 // Mock UpdatePasswordForm to avoid testing it here
 vi.mock("@/components/features/auth/UpdatePasswordForm", () => ({
-  UpdatePasswordForm: () => <div>Update Password Form</div>
+  UpdatePasswordForm: () => <div>Update Password Form</div>,
 }));
 
 describe("ProfileView", () => {
@@ -31,17 +31,17 @@ describe("ProfileView", () => {
   });
 
   it("obsługuje usuwanie konta po potwierdzeniu", async () => {
-    (fetch as any).mockResolvedValueOnce({ ok: true });
-    
+    vi.mocked(fetch).mockResolvedValueOnce({ ok: true });
+
     render(<ProfileView user={mockUser} />);
-    
+
     // Kliknij "Usuń konto", aby otworzyć dialog
     fireEvent.click(screen.getByRole("button", { name: /Usuń konto/i }));
-    
+
     // Kliknij "Tak, usuń moje konto" w dialogu
     const confirmButton = screen.getByRole("button", { name: /Tak, usuń moje konto/i });
     fireEvent.click(confirmButton);
-    
+
     await waitFor(() => {
       expect(fetch).toHaveBeenCalledWith("/api/auth/delete-account", { method: "POST" });
     });
@@ -51,16 +51,16 @@ describe("ProfileView", () => {
   });
 
   it("obsługuje błąd usuwania konta", async () => {
-    (fetch as any).mockResolvedValueOnce({ 
-      ok: false, 
-      json: async () => ({ error: "Failed to delete" }) 
+    vi.mocked(fetch).mockResolvedValueOnce({
+      ok: false,
+      json: async () => ({ error: "Failed to delete" }),
     });
-    
+
     render(<ProfileView user={mockUser} />);
-    
+
     fireEvent.click(screen.getByRole("button", { name: /Usuń konto/i }));
     fireEvent.click(screen.getByRole("button", { name: /Tak, usuń moje konto/i }));
-    
+
     await waitFor(() => {
       expect(toast.error).toHaveBeenCalledWith("Failed to delete");
     });

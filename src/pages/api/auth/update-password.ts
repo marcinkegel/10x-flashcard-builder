@@ -1,4 +1,4 @@
-import type { APIRoute } from 'astro';
+import type { APIRoute } from "astro";
 
 export const POST: APIRoute = async ({ request, locals }) => {
   const { password } = await request.json();
@@ -12,7 +12,10 @@ export const POST: APIRoute = async ({ request, locals }) => {
   const supabase = locals.supabase;
 
   // IMPORTANT: Verify user is logged in
-  const { data: { user }, error: userError } = await supabase.auth.getUser();
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
 
   if (userError || !user) {
     return new Response(JSON.stringify({ error: "Nieautoryzowany dostęp" }), {

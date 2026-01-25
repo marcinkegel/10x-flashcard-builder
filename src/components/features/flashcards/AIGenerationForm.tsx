@@ -31,19 +31,19 @@ export function AIGenerationForm({ onGenerate, isGenerating, hasActiveProposals 
   // Wiadomość i czerwona ramka powinny pojawiać się dopiero po przekroczeniu ilości znaków lub po wyjściu z ramki
   const shouldShowValidationError = (isTouched || text.length > MAX_CHARS) && isInvalidLength;
 
-  const canGenerate =
-    text.length >= MIN_CHARS && text.length <= MAX_CHARS && !isGenerating && !hasActiveProposals;
+  const canGenerate = text.length >= MIN_CHARS && text.length <= MAX_CHARS && !isGenerating && !hasActiveProposals;
 
+  const hasError = !!error;
   // Scroll to error when it appears
   useEffect(() => {
-    if ((shouldShowValidationError || error) && errorRef.current) {
+    if ((shouldShowValidationError || hasError) && errorRef.current) {
       errorRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
     }
-  }, [shouldShowValidationError, !!error]);
+  }, [shouldShowValidationError, hasError]);
 
   const handleGenerate = async () => {
     if (hasActiveProposals) return;
-    
+
     if (!canGenerate) {
       setIsTouched(true);
       return;
@@ -72,9 +72,7 @@ export function AIGenerationForm({ onGenerate, isGenerating, hasActiveProposals 
           disabled={isGenerating || hasActiveProposals}
         />
         <div className="flex justify-between items-center">
-          <p className="text-xs text-muted-foreground">
-            Zalecamy teksty o spójnej tematyce dla najlepszych efektów.
-          </p>
+          <p className="text-xs text-muted-foreground">Zalecamy teksty o spójnej tematyce dla najlepszych efektów.</p>
           <CharacterCounter current={text.length} min={MIN_CHARS} max={MAX_CHARS} />
         </div>
 
@@ -92,7 +90,7 @@ export function AIGenerationForm({ onGenerate, isGenerating, hasActiveProposals 
               {isTooLong && `Tekst jest za długi. Przekroczono limit o ${text.length - MAX_CHARS} znaków.`}
             </div>
           )}
-          
+
           {error && (
             <div className="p-3 text-sm font-medium text-destructive bg-destructive/10 border border-destructive/20 rounded-md animate-in fade-in slide-in-from-top-1">
               {error}
@@ -101,11 +99,7 @@ export function AIGenerationForm({ onGenerate, isGenerating, hasActiveProposals 
         </div>
       </div>
 
-      <Button
-        className="w-full h-12 text-base font-semibold"
-        disabled={!canGenerate}
-        onClick={handleGenerate}
-      >
+      <Button className="w-full h-12 text-base font-semibold" disabled={!canGenerate} onClick={handleGenerate}>
         {isGenerating ? (
           <>Generowanie...</>
         ) : (

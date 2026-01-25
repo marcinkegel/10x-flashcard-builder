@@ -24,24 +24,24 @@ export const FLASHCARD_RESPONSE_SCHEMA = {
       items: {
         type: "object",
         properties: {
-          front: { 
+          front: {
             type: "string",
             description: "Pytanie lub pojęcie (max 200 znaków)",
-            maxLength: 200 
+            maxLength: 200,
           },
-          back: { 
-            type: "string", 
+          back: {
+            type: "string",
             description: "Odpowiedź lub definicja (max 500 znaków)",
-            maxLength: 500 
-          }
+            maxLength: 500,
+          },
         },
         required: ["front", "back"],
-        additionalProperties: false
-      }
-    }
+        additionalProperties: false,
+      },
+    },
   },
   required: ["proposals"],
-  additionalProperties: false
+  additionalProperties: false,
 };
 
 /**
@@ -56,7 +56,7 @@ export class OpenRouterService {
     // In Astro, server-side environment variables are accessed via import.meta.env
     this.apiKey = import.meta.env.OPENROUTER_API_KEY;
     this.defaultModel = config?.model || "openai/gpt-4o-mini";
-    
+
     if (!this.apiKey) {
       throw new Error("Missing OPENROUTER_API_KEY in environment variables");
     }
@@ -74,7 +74,7 @@ export class OpenRouterService {
       try {
         const response = await this.executeRequest(payload);
         const data = await this.handleApiResponse(response);
-        
+
         const content = data.choices?.[0]?.message?.content;
         if (!content) {
           throw new Error("Empty response from OpenRouter");
@@ -82,23 +82,29 @@ export class OpenRouterService {
 
         try {
           return JSON.parse(content) as T;
-        } catch (parseError) {
+        } catch {
+          // eslint-disable-next-line no-console
           console.error("[OpenRouterService] Failed to parse response as JSON:", content);
           throw new Error("Validation Error: Model returned invalid JSON format");
         }
-      } catch (error: any) {
+      } catch (error: unknown) {
+        const err = error as Error;
         // Handle rate limiting with exponential backoff
-        if (error.message.includes("429") && retryCount < maxRetries) {
+        if (err.message.includes("429") && retryCount < maxRetries) {
           retryCount++;
           const delay = Math.pow(2, retryCount) * 1000;
-          console.warn(`[OpenRouterService] Rate limit hit. Retrying in ${delay}ms... (Attempt ${retryCount}/${maxRetries})`);
+          // eslint-disable-next-line no-console
+          console.warn(
+            `[OpenRouterService] Rate limit hit. Retrying in ${delay}ms... (Attempt ${retryCount}/${maxRetries})`
+          );
           await new Promise((resolve) => setTimeout(resolve, delay));
           continue;
         }
-        
+
         // Log and rethrow other errors
-        console.error("[OpenRouterService] Error during chat completion:", error.message);
-        throw error;
+        // eslint-disable-next-line no-console
+        console.error("[OpenRouterService] Error during chat completion:", err.message);
+        throw err;
       }
     }
 
@@ -113,19 +119,19 @@ export class OpenRouterService {
       model: params.model || this.defaultModel,
       messages: [
         { role: "system", content: params.systemPrompt },
-        { role: "user", content: params.userPrompt }
+        { role: "user", content: params.userPrompt },
       ],
       response_format: {
         type: "json_schema",
         json_schema: {
           name: "flashcard_generation",
           strict: true,
-          schema: params.responseSchema
-        }
+          schema: params.responseSchema,
+        },
       },
       temperature: params.temperature ?? 0.3,
       max_tokens: 6000,
-      top_p: 1
+      top_p: 1,
     };
   }
 
@@ -136,12 +142,12 @@ export class OpenRouterService {
     return fetch(`${this.baseUrl}/chat/completions`, {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${this.apiKey}`,
+        Authorization: `Bearer ${this.apiKey}`,
         "Content-Type": "application/json",
         "HTTP-Referer": "https://10x-flashcard-builder.vercel.app", // Fallback for OpenRouter tracking
-        "X-Title": "10x Flashcard Builder"
+        "X-Title": "10x Flashcard Builder",
       },
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
     });
   }
 

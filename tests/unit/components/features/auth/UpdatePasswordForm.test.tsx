@@ -30,7 +30,7 @@ describe("UpdatePasswordForm", () => {
   });
 
   it("poprawnie aktualizuje hasło i wyświetla komunikat o sukcesie", async () => {
-    (fetch as any).mockResolvedValueOnce({
+    vi.mocked(fetch).mockResolvedValueOnce({
       ok: true,
       json: async () => ({ success: true }),
     });

@@ -13,18 +13,18 @@ vi.mock("sonner", () => ({
 }));
 
 vi.mock("@/components/features/flashcards/AIGenerationForm", () => ({
-  AIGenerationForm: () => <div>AI Generation Form</div>
+  AIGenerationForm: () => <div>AI Generation Form</div>,
 }));
 vi.mock("@/components/features/flashcards/ProposalList", () => ({
-  ProposalList: () => <div>Proposal List</div>
+  ProposalList: () => <div>Proposal List</div>,
 }));
 vi.mock("@/components/features/flashcards/BulkActionToolbar", () => ({
-  BulkActionToolbar: ({ onSave, onClear }: any) => (
+  BulkActionToolbar: ({ onSave, onClear }: { onSave: (s: string) => void; onClear: () => void }) => (
     <div>
       <button onClick={() => onSave("accepted_only")}>Save Accepted</button>
       <button onClick={onClear}>Clear</button>
     </div>
-  )
+  ),
 }));
 
 describe("AIGenerationView", () => {
@@ -34,15 +34,19 @@ describe("AIGenerationView", () => {
   beforeEach(() => {
     vi.mocked(useGenerationSession).mockReturnValue({
       proposals: [],
+      generationId: null,
       isGenerating: false,
       isSaving: false,
       generate: vi.fn(),
       updateProposal: vi.fn(),
       saveBulk: mockSaveBulk,
       clearSession: mockClearSession,
-    } as any);
-    
-    vi.stubGlobal("confirm", vi.fn(() => true));
+    } as ReturnType<typeof useGenerationSession>);
+
+    vi.stubGlobal(
+      "confirm",
+      vi.fn(() => true)
+    );
   });
 
   it("wyświetla pusty formularz na początku", () => {
@@ -53,14 +57,15 @@ describe("AIGenerationView", () => {
 
   it("wyświetla listę propozycji, gdy są dostępne", () => {
     vi.mocked(useGenerationSession).mockReturnValue({
-      proposals: [{ id: "1", front: "Q", back: "A", status: "pending" }],
+      proposals: [{ id: "1", front: "Q", back: "A", status: "pending", source: "ai-full", isEditing: false }],
+      generationId: "session-1",
       isGenerating: false,
       isSaving: false,
       generate: vi.fn(),
       updateProposal: vi.fn(),
       saveBulk: mockSaveBulk,
       clearSession: mockClearSession,
-    } as any);
+    } as ReturnType<typeof useGenerationSession>);
 
     render(<AIGenerationView />);
     expect(screen.getByText(/Propozycje AI \(1\)/i)).toBeInTheDocument();
@@ -70,19 +75,20 @@ describe("AIGenerationView", () => {
   it("obsługuje zapisywanie masowe", async () => {
     mockSaveBulk.mockResolvedValueOnce({ success: true, count: 5 });
     vi.mocked(useGenerationSession).mockReturnValue({
-      proposals: [{ id: "1", front: "Q", back: "A", status: "accepted" }],
+      proposals: [{ id: "1", front: "Q", back: "A", status: "accepted", source: "ai-full", isEditing: false }],
+      generationId: "session-1",
       isGenerating: false,
       isSaving: false,
       generate: vi.fn(),
       updateProposal: vi.fn(),
       saveBulk: mockSaveBulk,
       clearSession: mockClearSession,
-    } as any);
+    } as ReturnType<typeof useGenerationSession>);
 
     render(<AIGenerationView />);
-    
+
     fireEvent.click(screen.getByText(/Save Accepted/i));
-    
+
     await waitFor(() => {
       expect(mockSaveBulk).toHaveBeenCalledWith("accepted_only");
       expect(toast.success).toHaveBeenCalledWith("Zapisano 5 fiszek!");
@@ -91,19 +97,20 @@ describe("AIGenerationView", () => {
 
   it("obsługuje czyszczenie sesji z potwierdzeniem", () => {
     vi.mocked(useGenerationSession).mockReturnValue({
-      proposals: [{ id: "1", front: "Q", back: "A", status: "pending" }],
+      proposals: [{ id: "1", front: "Q", back: "A", status: "pending", source: "ai-full", isEditing: false }],
+      generationId: "session-1",
       isGenerating: false,
       isSaving: false,
       generate: vi.fn(),
       updateProposal: vi.fn(),
       saveBulk: mockSaveBulk,
       clearSession: mockClearSession,
-    } as any);
+    } as ReturnType<typeof useGenerationSession>);
 
     render(<AIGenerationView />);
-    
+
     fireEvent.click(screen.getByText(/Clear/i));
-    
+
     expect(window.confirm).toHaveBeenCalled();
     expect(mockClearSession).toHaveBeenCalled();
     expect(toast.info).toHaveBeenCalledWith("Wyczyszczono listę propozycji.");

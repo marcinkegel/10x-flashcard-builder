@@ -7,64 +7,68 @@ Aplikacja Flashcard Builder MVP została zaprojektowana jako nowoczesna aplikacj
 ## 2. Lista widoków
 
 ### Widok: Logowanie i Rejestracja
+
 - **Ścieżka**: `/auth/login`, `/auth/register`
 - **Główny cel**: Uwierzytelnienie użytkownika i dostęp do bazy danych.
 - **Kluczowe informacje**: Formularze e-mail/hasło, komunikaty o błędach walidacji.
 - **Kluczowe komponenty**: `Card`, `Input`, `Button`, `Form` (shadcn/ui).
-- **UX, dostępność i bezpieczeństwo**: 
-    - Walidacja siły hasła (małe/wielkie litery, cyfry, znaki specjalne).
-    - Ukrywanie szczegółów błędów logowania (bezpieczeństwo).
-    - Automatyczne logowanie po rejestracji.
+- **UX, dostępność i bezpieczeństwo**:
+  - Walidacja siły hasła (małe/wielkie litery, cyfry, znaki specjalne).
+  - Ukrywanie szczegółów błędów logowania (bezpieczeństwo).
+  - Automatyczne logowanie po rejestracji.
 
 ### Widok tworzenia fiszek (Generowanie i Tworzenie)
+
 - **Ścieżka**: `/generate`
 - **Główny cel**: Centralny punkt tworzenia treści – automatycznie przez AI lub ręcznie.
 - **Kluczowe informacje**: Zakładki (Tabs) między AI a Manual, pole tekstowe źródłowe, lista propozycji AI.
-- **Kluczowe komponenty**: 
-    - `Tabs`: Przełączanie trybu pracy.
-    - `Textarea`: Z licznikami znaków (1k-10k dla AI). Pole posiada max wysokość (400px) i scroll.
-    - `AIProposalList`: Dynamiczna lista kart z trybem edycji inline. Karty zmieniają kolory w zależności od statusu (zielony dla zatwierdzonych, czerwony dla odrzuconych).
-    - `Skeleton`: Stan ładowania podczas pracy LLM.
-    - `BulkActionToolbar`: Przyklejony pasek akcji masowych (zapis wg strategii, usuwanie sesji).
+- **Kluczowe komponenty**:
+  - `Tabs`: Przełączanie trybu pracy.
+  - `Textarea`: Z licznikami znaków (1k-10k dla AI). Pole posiada max wysokość (400px) i scroll.
+  - `AIProposalList`: Dynamiczna lista kart z trybem edycji inline. Karty zmieniają kolory w zależności od statusu (zielony dla zatwierdzonych, czerwony dla odrzuconych).
+  - `Skeleton`: Stan ładowania podczas pracy LLM.
+  - `BulkActionToolbar`: Przyklejony pasek akcji masowych (zapis wg strategii, usuwanie sesji).
 - **UX, dostępność i bezpieczeństwo**:
-    - **Walidacja inline**: Błędy i ostrzeżenia wyświetlane pod polami (nad przyciskiem), czerwone ramki po `blur` lub overflow.
-    - **Autoscroll**: Automatyczne przewijanie do komunikatów o błędach/informacjach.
-    - **Blokada generowania**: Nowa sesja AI możliwa dopiero po zapisie/usunięciu obecnych propozycji (informacja inline).
-    - **Persystencja**: Synchronizacja propozycji AI z `sessionStorage`.
-    - **Ostrzeżenie**: `beforeunload` przy próbie wyjścia z niezapisanymi danymi.
+  - **Walidacja inline**: Błędy i ostrzeżenia wyświetlane pod polami (nad przyciskiem), czerwone ramki po `blur` lub overflow.
+  - **Autoscroll**: Automatyczne przewijanie do komunikatów o błędach/informacjach.
+  - **Blokada generowania**: Nowa sesja AI możliwa dopiero po zapisie/usunięciu obecnych propozycji (informacja inline).
+  - **Persystencja**: Synchronizacja propozycji AI z `sessionStorage`.
+  - **Ostrzeżenie**: `beforeunload` przy próbie wyjścia z niezapisanymi danymi.
 
 ### Widok: Moje fiszki (Biblioteka)
+
 - **Ścieżka**: `/flashcards`
 - **Główny cel**: Przeglądanie, edycja i usuwanie zapisanych fiszek.
 - **Kluczowe informacje**: Lista wszystkich kart (przód i tył widoczne jednocześnie).
-- **Kluczowe komponenty**: 
-    - `DataView`: Grid/Lista kart.
-    - `Dialog`: Formularz edycji istniejącej fiszki.
-    - `AlertDialog`: Potwierdzenie usunięcia fiszki.
+- **Kluczowe komponenty**:
+  - `DataView`: Grid/Lista kart.
+  - `Dialog`: Formularz edycji istniejącej fiszki.
+  - `AlertDialog`: Potwierdzenie usunięcia fiszki.
 - **UX, dostępność i bezpieczeństwo**:
-    - Brak animacji obracania (szybki skan wzrokowy treści).
-
+  - Brak animacji obracania (szybki skan wzrokowy treści).
 
 ### Widok: Sesja nauki
+
 - **Ścieżka**: `/session`
 - **Główny cel**: Aktywna nauka metodą spaced repetition (FSRS).
 - **Kluczowe informacje**: Licznik postępu, karta 3D, przyciski oceny algorytmu.
-- **Kluczowe komponenty**: 
-    - `StudyCard`: Komponent 3D z animacją flip.
-    - `FSRSButtonGroup`: Cztery przyciski ocen (Again, Hard, Good, Easy).
-    - `Progress`: Pasek postępu sesji.
+- **Kluczowe komponenty**:
+  - `StudyCard`: Komponent 3D z animacją flip.
+  - `FSRSButtonGroup`: Cztery przyciski ocen (Again, Hard, Good, Easy).
+  - `Progress`: Pasek postępu sesji.
 - **UX, dostępność i bezpieczeństwo**:
-    - Obsługa klawiatury: `Spacja` (obrót), `1-4` (oceny).
-    - Widok "distraction-free" (ukrycie zbędnych elementów interfejsu).
+  - Obsługa klawiatury: `Spacja` (obrót), `1-4` (oceny).
+  - Widok "distraction-free" (ukrycie zbędnych elementów interfejsu).
 
 ### Widok: Profil i Ustawienia
+
 - **Ścieżka**: `/profile`
 - **Główny cel**: Zarządzanie kontem i bezpieczeństwem danych.
 - **Kluczowe informacje**: zmiana hasła, usuwanie konta.
-- **Kluczowe komponenty**: 
-    - `AlertDialog`: Potwierdzenie usunięcia konta (RODO).
+- **Kluczowe komponenty**:
+  - `AlertDialog`: Potwierdzenie usunięcia konta (RODO).
 - **UX, dostępność i bezpieczeństwo**:
-    - Jasne ostrzeżenia o nieodwracalności usunięcia danych.
+  - Jasne ostrzeżenia o nieodwracalności usunięcia danych.
 
 ## 3. Mapa podróży użytkownika
 
@@ -90,21 +94,23 @@ Aplikacja Flashcard Builder MVP została zaprojektowana jako nowoczesna aplikacj
 ## 4. Układ i struktura nawigacji
 
 ### Topbar (Desktop)
+
 - **Pozycja**: `sticky top-0`, `z-50`, `backdrop-blur`.
-- **Elementy**: 
-    - Menu: Generuj, Moje fiszki, Sesja nauki, ustawienia.
-    - Przycisk: Wyloguj.
+- **Elementy**:
+  - Menu: Generuj, Moje fiszki, Sesja nauki, ustawienia.
+  - Przycisk: Wyloguj.
 
 ### Navigation Drawer (Mobile)
+
 - **Trigger**: Przycisk hamburger w Topbarze.
 - **Komponent**: `Sheet` (lewa lub prawa strona).
 - **Elementy**: Pionowa lista linków + przycisk wylogowania na dole panelu.
 
 ## 5. Kluczowe komponenty
 
-1.  **`FlashcardProposal`**: Karta używana w procesie recenzji AI. Wykorzystuje model `FlashcardProposalViewModel` do zarządzania stanem akceptacji i edycji. Zawiera dwa stany: wyświetlanie i edycja inline. Obsługuje przyciski Zatwierdź/Edytuj/Odrzuć. Znajduje sie w `/generate` w domyślnej zakładce AI, poniżej formularza generacji. 
+1.  **`FlashcardProposal`**: Karta używana w procesie recenzji AI. Wykorzystuje model `FlashcardProposalViewModel` do zarządzania stanem akceptacji i edycji. Zawiera dwa stany: wyświetlanie i edycja inline. Obsługuje przyciski Zatwierdź/Edytuj/Odrzuć. Znajduje sie w `/generate` w domyślnej zakładce AI, poniżej formularza generacji.
 2.  **`CharacterCounter`**: Mały komponent tekstowy pod polami `input/textarea`, zmieniający kolor na czerwony po przekroczeniu limitu (200 dla frontu, 500 dla tyłu).
 3.  **`StudyCard`**: Zaawansowany komponent CSS 3D obsługujący stan `isFlipped`. Zapewnia płynną animację i czytelność tekstu po obu stronach.
 4.  **`StatusToast`**: Globalny system powiadomień o sukcesach (np. "Zapisano 7 fiszek"),
-błędy wyświetlane inline.
+    błędy wyświetlane inline.
 5.  **`BulkActionToolbar`**: Pasek narzędziowy widoczny pod listą propozycji AI, zawierający przyciski "Zapisz nieodrzucone" (zapisuje status `accepted` i `pending`) oraz "Zapisz zatwierdzone" (zapisuje tylko status `accepted`).

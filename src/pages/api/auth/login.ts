@@ -1,11 +1,11 @@
-import type { APIRoute } from 'astro';
-import { z } from 'zod';
+import type { APIRoute } from "astro";
+import { z } from "zod";
 
 export const prerender = false;
 
 const loginSchema = z.object({
-  email: z.string().email('Niepoprawny format adresu e-mail'),
-  password: z.string().min(1, 'Hasło jest wymagane'),
+  email: z.string().email("Niepoprawny format adresu e-mail"),
+  password: z.string().min(1, "Hasło jest wymagane"),
 });
 
 export const POST: APIRoute = async ({ request, locals }) => {
@@ -31,11 +31,11 @@ export const POST: APIRoute = async ({ request, locals }) => {
     });
 
     if (error) {
-      // PRD US-002: Błędne dane logowania skutkują wyświetleniem komunikatu o niepowodzeniu 
+      // PRD US-002: Błędne dane logowania skutkują wyświetleniem komunikatu o niepowodzeniu
       // bez zdradzania, które pole jest błędne.
       return new Response(
         JSON.stringify({
-          error: 'Nieprawidłowy e-mail lub hasło',
+          error: "Nieprawidłowy e-mail lub hasło",
         }),
         { status: 401 }
       );
@@ -50,10 +50,10 @@ export const POST: APIRoute = async ({ request, locals }) => {
       }),
       { status: 200 }
     );
-  } catch (error) {
+  } catch {
     return new Response(
       JSON.stringify({
-        error: 'Wystąpił błąd podczas logowania. Spróbuj ponownie później.',
+        error: "Wystąpił błąd podczas logowania. Spróbuj ponownie później.",
       }),
       { status: 500 }
     );

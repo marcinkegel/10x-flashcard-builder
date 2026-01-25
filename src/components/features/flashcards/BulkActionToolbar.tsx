@@ -34,16 +34,13 @@ export function BulkActionToolbar({
             )}
           </div>
           {!anyEditing && (
-            <button 
-              onClick={onClear}
-              className="text-xs text-destructive hover:underline flex items-center mt-1"
-            >
+            <button onClick={onClear} className="text-xs text-destructive hover:underline flex items-center mt-1">
               <Trash2 className="w-3 h-3 mr-1" />
               Usuń niezapisane
             </button>
           )}
         </div>
-        
+
         <div className="flex flex-col md:flex-row gap-2 w-full md:w-auto">
           <Button
             variant="outline"

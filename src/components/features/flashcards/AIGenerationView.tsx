@@ -11,15 +11,8 @@ import { useState } from "react";
  * Orchestrates the form, proposal list, and bulk actions.
  */
 export function AIGenerationView() {
-  const {
-    proposals,
-    isGenerating,
-    isSaving,
-    generate,
-    updateProposal,
-    saveBulk,
-    clearSession,
-  } = useGenerationSession();
+  const { proposals, isGenerating, isSaving, generate, updateProposal, saveBulk, clearSession } =
+    useGenerationSession();
 
   const [saveError, setSaveError] = useState<string | null>(null);
 
@@ -50,10 +43,10 @@ export function AIGenerationView() {
       <div className="max-w-4xl mx-auto space-y-6">
         <section className="bg-card border rounded-lg p-6 shadow-sm">
           <h2 className="text-xl font-bold mb-4">Nowa sesja generowania</h2>
-          <AIGenerationForm 
-            onGenerate={generate} 
-            isGenerating={isGenerating} 
-            hasActiveProposals={proposals.length > 0} 
+          <AIGenerationForm
+            onGenerate={generate}
+            isGenerating={isGenerating}
+            hasActiveProposals={proposals.length > 0}
           />
         </section>
 
@@ -80,9 +73,7 @@ export function AIGenerationView() {
           <section className="space-y-4">
             <div className="flex justify-between items-center">
               <h2 className="text-xl font-bold">Propozycje AI ({proposals.length})</h2>
-              <p className="text-sm text-muted-foreground italic">
-                Przejrzyj, edytuj i zatwierdź przed zapisaniem.
-              </p>
+              <p className="text-sm text-muted-foreground italic">Przejrzyj, edytuj i zatwierdź przed zapisaniem.</p>
             </div>
             <ProposalList proposals={proposals} onUpdateProposal={updateProposal} />
           </section>

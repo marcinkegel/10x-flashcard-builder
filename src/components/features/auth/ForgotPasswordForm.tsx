@@ -32,8 +32,9 @@ export function ForgotPasswordForm() {
       }
 
       setIsSubmitted(true);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      const errorObj = err as Error;
+      setError(errorObj.message);
     } finally {
       setIsLoading(false);
     }

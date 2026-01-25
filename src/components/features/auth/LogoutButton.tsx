@@ -16,9 +16,11 @@ export function LogoutButton() {
         // Hard redirect to login page
         window.location.href = "/login";
       } else {
+        // eslint-disable-next-line no-console
         console.error("Logout failed");
       }
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error("Logout error:", error);
     } finally {
       setIsLoading(false);
@@ -26,13 +28,7 @@ export function LogoutButton() {
   };
 
   return (
-    <Button 
-      variant="ghost" 
-      size="sm" 
-      onClick={handleLogout} 
-      disabled={isLoading}
-      className="flex items-center gap-2"
-    >
+    <Button variant="ghost" size="sm" onClick={handleLogout} disabled={isLoading} className="flex items-center gap-2">
       <LogOut className="h-4 w-4" />
       <span className="hidden sm:inline">Wyloguj</span>
     </Button>

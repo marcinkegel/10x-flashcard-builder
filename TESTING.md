@@ -76,10 +76,10 @@ describe('MyComponent', () => {
   it('should handle click events', async () => {
     const handleClick = vi.fn();
     const user = userEvent.setup();
-    
+
     render(<MyComponent onClick={handleClick} />);
     await user.click(screen.getByRole('button'));
-    
+
     expect(handleClick).toHaveBeenCalledTimes(1);
   });
 });
@@ -97,23 +97,26 @@ describe('MyComponent', () => {
 ### Mocking Examples
 
 #### Mock a module
+
 ```typescript
-vi.mock('@/lib/services/flashcard.service', () => ({
+vi.mock("@/lib/services/flashcard.service", () => ({
   getFlashcards: vi.fn().mockResolvedValue([]),
-  createFlashcard: vi.fn().mockResolvedValue({ id: '1' }),
+  createFlashcard: vi.fn().mockResolvedValue({ id: "1" }),
 }));
 ```
 
 #### Mock a function
+
 ```typescript
 const mockFn = vi.fn();
-mockFn.mockReturnValue('mocked value');
-mockFn.mockResolvedValue(Promise.resolve('async value'));
+mockFn.mockReturnValue("mocked value");
+mockFn.mockResolvedValue(Promise.resolve("async value"));
 ```
 
 #### Spy on existing functions
+
 ```typescript
-const spy = vi.spyOn(console, 'error').mockImplementation(() => {});
+const spy = vi.spyOn(console, "error").mockImplementation(() => {});
 // ... test code ...
 expect(spy).toHaveBeenCalled();
 spy.mockRestore();
@@ -138,19 +141,19 @@ The Playwright configuration is in `playwright.config.ts`:
 Create test files with `.spec.ts` extension in `tests/e2e/`:
 
 ```typescript
-import { test, expect } from '@playwright/test';
+import { test, expect } from "@playwright/test";
 
-test.describe('Feature Name', () => {
-  test('should perform action', async ({ page }) => {
-    await page.goto('/');
-    
-    await page.click('text=Login');
+test.describe("Feature Name", () => {
+  test("should perform action", async ({ page }) => {
+    await page.goto("/");
+
+    await page.click("text=Login");
     await expect(page).toHaveURL(/.*login/);
-    
-    await page.fill('input[type="email"]', 'user@example.com');
-    await page.fill('input[type="password"]', 'password123');
+
+    await page.fill('input[type="email"]', "user@example.com");
+    await page.fill('input[type="password"]', "password123");
     await page.click('button[type="submit"]');
-    
+
     await expect(page).toHaveURL(/.*flashcards/);
   });
 });
@@ -162,7 +165,7 @@ Use the Page Object Model (POM) pattern for maintainable tests:
 
 ```typescript
 // tests/e2e/pages/LoginPage.ts
-import { Page } from '@playwright/test';
+import { Page } from "@playwright/test";
 
 export class LoginPage {
   constructor(private page: Page) {}
@@ -179,12 +182,12 @@ export class LoginPage {
 }
 
 // Usage in test
-import { LoginPage } from './pages/LoginPage';
+import { LoginPage } from "./pages/LoginPage";
 
-test('login flow', async ({ page }) => {
+test("login flow", async ({ page }) => {
   const loginPage = new LoginPage(page);
-  await page.goto('/login');
-  await loginPage.login('user@example.com', 'password123');
+  await page.goto("/login");
+  await loginPage.login("user@example.com", "password123");
 });
 ```
 
@@ -261,6 +264,7 @@ tests/
 ## CI/CD Integration
 
 Tests run automatically on:
+
 - Push to `main`, `master`, or `develop` branches
 - Pull requests to these branches
 
@@ -298,18 +302,21 @@ OPENROUTER_API_KEY=your_openrouter_api_key
 ### Common Issues
 
 #### Tests fail with module not found
+
 ```bash
 # Make sure TypeScript paths are configured
 # Check tsconfig.json and vitest.config.ts
 ```
 
 #### Playwright tests timeout
+
 ```bash
 # Increase timeout in playwright.config.ts
 timeout: 60000 // 60 seconds
 ```
 
 #### Coverage reports missing files
+
 ```bash
 # Check coverage.include and coverage.exclude in vitest.config.ts
 ```
