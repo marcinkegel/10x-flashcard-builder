@@ -24,10 +24,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run unit tests
-        run: npm run test
-
-      - name: Generate coverage report
+      - name: Run unit tests with coverage
         run: npm run test:coverage
 
       - name: Upload coverage to Codecov
@@ -36,4 +33,6 @@ jobs:
           files: ./coverage/lcov.info
           flags: unit
           name: unit-tests
+          fail_ci_if_error: false
         if: always()
+        continue-on-error: true
