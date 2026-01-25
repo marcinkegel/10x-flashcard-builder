@@ -53,3 +53,8 @@ global.ResizeObserver = class ResizeObserver {
     /* mock */
   }
 } as unknown as typeof ResizeObserver;
+
+// Setup environment variables for Supabase
+vi.stubEnv("SUPABASE_URL", "https://example.supabase.co");
+vi.stubEnv("SUPABASE_KEY", "fake-key");
+vi.stubEnv("SUPABASE_SERVICE_ROLE_KEY", "fake-admin-key");

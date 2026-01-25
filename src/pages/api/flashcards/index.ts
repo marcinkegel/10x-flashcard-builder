@@ -6,7 +6,7 @@ import type { ApiResponse, FlashcardDTO, ApiError } from "../../../types";
 export const prerender = false;
 
 // Validation schema for a single flashcard
-const flashcardSchema = z
+export const flashcardSchema = z
   .object({
     front: z.string().trim().min(1, "Front cannot be empty").max(200, "Front is too long"),
     back: z.string().trim().min(1, "Back cannot be empty").max(500, "Back is too long"),
@@ -28,10 +28,10 @@ const flashcardSchema = z
   );
 
 // Support both a single object and an array of objects
-const requestSchema = z.union([flashcardSchema, z.array(flashcardSchema)]);
+export const requestSchema = z.union([flashcardSchema, z.array(flashcardSchema)]);
 
 // Validation schema for GET query parameters
-const querySchema = z.object({
+export const querySchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(100).default(50),
   source: z.enum(["ai-full", "ai-edited", "manual"]).optional(),
