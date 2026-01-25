@@ -1,0 +1,12 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { FlashcardsLibrary } from "../components/features/flashcards/FlashcardsLibrary";
+
+export const prerender = false;
+---
+
+<Layout title="Moje Fiszki | 10x Flashcard Builder">
+  <div class="container mx-auto py-8 px-4">
+    <FlashcardsLibrary client:only="react" />
+  </div>
+</Layout>

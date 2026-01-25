@@ -55,12 +55,13 @@ export function MobileNav({ userEmail }: MobileNavProps) {
           >
             Generuj
           </a>
-          <span
-            className="text-lg font-medium text-muted-foreground/50 cursor-not-allowed ml-2"
-            title="dostępne wkrótce"
+          <a
+            href="/flashcards"
+            className="text-lg font-medium transition-colors hover:text-primary ml-2"
+            onClick={() => setOpen(false)}
           >
             Moje fiszki
-          </span>
+          </a>
           <a
             href="/profile"
             className="text-lg font-medium transition-colors hover:text-primary ml-2"
