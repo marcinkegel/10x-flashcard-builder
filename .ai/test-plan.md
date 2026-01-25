@@ -120,8 +120,8 @@ Celem niniejszego planu jest zapewnienie jakości aktualnie zaimplementowanych m
 
 **Checklist:**
 - [ ] Testy eksploracyjne (edge cases, creative scenarios)
-- [ ] Cross-browser testing (Chrome, Firefox, Safari, Edge)
-- [ ] Mobile devices testing (iOS Safari, Chrome Android)
+- [ ] Browser testing (Chrome only)
+- [ ] Mobile devices testing (Chrome Mobile emulation)
 - [ ] Accessibility testing (screen readers, keyboard only)
 - [ ] Performance testing (Lighthouse scores, load times)
 - [ ] Security testing (SQL injection, XSS, CSRF)
@@ -283,8 +283,8 @@ Celem niniejszego planu jest zapewnienie jakości aktualnie zaimplementowanych m
 - **Test Database:** Osobna instancja Supabase dla testów integracyjnych z RLS policies.
 - **Staging:** Środowisko identyczne z produkcyjnym (np. DigitalOcean App Platform, Vercel) z oddzielną bazą danych.
 - **Przeglądarki:** 
-  - Desktop: Chrome (latest), Firefox (latest), Edge (latest)
-  - Mobile: Safari iOS (iPhone 13+), Chrome Android
+  - Desktop: Chrome (latest)
+  - Mobile: Chrome Android (emulation)
 - **Node.js:** v20.x (zgodnie z `.nvmrc`)
 - **OS:** Windows 11, macOS, Linux (Ubuntu 22.04+)
 
@@ -432,8 +432,6 @@ export default defineConfig({
   },
   projects: [
     { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
-    { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
-    { name: 'mobile', use: { ...devices['iPhone 13'] } },
   ],
   webServer: {
     command: 'npm run dev',

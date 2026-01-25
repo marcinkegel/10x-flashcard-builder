@@ -168,3 +168,21 @@ Kryteria akceptacji:
 
 1. Wskaźnik akceptacji AI: 75% fiszek zaproponowanych przez model LLM zostaje zaakceptowanych przez użytkowników.
 2. Adopcja AI: 75% wszystkich nowych fiszek w systemie jest tworzonych przy użyciu modułu generowania AI (zamiast wprowadzania ręcznego).
+
+## 7. Zapewnienie jakości
+
+Aplikacja wdraża wielopoziomową strategię testów automatycznych w celu zapewnienia stabilności i bezpieczeństwa:
+
+1. **Testy jednostkowe i komponentowe (Vitest + React Testing Library):**
+   - Izolowana weryfikacja logiki biznesowej (serwisy, walidatory, parsery).
+   - Testowanie interakcji użytkownika w komponentach React.
+   - Cel pokrycia kodu (coverage): min. 70% dla folderu `src/lib/services`.
+
+2. **Testy integracyjne (Vitest):**
+   - Testowanie komunikacji między warstwami (API ↔ Database).
+   - Weryfikacja izolacji danych przez Row Level Security (RLS) w Supabase.
+
+3. **Testy End-to-End (Playwright):**
+   - Pełne scenariusze użytkownika (User Journeys) w przeglądarce.
+   - Testy krytycznych ścieżek: Rejestracja/Logowanie, Generowanie AI, Zarządzanie Biblioteką.
+   - Weryfikacja responsywności (Desktop/Mobile) oraz obsługi błędów API.
