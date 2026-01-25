@@ -28,6 +28,109 @@ const requestSchema = z.union([
   z.array(flashcardSchema)
 ]);
 
+// Validation schema for GET query parameters
+const querySchema = z.object({
+  page: z.coerce.number().int().min(1).default(1),
+  limit: z.coerce.number().int().min(1).max(100).default(50),
+  source: z.enum(["ai-full", "ai-edited", "manual"]).optional(),
+  sort: z.enum(["created_at", "updated_at"]).default("created_at"),
+  order: z.enum(["asc", "desc"]).default("desc"),
+});
+
+/**
+ * GET /api/flashcards
+ * 
+ * API endpoint to retrieve a paginated list of flashcards.
+ * Supports filtering by source and custom sorting.
+ * 
+ * Query parameters:
+ * - page: number (default: 1)
+ * - limit: number (default: 50, max: 100)
+ * - source: "ai-full" | "ai-edited" | "manual" (optional)
+ * - sort: "created_at" | "updated_at" (default: "created_at")
+ * - order: "asc" | "desc" (default: "desc")
+ * 
+ * Response: ApiResponse<PaginatedData<FlashcardDTO>>
+ */
+export const GET: APIRoute = async ({ request, locals }) => {
+  try {
+    // 1. Authenticate user
+    const user = locals.user;
+    if (!user) {
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: {
+            code: "UNAUTHORIZED",
+            message: "Musisz być zalogowany, aby przeglądać fiszki.",
+          },
+        } as ApiResponse<never>),
+        { status: 401 }
+      );
+    }
+
+    // 2. Parse and validate query parameters
+    const url = new URL(request.url);
+    const queryParams = Object.fromEntries(url.searchParams.entries());
+    const result = querySchema.safeParse(queryParams);
+
+    if (!result.success) {
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: {
+            code: "VALIDATION_ERROR",
+            message: "Błędne parametry zapytania.",
+            details: result.error.flatten().fieldErrors,
+          },
+        } as ApiResponse<never>),
+        { status: 400 }
+      );
+    }
+
+    // 3. Call flashcard service
+    const paginatedData = await FlashcardService.getFlashcards(
+      locals.supabase,
+      user.id,
+      result.data
+    );
+
+    // 4. Return success response
+    const response: ApiResponse<PaginatedData<FlashcardDTO>> = {
+      success: true,
+      data: paginatedData,
+    };
+
+    return new Response(JSON.stringify(response), {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+  } catch (error: any) {
+    console.error("API Error in GET /api/flashcards:", error);
+
+    const apiError = error as ApiError;
+    const status = apiError.code === "NOT_FOUND" ? 404 : 500;
+
+    const response: ApiResponse<never> = {
+      success: false,
+      error: {
+        code: apiError.code || "INTERNAL_SERVER_ERROR",
+        message: apiError.message || "Wystąpił nieoczekiwany błąd serwera.",
+      },
+    };
+
+    return new Response(JSON.stringify(response), {
+      status,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  }
+};
+
 /**
  * POST /api/flashcards
  * 
