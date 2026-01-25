@@ -81,7 +81,8 @@ Aplikacja Flashcard Builder MVP została zaprojektowana jako nowoczesna aplikacj
 4.  **Zarządzanie**:
     - Przechodzi do "Moje fiszki", aby przejrzeć nowo dodane karty.
     - Poprawia błąd w jednej z kart poprzez Dialog edycji.
-5.  **Nauka**:
+    - Usuwa jedną nieprzydatną fiszkę
+5.  **Nauka**: (funkcjonalnośc i widok sesji nauki zostanie zaimplementowany w dakszej kolejnośći)
     - Klika "Sesja nauki".
     - Przechodzi przez 10 kart, używając skrótów klawiaturowych.
     - Po zakończeniu widzi podsumowanie (opcjonalne) lub wraca do Generate.
