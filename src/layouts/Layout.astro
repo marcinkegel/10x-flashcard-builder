@@ -1,6 +1,7 @@
 ---
 import "../styles/global.css";
 import { LogoutButton } from "@/components/features/auth/LogoutButton";
+import { MobileNav } from "@/components/MobileNav";
 import { Toaster } from "@/components/ui/sonner";
 
 interface Props {
@@ -24,7 +25,8 @@ const { user } = Astro.locals;
     {user && (
       <header class="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div class="container mx-auto flex h-16 items-center justify-between px-4">
-          <div class="flex items-center gap-6 md:gap-10">
+          <div class="flex items-center gap-4 md:gap-10">
+            <MobileNav userEmail={user.email} client:load />
             <a href="/" class="flex items-center space-x-2">
               <span class="inline-block font-bold text-xl">Flashcard Builder</span>
             </a>
@@ -50,10 +52,12 @@ const { user } = Astro.locals;
             </nav>
           </div>
           <div class="flex items-center gap-4">
-            <div class="hidden sm:flex items-center gap-2 mr-2">
+            <div class="hidden lg:flex items-center gap-2 mr-2">
               <span class="text-sm text-muted-foreground">{user.email}</span>
             </div>
-            <LogoutButton client:load />
+            <div class="hidden md:flex">
+              <LogoutButton client:load />
+            </div>
           </div>
         </div>
       </header>
