@@ -1,142 +1,212 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import { setupMSW, server } from '../../mocks/server';
-import { http, HttpResponse } from 'msw';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { FlashcardService } from '../../../src/lib/services/flashcard.service';
+import type { SupabaseClient } from '../../../src/db/supabase.client';
+import type { UpdateFlashcardCommand, CreateFlashcardCommand } from '../../../src/types';
 
-// Import service to test
-// import { flashcardService } from '@/lib/services/flashcard.service';
+describe('FlashcardService', () => {
+  let mockSupabase: any;
+  const userId = 'user-123';
 
-// Setup MSW for all tests in this file
-setupMSW();
-
-describe('Flashcard Service', () => {
   beforeEach(() => {
-    // Reset any runtime request handlers we may have added during tests
-    server.resetHandlers();
+    vi.clearAllMocks();
+
+    // Create a more robust fluent mock for Supabase
+    // Each method returns the mock object, and the mock object is also a thenable (Promise-like)
+    const createFluentMock = () => {
+      const mock: any = {
+        from: vi.fn().mockImplementation(() => mock),
+        select: vi.fn().mockImplementation(() => mock),
+        insert: vi.fn().mockImplementation(() => mock),
+        update: vi.fn().mockImplementation(() => mock),
+        delete: vi.fn().mockImplementation(() => mock),
+        eq: vi.fn().mockImplementation(() => mock),
+        single: vi.fn().mockImplementation(() => mock),
+        maybeSingle: vi.fn().mockImplementation(() => mock),
+        order: vi.fn().mockImplementation(() => mock),
+        range: vi.fn().mockImplementation(() => mock),
+        // Add then to make it awaitable
+        then: vi.fn().mockImplementation((onFulfilled) => {
+          return Promise.resolve({ data: null, error: null }).then(onFulfilled);
+        }),
+      };
+      return mock;
+    };
+
+    mockSupabase = createFluentMock();
+  });
+
+  describe('updateFlashcard', () => {
+    const flashcardId = 'fc-1';
+
+    it('should throw error when trying to change source from manual to AI', async () => {
+      // Setup: current flashcard is manual
+      mockSupabase.then.mockImplementationOnce((onFulfilled: any) => {
+        return Promise.resolve({ 
+          data: { id: flashcardId, source: 'manual', front: 'Q', back: 'A' }, 
+          error: null 
+        }).then(onFulfilled);
+      });
+
+      const command: UpdateFlashcardCommand = { source: 'ai-full' };
+
+      await expect(
+        FlashcardService.updateFlashcard(mockSupabase as unknown as SupabaseClient, userId, flashcardId, command)
+      ).rejects.toMatchObject({
+        code: 'INVALID_SOURCE_TRANSITION'
+      });
+    });
+
+    it('should auto-transition from ai-full to ai-edited when content changes', async () => {
+      const current = { 
+        id: flashcardId, 
+        source: 'ai-full', 
+        front: 'Old Q', 
+        back: 'Old A', 
+        generation_id: 'gen-1',
+        user_id: userId
+      };
+      
+      // 1. getFlashcardById call
+      mockSupabase.then.mockImplementationOnce((onFulfilled: any) => {
+        return Promise.resolve({ data: current, error: null }).then(onFulfilled);
+      });
+      
+      // 2. update() call
+      const updated = { ...current, front: 'New Q', source: 'ai-edited' };
+      mockSupabase.then.mockImplementationOnce((onFulfilled: any) => {
+        return Promise.resolve({ data: updated, error: null }).then(onFulfilled);
+      });
+
+      // 3. syncGenerationStatsOnEdit -> fetch current counts
+      mockSupabase.then.mockImplementationOnce((onFulfilled: any) => {
+        return Promise.resolve({ 
+          data: { count_accepted_unedited: 5, count_accepted_edited: 2 }, 
+          error: null 
+        }).then(onFulfilled);
+      });
+
+      // 4. syncGenerationStatsOnEdit -> update counts
+      mockSupabase.then.mockImplementationOnce((onFulfilled: any) => {
+        return Promise.resolve({ error: null }).then(onFulfilled);
+      });
+
+      const command: UpdateFlashcardCommand = { front: 'New Q' };
+
+      const result = await FlashcardService.updateFlashcard(
+        mockSupabase as unknown as SupabaseClient, 
+        userId, 
+        flashcardId, 
+        command
+      );
+
+      expect(result.source).toBe('ai-edited');
+      expect(mockSupabase.update).toHaveBeenCalledWith(expect.objectContaining({
+        source: 'ai-edited',
+        front: 'New Q'
+      }));
+      expect(mockSupabase.from).toHaveBeenCalledWith('generations');
+    });
+  });
+
+  describe('deleteFlashcard', () => {
+    it('should sync generation stats when deleting an AI flashcard', async () => {
+      const flashcardId = 'fc-1';
+      const current = { 
+        id: flashcardId, 
+        source: 'ai-full', 
+        generation_id: 'gen-1',
+        user_id: userId
+      };
+
+      // 1. getFlashcardById
+      mockSupabase.then.mockImplementationOnce((onFulfilled: any) => {
+        return Promise.resolve({ data: current, error: null }).then(onFulfilled);
+      });
+      
+      // 2. delete execution
+      mockSupabase.then.mockImplementationOnce((onFulfilled: any) => {
+        return Promise.resolve({ error: null }).then(onFulfilled);
+      });
+      
+      // 3. syncGenerationStatsOnDelete -> fetch current counts
+      mockSupabase.then.mockImplementationOnce((onFulfilled: any) => {
+        return Promise.resolve({ 
+          data: { count_accepted_unedited: 5, count_accepted_edited: 2 }, 
+          error: null 
+        }).then(onFulfilled);
+      });
+
+      // 4. syncGenerationStatsOnDelete -> update counts
+      mockSupabase.then.mockImplementationOnce((onFulfilled: any) => {
+        return Promise.resolve({ error: null }).then(onFulfilled);
+      });
+
+      await FlashcardService.deleteFlashcard(mockSupabase as unknown as SupabaseClient, userId, flashcardId);
+
+      expect(mockSupabase.from).toHaveBeenCalledWith('flashcards');
+      expect(mockSupabase.delete).toHaveBeenCalled();
+      
+      expect(mockSupabase.from).toHaveBeenCalledWith('generations');
+      expect(mockSupabase.update).toHaveBeenCalledWith(expect.objectContaining({
+        count_accepted_unedited: 4
+      }));
+    });
+  });
+
+  describe('createFlashcards', () => {
+    it('should sync generation stats when creating AI flashcards', async () => {
+      const commands: CreateFlashcardCommand[] = [
+        { front: 'Q1', back: 'A1', source: 'ai-full', generation_id: 'gen-1' },
+        { front: 'Q2', back: 'A2', source: 'ai-edited', generation_id: 'gen-1' }
+      ];
+
+      // 1. insert execution
+      mockSupabase.then.mockImplementationOnce((onFulfilled: any) => {
+        return Promise.resolve({ 
+          data: [{ id: '1', ...commands[0] }, { id: '2', ...commands[1] }], 
+          error: null 
+        }).then(onFulfilled);
+      });
+
+      // 2. updateGenerationStats -> fetch current counts
+      mockSupabase.then.mockImplementationOnce((onFulfilled: any) => {
+        return Promise.resolve({ 
+          data: { id: 'gen-1', count_accepted_unedited: 10, count_accepted_edited: 5 }, 
+          error: null 
+        }).then(onFulfilled);
+      });
+
+      // 3. updateGenerationStats -> update counts
+      mockSupabase.then.mockImplementationOnce((onFulfilled: any) => {
+        return Promise.resolve({ error: null }).then(onFulfilled);
+      });
+
+      const result = await FlashcardService.createFlashcards(
+        mockSupabase as unknown as SupabaseClient, 
+        userId, 
+        commands
+      );
+
+      expect(result).toHaveLength(2);
+      expect(mockSupabase.update).toHaveBeenCalledWith(expect.objectContaining({
+        count_accepted_unedited: 11,
+        count_accepted_edited: 6
+      }));
+    });
   });
 
   describe('getFlashcards', () => {
-    it('should fetch flashcards successfully', async () => {
-      // Arrange
-      const mockFlashcards = [
-        {
-          id: '1',
-          question: 'What is TypeScript?',
-          answer: 'A typed superset of JavaScript',
-          created_at: new Date().toISOString(),
-        },
-        {
-          id: '2',
-          question: 'What is React?',
-          answer: 'A JavaScript library for building UIs',
-          created_at: new Date().toISOString(),
-        },
-      ];
+    it('should correctly calculate pagination range', async () => {
+      mockSupabase.then.mockImplementationOnce((onFulfilled: any) => {
+        return Promise.resolve({ data: [], count: 100, error: null }).then(onFulfilled);
+      });
 
-      server.use(
-        http.get('/api/flashcards', () => {
-          return HttpResponse.json({
-            data: mockFlashcards,
-            total: 2,
-            page: 1,
-            limit: 10,
-          });
-        })
-      );
+      await FlashcardService.getFlashcards(mockSupabase as unknown as SupabaseClient, userId, {
+        page: 3,
+        limit: 20
+      });
 
-      // Act
-      // const result = await flashcardService.getFlashcards({ page: 1, limit: 10 });
-
-      // Assert
-      // expect(result.data).toHaveLength(2);
-      // expect(result.total).toBe(2);
-      // expect(result.data[0].question).toBe('What is TypeScript?');
-    });
-
-    it('should handle API errors gracefully', async () => {
-      // Arrange
-      server.use(
-        http.get('/api/flashcards', () => {
-          return new HttpResponse(null, {
-            status: 500,
-            statusText: 'Internal Server Error',
-          });
-        })
-      );
-
-      // Act & Assert
-      // await expect(
-      //   flashcardService.getFlashcards({ page: 1, limit: 10 })
-      // ).rejects.toThrow();
-    });
-
-    it('should handle network errors', async () => {
-      // Arrange
-      server.use(
-        http.get('/api/flashcards', () => {
-          return HttpResponse.error();
-        })
-      );
-
-      // Act & Assert
-      // await expect(
-      //   flashcardService.getFlashcards({ page: 1, limit: 10 })
-      // ).rejects.toThrow();
-    });
-  });
-
-  describe('createFlashcard', () => {
-    it('should create a flashcard successfully', async () => {
-      // Arrange
-      const newFlashcard = {
-        question: 'What is Vitest?',
-        answer: 'A fast unit test framework',
-      };
-
-      server.use(
-        http.post('/api/flashcards', async ({ request }) => {
-          const body = await request.json();
-          return HttpResponse.json(
-            {
-              data: {
-                id: '3',
-                ...body,
-                created_at: new Date().toISOString(),
-              },
-            },
-            { status: 201 }
-          );
-        })
-      );
-
-      // Act
-      // const result = await flashcardService.createFlashcard(newFlashcard);
-
-      // Assert
-      // expect(result.data.id).toBe('3');
-      // expect(result.data.question).toBe(newFlashcard.question);
-      // expect(result.data.answer).toBe(newFlashcard.answer);
-    });
-
-    it('should handle validation errors', async () => {
-      // Arrange
-      server.use(
-        http.post('/api/flashcards', () => {
-          return HttpResponse.json(
-            {
-              error: 'Validation failed',
-              details: {
-                question: 'Question is required',
-              },
-            },
-            { status: 400 }
-          );
-        })
-      );
-
-      // Act & Assert
-      // await expect(
-      //   flashcardService.createFlashcard({ question: '', answer: '' })
-      // ).rejects.toThrow();
+      expect(mockSupabase.range).toHaveBeenCalledWith(40, 59);
     });
   });
 });

@@ -35,17 +35,28 @@ describe('useGenerationSession', () => {
     expect(result.current.generationId).toBe('gen-123');
   });
 
-  it('updates proposal in state', () => {
-    const { result } = renderHook(() => useGenerationSession());
-
-    act(() => {
-      // Manually setting proposals for test (usually done by generate)
-      // Since generate is async, we'll just test the updateProposal logic
-      (result.current as any).setProposals = vi.fn(); // This wouldn't work easily with actual state
+  it('updates proposal in state', async () => {
+    mockFetch.mockResolvedValueOnce({
+      json: async () => ({
+        success: true,
+        data: {
+          generation_id: 'gen-123',
+          proposals: [{ proposal_id: 'p1', front: 'Q1', back: 'A1' }]
+        }
+      })
     });
 
-    // Let's test it by generating first or using act with internal state setter if we had access
-    // Better: test generate, then update.
+    const { result } = renderHook(() => useGenerationSession());
+
+    await act(async () => {
+      await result.current.generate('Source text');
+    });
+
+    act(() => {
+      result.current.updateProposal('p1', { front: 'Updated Q1' });
+    });
+
+    expect(result.current.proposals[0].front).toBe('Updated Q1');
   });
 
   it('generates flashcards and updates state', async () => {
@@ -61,7 +72,7 @@ describe('useGenerationSession', () => {
 
     const { result } = renderHook(() => useGenerationSession());
 
-    let response;
+    let response: any;
     await act(async () => {
       response = await result.current.generate('Source text');
     });
@@ -83,13 +94,13 @@ describe('useGenerationSession', () => {
 
     const { result } = renderHook(() => useGenerationSession());
 
-    let response;
+    let response: any;
     await act(async () => {
       response = await result.current.generate('Source text');
     });
 
-    expect(response.success).toBe(false);
-    expect(response.error).toBe('Generation failed');
+    expect(response?.success).toBe(false);
+    expect(response?.error).toBe('Generation failed');
     expect(result.current.isGenerating).toBe(false);
   });
 
@@ -123,7 +134,7 @@ describe('useGenerationSession', () => {
       json: async () => ({ success: true, data: [] })
     });
 
-    let saveResponse;
+    let saveResponse: any;
     await act(async () => {
       saveResponse = await result.current.saveBulk('accepted_only');
     });
@@ -131,7 +142,8 @@ describe('useGenerationSession', () => {
     expect(saveResponse).toEqual({ success: true, count: 1 });
     // Verify fetch was called with only p1
     const fetchCall = mockFetch.mock.calls.find(call => call[0] === '/api/flashcards');
-    const body = JSON.parse(fetchCall[1].body);
+    expect(fetchCall).toBeDefined();
+    const body = JSON.parse(fetchCall![1].body);
     expect(body).toHaveLength(1);
     expect(body[0].front).toBe('Q1');
   });
