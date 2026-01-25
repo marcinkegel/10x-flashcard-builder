@@ -82,25 +82,24 @@ describe('OpenRouterService', () => {
         })
       );
 
-      vi.useFakeTimers();
-      const promise = service.generateChatCompletion({ 
-        systemPrompt: 's', 
-        userPrompt: 'u', 
-        responseSchema: {} 
-      });
-      
-      // Attach a no-op catch to prevent unhandled rejection warning in Node.js
-      // as the rejection happens during runAllTimersAsync before expect() is reached.
-      promise.catch(() => {});
+      // Mock setTimeout to avoid delays but don't use fake timers which cause unhandled rejection issues
+      const originalSetTimeout = global.setTimeout;
+      global.setTimeout = ((cb: Function) => {
+        cb();
+        return 0 as any;
+      }) as any;
 
-      // Advance timers for all retries
-      for(let i = 0; i < 4; i++) {
-        await vi.runAllTimersAsync();
+      try {
+        await expect(
+          service.generateChatCompletion({ 
+            systemPrompt: 's', 
+            userPrompt: 'u', 
+            responseSchema: {} 
+          })
+        ).rejects.toThrow(/429 Too Many Requests/);
+      } finally {
+        global.setTimeout = originalSetTimeout;
       }
-      
-      // The implementation throws the last caught error (429) rather than "Max retries exceeded"
-      await expect(promise).rejects.toThrow(/429 Too Many Requests/);
-      vi.useRealTimers();
     });
 
     it('should throw Validation Error when model returns invalid JSON', async () => {
