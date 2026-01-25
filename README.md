@@ -79,6 +79,26 @@ The main hurdle for students using spaced repetition is the high effort of manua
 | `npm run lint` | Runs ESLint to check for code quality issues. |
 | `npm run format` | Formats the codebase using Prettier. |
 | `npm run astro` | Access the Astro CLI for advanced configurations. |
+| `npm run test` | Runs unit tests with Vitest. |
+| `npm run test:watch` | Runs unit tests in watch mode. |
+| `npm run test:ui` | Opens Vitest UI for interactive testing. |
+| `npm run test:coverage` | Generates test coverage report. |
+| `npm run test:e2e` | Runs end-to-end tests with Playwright. |
+| `npm run test:e2e:ui` | Opens Playwright UI for interactive E2E testing. |
+| `npm run test:e2e:report` | Views the Playwright test report. |
+
+## Testing
+
+This project uses a comprehensive testing strategy:
+
+- **Unit Tests:** Vitest with React Testing Library for component and function testing
+- **E2E Tests:** Playwright for browser-based end-to-end testing
+- **API Mocking:** MSW (Mock Service Worker) for realistic API testing
+
+For detailed testing documentation, see:
+- [TESTING.md](./TESTING.md) - Comprehensive testing guide
+- [.ai/testing-quick-reference.md](./.ai/testing-quick-reference.md) - Quick reference for common patterns
+- [.ai/testing-setup-summary.md](./.ai/testing-setup-summary.md) - Setup summary
 
 ## Project Scope
 
