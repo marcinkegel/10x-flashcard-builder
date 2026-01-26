@@ -6,6 +6,7 @@
 - [Tech Stack](#tech-stack)
 - [Getting Started Locally](#getting-started-locally)
 - [Available Scripts](#available-scripts)
+- [Testing](#testing)
 - [Project Scope](#project-scope)
 - [Project Status](#project-status)
 - [License](#license)
@@ -13,32 +14,34 @@
 ## Project Description
 
 An AI-powered web application designed to aid the way you study. 10x Flashcard Builder reduces the time and cognitive effort required to create high-quality study materials by leveraging Large Language Models (LLMs) to automatically generate flashcards from your source text.
+
 The main hurdle for students using spaced repetition is the high effort of manually creating effective flashcards. This tool solves that by allowing users to paste source text (1,000 to 10,000 characters) and instantly receive AI-generated question-answer pairs.
 
 ### Key Features:
 
-- **AI Generation:** Transform long notes or book fragments into flashcards in seconds.
-- **Spaced Repetition:** Integrated study sessions based on proven learning algorithms.
+- **AI Generation:** Transform long notes or book fragments into flashcards in seconds using OpenRouter.
+- **Review System:** Accept, edit, or reject AI-generated flashcard proposals before adding them to your library.
 - **Manual Management:** Full CRUD operations for custom flashcards with real-time character limits.
-- **Analytics:** Tracks progress and see what precentage of the flashcards are made by AI and what percentage of the AI made flashcards are accepted.
-- **User System:** Secure authentication and data privacy (GDPR-compliant account deletion).
+- **User System:** Secure authentication via Supabase (Login, Register, Password Reset, Profile Management).
+- **Data Privacy:** GDPR-compliant account deletion functionality.
+- **Responsive Design:** Modern, mobile-friendly UI built with Tailwind CSS and Shadcn/ui.
 
 ## Tech Stack
 
 ### Frontend
 
-- **Astro 5:** For high-performance static site generation and modern routing.
-- **React 19:** Powers interactive components like the study session and AI review flow.
+- **Astro 5:** High-performance web framework with server-side rendering (SSR) enabled.
+- **React 19:** Powers interactive components like the AI review flow and flashcard management.
 - **TypeScript 5:** For robust, type-safe development.
-- **Tailwind CSS 4 & Shadcn/ui:** For a modern, responsive, and accessible user interface.
+- **Tailwind CSS 4:** For modern, utility-first styling.
+- **Shadcn/ui:** Accessible and customizable UI components.
 
 ### Backend & Infrastructure
 
-- **Supabase:** Provides PostgreSQL database, Authentication, and real-time capabilities.
-- **OpenRouter.ai:** Unified API to access various LLMs (OpenAI, Anthropic, Google) for flashcard generation.
-- **Docker:** For consistent environments and easy deployment.
-- **GitHub Actions:** Automated CI/CD pipelines.
-- **DigitalOcean:** Cloud hosting for the production application.
+- **Supabase:** PostgreSQL database, Authentication (GoTrue), and SSR-ready client integration.
+- **OpenRouter.ai:** Unified API to access various LLMs for flashcard generation.
+- **GitHub Actions:** Automated CI/CD pipeline for running tests on push.
+- **Husky & lint-staged:** Pre-commit hooks for code quality.
 
 ## Getting Started Locally
 
@@ -82,12 +85,13 @@ The main hurdle for students using spaced repetition is the high effort of manua
 
 | Script                    | Description                                                |
 | :------------------------ | :--------------------------------------------------------- |
-| `npm run dev`             | Starts the development server with hot-module replacement. |
+| `npm run dev`             | Starts the development server.                             |
 | `npm run build`           | Builds the application for production.                     |
 | `npm run preview`         | Locally previews the production build.                     |
 | `npm run lint`            | Runs ESLint to check for code quality issues.              |
+| `npm run lint:fix`        | Automatically fixes linting issues.                        |
 | `npm run format`          | Formats the codebase using Prettier.                       |
-| `npm run astro`           | Access the Astro CLI for advanced configurations.          |
+| `npm run astro`           | Access the Astro CLI.                                      |
 | `npm run test`            | Runs unit tests with Vitest.                               |
 | `npm run test:watch`      | Runs unit tests in watch mode.                             |
 | `npm run test:ui`         | Opens Vitest UI for interactive testing.                   |
@@ -100,39 +104,40 @@ The main hurdle for students using spaced repetition is the high effort of manua
 
 This project uses a comprehensive testing strategy:
 
-- **Unit Tests:** Vitest with React Testing Library for component and function testing
-- **E2E Tests:** Playwright for browser-based end-to-end testing
-- **API Mocking:** MSW (Mock Service Worker) for realistic API testing
+- **Unit Tests:** Vitest with React Testing Library for component and service testing.
+- **E2E Tests:** Playwright for browser-based end-to-end testing.
+- **API Mocking:** MSW (Mock Service Worker) for realistic API testing in unit/integration tests.
 
 For detailed testing documentation, see:
 
-- [TESTING.md](./TESTING.md) - Comprehensive testing guide
-- [.ai/testing-quick-reference.md](./.ai/testing-quick-reference.md) - Quick reference for common patterns
-- [.ai/testing-setup-summary.md](./.ai/testing-setup-summary.md) - Setup summary
+- [TESTING.md](./TESTING.md) - Comprehensive testing guide.
+- [.ai/testing-quick-reference.md](./.ai/testing-quick-reference.md) - Quick reference for common patterns.
+- [.ai/testing-setup-summary.md](./.ai/testing-setup-summary.md) - Setup summary.
 
 ## Project Scope
 
 ### Included in MVP:
 
-- AI flashcard generation (1k-10k char input).
-- Review system (Accept/Edit/Reject AI proposals).
-- Manual flashcard creation (200 char front / 500 char back limit).
-- Study session based on spaced repetition.
-- User registration and login.
-- Basic statistics (AI adoption and acceptance rates).
+- ✅ AI flashcard generation (1k-10k char input) via OpenRouter.
+- ✅ Review system (Accept/Edit/Reject AI proposals).
+- ✅ Manual flashcard creation (200 char front / 500 char back limit).
+- ✅ Flashcard Library with full CRUD operations.
+- ✅ User authentication (Login, Register, Password Reset).
+- ✅ Profile management and account deletion.
+- ✅ Automated CI/CD with GitHub Actions.
 
 ### Out of Scope (Future Updates):
 
+- Spaced repetition study sessions (in progress).
 - External file imports (PDF, DOCX).
 - Deck sharing between users.
 - Native mobile applications.
 - Integration with 3rd party platforms like Anki or Quizlet.
-- Push notifications for study reminders.
 
 ## Project Status
 
-**Current Status:** `MVP Development`  
-The project is currently in its Initial MVP phase, focusing on core AI generation and study session functionality.
+**Current Status:** `MVP Development`
+The project has implemented core AI generation, flashcard management, and authentication. CI/CD is configured, and testing coverage is being actively expanded.
 
 ## License
 
