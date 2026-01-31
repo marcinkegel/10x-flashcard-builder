@@ -21,6 +21,7 @@ export function FlashcardItem({ flashcard, onUpdate, onDelete, index = 0 }: Flas
   return (
     <>
       <Card
+        data-testid="flashcard-item"
         className={cn(
           "h-full flex flex-col group transition-all duration-200 hover:shadow-md border-2 border-transparent hover:border-primary/20",
           "animate-in fade-in zoom-in-95 duration-300 fill-mode-both"

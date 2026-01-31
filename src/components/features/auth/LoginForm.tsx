@@ -66,6 +66,7 @@ export function LoginForm() {
             <Label htmlFor="email">Email</Label>
             <Input
               id="email"
+              data-testid="login-email-input"
               type="email"
               placeholder="name@example.com"
               required
@@ -83,6 +84,7 @@ export function LoginForm() {
             </div>
             <Input
               id="password"
+              data-testid="login-password-input"
               type="password"
               required
               value={password}
@@ -92,7 +94,7 @@ export function LoginForm() {
           </div>
         </CardContent>
         <CardFooter className="flex flex-col space-y-4 pt-4">
-          <Button type="submit" className="w-full" disabled={isLoading}>
+          <Button type="submit" data-testid="login-submit-button" className="w-full" disabled={isLoading}>
             {isLoading ? "Logowanie..." : "Zaloguj się"}
           </Button>
           <div className="text-sm text-center text-muted-foreground">

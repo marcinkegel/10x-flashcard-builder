@@ -9,15 +9,15 @@ export class LoginPage {
 
   // Locators
   get emailInput() {
-    return this.page.locator('input[type="email"]');
+    return this.page.getByTestId("login-email-input");
   }
 
   get passwordInput() {
-    return this.page.locator('input[type="password"]');
+    return this.page.getByTestId("login-password-input");
   }
 
   get submitButton() {
-    return this.page.locator('button[type="submit"]');
+    return this.page.getByTestId("login-submit-button");
   }
 
   get errorMessage() {

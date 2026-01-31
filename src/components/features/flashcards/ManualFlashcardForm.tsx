@@ -86,6 +86,7 @@ export function ManualFlashcardForm() {
         <Label htmlFor="front">Przód fiszki (Pytanie/Pojęcie)</Label>
         <Textarea
           id="front"
+          data-testid="manual-front-input"
           placeholder="Np. Czym jest React?"
           value={front}
           onChange={(e) => setFront(e.target.value)}
@@ -107,6 +108,7 @@ export function ManualFlashcardForm() {
         <Label htmlFor="back">Tył fiszki (Odpowiedź/Definicja)</Label>
         <Textarea
           id="back"
+          data-testid="manual-back-input"
           placeholder="Np. Biblioteka JavaScript do budowy interfejsów użytkownika."
           value={back}
           onChange={(e) => setBack(e.target.value)}
@@ -135,6 +137,7 @@ export function ManualFlashcardForm() {
       <div className="flex justify-end pt-2">
         <Button
           onClick={handleSave}
+          data-testid="manual-submit-button"
           disabled={!canSave && (isTouchedFront || isTouchedBack)}
           className="w-full md:w-auto"
         >

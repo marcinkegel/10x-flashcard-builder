@@ -34,12 +34,14 @@ const { user } = Astro.locals;
               <nav class="hidden md:flex gap-6">
                 <a
                   href="/generate"
+                  data-testid="nav-generate"
                   class="flex items-center text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
                 >
                   Generuj
                 </a>
                 <a
                   href="/flashcards"
+                  data-testid="nav-library"
                   class="flex items-center text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
                 >
                   Moje fiszki

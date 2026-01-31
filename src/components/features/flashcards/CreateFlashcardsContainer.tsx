@@ -36,7 +36,7 @@ export default function CreateFlashcardsContainer() {
         <div className="flex justify-center md:justify-start">
           <TabsList className="grid w-full max-w-md grid-cols-2">
             <TabsTrigger value="ai">Generowanie AI</TabsTrigger>
-            <TabsTrigger value="manual">Tworzenie ręczne</TabsTrigger>
+            <TabsTrigger value="manual" data-testid="manual-tab-trigger">Tworzenie ręczne</TabsTrigger>
           </TabsList>
         </div>
 
