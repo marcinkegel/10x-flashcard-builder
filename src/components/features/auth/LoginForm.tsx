@@ -47,7 +47,7 @@ export function LoginForm() {
   const registerUrl = redirectTo ? `/register?redirectTo=${encodeURIComponent(redirectTo)}` : "/register";
 
   return (
-    <Card className="w-full">
+    <Card className="w-full" data-testid="login-form">
       <CardHeader className="space-y-1">
         <CardTitle className="text-2xl font-bold text-center">Zaloguj się</CardTitle>
         <CardDescription className="text-center">
@@ -57,7 +57,10 @@ export function LoginForm() {
       <form onSubmit={handleSubmit}>
         <CardContent className="space-y-4">
           {error && (
-            <div className="bg-destructive/15 text-destructive text-sm p-3 rounded-md flex items-center gap-2 animate-in fade-in slide-in-from-top-1">
+            <div
+              data-testid="login-error"
+              className="bg-destructive/15 text-destructive text-sm p-3 rounded-md flex items-center gap-2 animate-in fade-in slide-in-from-top-1"
+            >
               <AlertCircle className="h-4 w-4" />
               <p>{error}</p>
             </div>
@@ -66,6 +69,7 @@ export function LoginForm() {
             <Label htmlFor="email">Email</Label>
             <Input
               id="email"
+              data-testid="login-email-input"
               type="email"
               placeholder="name@example.com"
               required
@@ -77,12 +81,17 @@ export function LoginForm() {
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <Label htmlFor="password">Hasło</Label>
-              <a href="/forgot-password" className="text-sm font-medium text-primary hover:underline">
+              <a
+                href="/forgot-password"
+                data-testid="forgot-password-link"
+                className="text-sm font-medium text-primary hover:underline"
+              >
                 Zapomniałeś hasła?
               </a>
             </div>
             <Input
               id="password"
+              data-testid="login-password-input"
               type="password"
               required
               value={password}
@@ -92,12 +101,12 @@ export function LoginForm() {
           </div>
         </CardContent>
         <CardFooter className="flex flex-col space-y-4 pt-4">
-          <Button type="submit" className="w-full" disabled={isLoading}>
+          <Button type="submit" data-testid="login-submit-button" className="w-full" disabled={isLoading}>
             {isLoading ? "Logowanie..." : "Zaloguj się"}
           </Button>
           <div className="text-sm text-center text-muted-foreground">
             Nie masz jeszcze konta?{" "}
-            <a href={registerUrl} className="font-medium text-primary hover:underline">
+            <a href={registerUrl} data-testid="register-link" className="font-medium text-primary hover:underline">
               Zarejestruj się
             </a>
           </div>

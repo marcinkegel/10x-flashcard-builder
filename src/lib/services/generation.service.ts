@@ -150,7 +150,6 @@ export const GenerationService = {
     try {
       // 3. Call OpenRouter
       // eslint-disable-next-line no-console
-      console.log(`[GenerationService] Starting generation for user ${userId}, hash ${sourceTextHash}`);
 
       const result = await openRouter.generateChatCompletion<{ proposals: GenerationProposalDTO[] }>({
         systemPrompt: FLASHCARD_SYSTEM_PROMPT,
@@ -175,7 +174,6 @@ export const GenerationService = {
       }
 
       // eslint-disable-next-line no-console
-      console.log(`[GenerationService] Successfully generated ${proposals.length} proposals for ${generation.id}`);
 
       return {
         generation_id: generation.id,

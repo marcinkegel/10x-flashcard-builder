@@ -42,6 +42,7 @@ export function MobileNav({ userEmail }: MobileNavProps) {
         <nav className="flex flex-col gap-6 mt-6 px-2">
           <a
             href="/generate"
+            data-testid="nav-generate-mobile"
             className="text-lg font-medium transition-colors hover:text-primary ml-2"
             onClick={() => setOpen(false)}
           >
@@ -49,6 +50,7 @@ export function MobileNav({ userEmail }: MobileNavProps) {
           </a>
           <a
             href="/flashcards"
+            data-testid="nav-library-mobile"
             className="text-lg font-medium transition-colors hover:text-primary ml-2"
             onClick={() => setOpen(false)}
           >
@@ -56,6 +58,7 @@ export function MobileNav({ userEmail }: MobileNavProps) {
           </a>
           <a
             href="/profile"
+            data-testid="nav-profile-mobile"
             className="text-lg font-medium transition-colors hover:text-primary ml-2"
             onClick={() => setOpen(false)}
           >

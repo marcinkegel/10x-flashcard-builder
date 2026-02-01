@@ -56,11 +56,12 @@ export function AIGenerationForm({ onGenerate, isGenerating, hasActiveProposals 
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" data-testid="ai-generation-form">
       <div className="space-y-2">
         <Label htmlFor="source-text">Wklej tekst źródłowy (artykuł, notatki, rozdział książki)</Label>
         <Textarea
           id="source-text"
+          data-testid="source-text-input"
           placeholder="Wklej tutaj tekst, z którego chcesz wygenerować fiszki (minimum 1000 znaków)..."
           className={cn(
             "min-h-[200px] max-h-[400px] overflow-y-auto resize-y transition-colors",
@@ -79,27 +80,41 @@ export function AIGenerationForm({ onGenerate, isGenerating, hasActiveProposals 
         {/* Informacje o błędach i nieodpowiedniej ilości tekstu poniżej licznika znaków ale nad przyciskiem */}
         <div ref={errorRef} className="space-y-2">
           {hasActiveProposals && (
-            <div className="p-3 text-sm font-medium text-amber-600 bg-amber-50 border border-amber-200 rounded-md animate-in fade-in slide-in-from-top-1">
+            <div
+              data-testid="active-proposals-warning"
+              className="p-3 text-sm font-medium text-amber-600 bg-amber-50 border border-amber-200 rounded-md animate-in fade-in slide-in-from-top-1"
+            >
               Aby wygenerować kolejne propozycje, najpierw zapisz lub usuń wszystkie propozycje z poprzedniej sesji.
             </div>
           )}
 
           {shouldShowValidationError && (
-            <div className="p-3 text-sm font-medium text-destructive bg-destructive/10 border border-destructive/20 rounded-md animate-in fade-in slide-in-from-top-1">
+            <div
+              data-testid="validation-error"
+              className="p-3 text-sm font-medium text-destructive bg-destructive/10 border border-destructive/20 rounded-md animate-in fade-in slide-in-from-top-1"
+            >
               {isTooShort && `Tekst jest za krótki. Brakuje jeszcze ${MIN_CHARS - text.length} znaków.`}
               {isTooLong && `Tekst jest za długi. Przekroczono limit o ${text.length - MAX_CHARS} znaków.`}
             </div>
           )}
 
           {error && (
-            <div className="p-3 text-sm font-medium text-destructive bg-destructive/10 border border-destructive/20 rounded-md animate-in fade-in slide-in-from-top-1">
+            <div
+              data-testid="generation-error"
+              className="p-3 text-sm font-medium text-destructive bg-destructive/10 border border-destructive/20 rounded-md animate-in fade-in slide-in-from-top-1"
+            >
               {error}
             </div>
           )}
         </div>
       </div>
 
-      <Button className="w-full h-12 text-base font-semibold" disabled={!canGenerate} onClick={handleGenerate}>
+      <Button
+        data-testid="generate-button"
+        className="w-full h-12 text-base font-semibold"
+        disabled={!canGenerate}
+        onClick={handleGenerate}
+      >
         {isGenerating ? (
           <>Generowanie...</>
         ) : (

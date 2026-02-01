@@ -299,7 +299,7 @@ npm run test:e2e                # Run all E2E tests
 npm run test:e2e:ui             # Interactive mode
 npm run test:e2e:report         # View report
 npx playwright codegen          # Generate tests
-npx playwright test --debug     # Debug mode
+npm run test:e2e -- --debug     # Debug mode
 npx playwright show-trace       # View trace
 ```
 

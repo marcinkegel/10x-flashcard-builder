@@ -63,6 +63,7 @@ export function ProposalItem({ proposal, onUpdate }: ProposalItemProps) {
 
   return (
     <Card
+      data-testid="proposal-item"
       className={cn(
         "transition-all duration-200 border-2",
         proposal.status === "accepted" && "border-green-500 bg-green-50/30",
@@ -72,7 +73,10 @@ export function ProposalItem({ proposal, onUpdate }: ProposalItemProps) {
     >
       <CardContent className="pt-6 space-y-4">
         {error && (
-          <div className="p-2 text-xs font-medium text-destructive bg-destructive/10 border border-destructive/20 rounded-md">
+          <div
+            data-testid="proposal-error"
+            className="p-2 text-xs font-medium text-destructive bg-destructive/10 border border-destructive/20 rounded-md"
+          >
             {error}
           </div>
         )}
@@ -83,9 +87,16 @@ export function ProposalItem({ proposal, onUpdate }: ProposalItemProps) {
             {isEditing && <CharacterCounter current={front.length} max={200} />}
           </div>
           {isEditing ? (
-            <Textarea value={front} onChange={(e) => setFront(e.target.value)} className="min-h-[80px] resize-none" />
+            <Textarea
+              data-testid="proposal-front-input"
+              value={front}
+              onChange={(e) => setFront(e.target.value)}
+              className="min-h-[80px] resize-none"
+            />
           ) : (
-            <p className="text-sm min-h-[40px] whitespace-pre-wrap">{proposal.front}</p>
+            <p data-testid="proposal-front-text" className="text-sm min-h-[40px] whitespace-pre-wrap">
+              {proposal.front}
+            </p>
           )}
         </div>
 
@@ -95,9 +106,16 @@ export function ProposalItem({ proposal, onUpdate }: ProposalItemProps) {
             {isEditing && <CharacterCounter current={back.length} max={500} />}
           </div>
           {isEditing ? (
-            <Textarea value={back} onChange={(e) => setBack(e.target.value)} className="min-h-[100px] resize-none" />
+            <Textarea
+              data-testid="proposal-back-input"
+              value={back}
+              onChange={(e) => setBack(e.target.value)}
+              className="min-h-[100px] resize-none"
+            />
           ) : (
-            <p className="text-sm min-h-[40px] whitespace-pre-wrap">{proposal.back}</p>
+            <p data-testid="proposal-back-text" className="text-sm min-h-[40px] whitespace-pre-wrap">
+              {proposal.back}
+            </p>
           )}
         </div>
       </CardContent>
@@ -105,11 +123,22 @@ export function ProposalItem({ proposal, onUpdate }: ProposalItemProps) {
       <CardFooter className="flex justify-between bg-muted/30 pt-4 pb-4">
         {isEditing ? (
           <div className="flex gap-2 w-full">
-            <Button size="sm" variant="outline" className="flex-1" onClick={handleCancelEdit}>
+            <Button
+              data-testid="proposal-cancel-button"
+              size="sm"
+              variant="outline"
+              className="flex-1"
+              onClick={handleCancelEdit}
+            >
               <RotateCcw className="w-4 h-4 mr-2" />
               Anuluj
             </Button>
-            <Button size="sm" className="flex-1" onClick={handleSaveEdit}>
+            <Button
+              data-testid="proposal-save-button"
+              size="sm"
+              className="flex-1"
+              onClick={handleSaveEdit}
+            >
               <Save className="w-4 h-4 mr-2" />
               Zapisz edycję
             </Button>
@@ -118,6 +147,7 @@ export function ProposalItem({ proposal, onUpdate }: ProposalItemProps) {
           <>
             <div className="flex gap-2">
               <Button
+                data-testid="proposal-accept-button"
                 size="sm"
                 variant={proposal.status === "accepted" ? "default" : "outline"}
                 className={cn(proposal.status === "accepted" && "bg-green-600 hover:bg-green-700")}
@@ -127,6 +157,7 @@ export function ProposalItem({ proposal, onUpdate }: ProposalItemProps) {
                 Zatwierdź
               </Button>
               <Button
+                data-testid="proposal-reject-button"
                 size="sm"
                 variant={proposal.status === "rejected" ? "destructive" : "outline"}
                 onClick={() => handleStatusChange("rejected")}
@@ -135,7 +166,7 @@ export function ProposalItem({ proposal, onUpdate }: ProposalItemProps) {
                 Odrzuć
               </Button>
             </div>
-            <Button size="sm" variant="ghost" onClick={handleEdit}>
+            <Button data-testid="proposal-edit-button" size="sm" variant="ghost" onClick={handleEdit}>
               <Pencil className="w-4 h-4 mr-2" />
               Edytuj
             </Button>

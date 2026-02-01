@@ -84,7 +84,7 @@ The testing environment for the 10x Flashcard Builder project has been successfu
 
 ### CI/CD Files (1)
 
-14. ✅ `.github/workflows/tests.yml` - GitHub Actions workflow for running tests
+14. ✅ `.github/workflows/tests.yml` - GitHub Actions workflow for running unit tests and linting
 
 ### Updated Files (5)
 
@@ -121,8 +121,8 @@ npm run test:e2e:report   # View Playwright HTML report
 
 ```bash
 npx playwright codegen              # Generate tests interactively
-npx playwright test --headed        # Run tests in headed mode
-npx playwright test --debug         # Debug tests
+npm run test:e2e -- --headed        # Run tests in headed mode
+npm run test:e2e -- --debug         # Debug tests
 npx playwright show-trace trace.zip # View trace file
 ```
 
@@ -270,7 +270,7 @@ npx playwright show-trace trace.zip # View trace file
    npm run test:e2e       # Run E2E tests
    ```
 
-4. **CI/CD Pipeline:**
+4. **CI/CD Pipeline:** Configured for unit tests and linting. E2E tests are ready for integration (pending secrets setup).
    - Automatically runs on push/PR to main, master, develop
    - Runs unit tests with coverage
    - Runs E2E tests with Chromium
@@ -410,7 +410,7 @@ npx playwright show-trace trace.zip # View trace file
 - ✅ Configuration files created
 - ✅ Example tests written and passing
 - ✅ Documentation comprehensive
-- ✅ CI/CD pipeline configured
+- ✅ CI/CD pipeline configured for unit tests and linting
 - ✅ IDE integration set up
 
 **You can now start writing tests for your application!**

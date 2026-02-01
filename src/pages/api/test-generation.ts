@@ -17,7 +17,6 @@ export const GET: APIRoute = async ({ locals }) => {
 
   try {
     // eslint-disable-next-line no-console
-    console.log("[TestEndpoint] Starting test generation...");
 
     const user = locals.user;
     if (!user) {

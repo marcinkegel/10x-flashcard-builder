@@ -40,7 +40,7 @@ The main hurdle for students using spaced repetition is the high effort of manua
 
 - **Supabase:** PostgreSQL database, Authentication (GoTrue), and SSR-ready client integration.
 - **OpenRouter.ai:** Unified API to access various LLMs for flashcard generation.
-- **GitHub Actions:** Automated CI/CD pipeline for running tests on push.
+- **GitHub Actions:** Automated CI/CD pipeline for running unit tests and linting on push.
 - **Husky & lint-staged:** Pre-commit hooks for code quality.
 
 ## Getting Started Locally
@@ -124,7 +124,7 @@ For detailed testing documentation, see:
 - ✅ Flashcard Library with full CRUD operations.
 - ✅ User authentication (Login, Register, Password Reset).
 - ✅ Profile management and account deletion.
-- ✅ Automated CI/CD with GitHub Actions.
+- ✅ Automated CI/CD with GitHub Actions (Unit Tests & Linting).
 
 ### Out of Scope (Future Updates):
 
@@ -137,7 +137,7 @@ For detailed testing documentation, see:
 ## Project Status
 
 **Current Status:** `MVP Development`
-The project has implemented core AI generation, flashcard management, and authentication. CI/CD is configured, and testing coverage is being actively expanded.
+The project has implemented core AI generation, flashcard management, and authentication. CI/CD is configured for unit tests and linting. A comprehensive suite of E2E tests is fully operational for manual execution. Testing coverage is being actively maintained and expanded.
 
 ## License
 

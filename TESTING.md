@@ -208,16 +208,16 @@ test("login flow", async ({ page }) => {
 npx playwright codegen http://localhost:4321
 
 # Run specific test file
-npx playwright test tests/e2e/login.spec.ts
+npm run test:e2e -- tests/e2e/login.spec.ts
 
 # Run tests in headed mode
-npx playwright test --headed
+npm run test:e2e -- --headed
 
 # Debug tests
-npx playwright test --debug
+npm run test:e2e -- --debug
 
 # View test report
-npx playwright show-report
+npm run test:e2e:report
 ```
 
 ---
@@ -263,6 +263,8 @@ tests/
 
 ## CI/CD Integration
 
+Currently, the automated CI/CD pipeline includes **Unit Tests and Linting**. E2E tests are excluded from the automated pipeline to avoid dependency on cloud secrets and external APIs, but they are fully operational for manual execution.
+
 Tests run automatically on:
 
 - Push to `main`, `master`, or `develop` branches
@@ -277,22 +279,22 @@ The workflow in `.github/workflows/tests.yml`:
    - Generates coverage report
    - Uploads to Codecov
 
-2. **E2E Tests Job**:
-   - Installs Playwright browsers
-   - Runs E2E tests
-   - Uploads test artifacts
+### Future E2E Integration
 
-### Environment Variables for CI
-
-Set these in GitHub repository secrets:
+To enable E2E tests in CI/CD, the following GitHub repository secrets must be configured:
 
 ```bash
 # Supabase
 SUPABASE_URL=your_supabase_url
-SUPABASE_ANON_KEY=your_supabase_anon_key
+SUPABASE_KEY=your_supabase_key
 
-# OpenRouter (if needed for tests)
+# OpenRouter
 OPENROUTER_API_KEY=your_openrouter_api_key
+
+# E2E Test User
+E2E_USER_ID=your_test_user_id
+E2E_USERNAME=your_test_user_email
+E2E_PASSWORD=your_test_user_password
 ```
 
 ---

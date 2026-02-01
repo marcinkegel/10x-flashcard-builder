@@ -71,7 +71,7 @@ export function FlashcardsLibrary() {
 
   if (isInitialLoading) {
     return (
-      <div className="space-y-8">
+      <div data-testid="library-loading" className="space-y-8">
         <div className="flex flex-col gap-2">
           <div className="h-10 w-48 bg-muted animate-pulse rounded-md" />
           <div className="h-5 w-64 bg-muted animate-pulse rounded-md" />
@@ -92,13 +92,19 @@ export function FlashcardsLibrary() {
 
   if (error) {
     return (
-      <div className="max-w-2xl mx-auto py-12">
+      <div data-testid="library-error" className="max-w-2xl mx-auto py-12">
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertTitle>Błąd</AlertTitle>
           <AlertDescription className="flex flex-col gap-4">
             <p>{error}</p>
-            <Button variant="outline" size="sm" onClick={() => fetchFlashcards(currentPage)} className="w-fit">
+            <Button
+              data-testid="retry-button"
+              variant="outline"
+              size="sm"
+              onClick={() => fetchFlashcards(currentPage)}
+              className="w-fit"
+            >
               <RefreshCw className="w-4 h-4 mr-2" />
               Spróbuj ponownie
             </Button>
@@ -109,19 +115,22 @@ export function FlashcardsLibrary() {
   }
 
   return (
-    <div className="space-y-8">
+    <div data-testid="flashcards-library" className="space-y-8">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <Library className="w-6 h-6 text-primary" />
-            <h1 className="text-3xl font-bold tracking-tight">Moje fiszki</h1>
+            <h1 data-testid="library-title" className="text-3xl font-bold tracking-tight">Moje fiszki</h1>
           </div>
           <p className="text-muted-foreground">
             Zarządzaj swoją bazą wiedzy. Przeglądaj, edytuj i usuwaj zapisane fiszki.
           </p>
         </div>
         {pagination && pagination.total > 0 && (
-          <div className="text-sm text-muted-foreground bg-muted/50 px-3 py-1 rounded-full w-fit">
+          <div
+            data-testid="flashcards-count"
+            className="text-sm text-muted-foreground bg-muted/50 px-3 py-1 rounded-full w-fit"
+          >
             Razem: <span className="font-semibold text-foreground">{pagination.total}</span>
           </div>
         )}

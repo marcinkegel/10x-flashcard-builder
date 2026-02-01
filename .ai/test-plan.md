@@ -341,7 +341,7 @@ Celem niniejszego planu jest zapewnienie jakości aktualnie zaimplementowanych m
 2. **Network Mocking** - E2E testy domyślnie mockują external APIs dla szybkości.
 3. **Authentication** - Test users są tworzeni automatycznie w setupie testowym.
 4. **Database Migrations** - Test DB jest resetowana przed każdym integration test run.
-5. **CI/CD** - Testy uruchamiają się automatycznie tylko dla PR do `main` branch.
+5. **CI/CD** - Unit tests and linting run automatically on PR/push. E2E tests are manual for now.
 6. **Parallel Execution** - Unit testy w parallel, E2E sequential (ze względu na DB state).
 7. **Timeouts** - OpenRouter calls mają timeout 30s, inne API 5s.
 
@@ -913,7 +913,7 @@ describe("Flashcards API Integration", () => {
 - ✅ Code coverage dla `src/lib/services/` ≥ 70%
 - ✅ Code coverage dla `src/components/features/` ≥ 60%
 - ✅ Brak błędów priorytetu "Blocker" i "Critical"
-- ✅ Testy uruchamiają się w CI/CD na każdym PR
+- ✅ Unit tests run in CI/CD on every PR. E2E tests are manual.
 - ✅ Dokumentacja testów (README.md w katalogu tests/)
 - ✅ Wszystkie testy są deterministyczne (nie flaky)
 - ✅ Średni czas wykonania testów jednostkowych < 30s

@@ -52,9 +52,9 @@
 - ✅ `TESTING.md` - Comprehensive testing guide
 - ✅ `tests/README.md` - Test directory overview
 
-### CI/CD
+### CI/CD (Unit Tests & Linting)
 
-- ✅ `.github/workflows/tests.yml` - GitHub Actions workflow
+- ✅ `.github/workflows/tests.yml` - GitHub Actions workflow for unit tests and linting
 
 ### Updated Files
 
