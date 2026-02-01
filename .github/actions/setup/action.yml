@@ -13,4 +13,4 @@ runs:
       shell: bash
       run: |
         npm ci
-        npm install @rollup/rollup-linux-x64-gnu --no-save
+        npm install @rollup/rollup-linux-x64-gnu lightningcss-linux-x64-gnu --no-save
