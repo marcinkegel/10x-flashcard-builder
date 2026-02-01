@@ -504,16 +504,25 @@ Po zakończeniu testów:
    npx playwright show-trace trace.zip
    ```
 
-## Przyszły rozwój: Continuous Integration
+## Continuous Integration
 
-Obecnie testy E2E **nie są** częścią automatycznego pipeline'u CI/CD ze względu na wymagania dotyczące konfiguracji sekretów i dostępu do API w chmurze.
+Testy E2E są integralną częścią automatycznego pipeline'u CI/CD.
 
-W przyszłości planujemy:
+### Jak to działa w CI?
 
-- Automatyczne uruchomienie przy PR i push do main (po skonfigurowaniu GitHub Actions Secrets)
-- Wyłączenie parallel execution na CI dla większej stabilności
-- Konfigurację 2 retries dla failed tests
-- Publikację Artifacts (screenshots, videos, traces) dostępnych po zakończeniu testu na CI
+1. **Wyzwalanie:** Przy każdym PR oraz push do `main`, `master`, `develop`.
+2. **Środowisko:** `ubuntu-latest`.
+3. **Workflow:** `.github/workflows/pull-request.yml`.
+4. **Sekrety:** CI używa dedykowanych sekretów (`SUPABASE_KEY`, `OPENROUTER_API_KEY`, `E2E_USERNAME`, `E2E_PASSWORD`) oraz zmiennych (`SUPABASE_URL`).
+5. **Artefakty:** Po zakończeniu testów, raporty Playwright są publikowane jako artefakty (dostępne przez 30 dni).
+6. **Status:** Wynik testów jest raportowany w statusie PR, a po sukcesie dodawany jest komentarz podsumowujący.
+
+### Konfiguracja CI
+
+W pipeline CI:
+- Testy działają w trybie headless.
+- Wykorzystywany jest tylko Chromium dla optymalizacji czasu.
+- Retries są skonfigurowane dla większej stabilności (jeśli włączone w configu).
 
 ## Dalszy rozwój
 

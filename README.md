@@ -124,7 +124,7 @@ For detailed testing documentation, see:
 - ✅ Flashcard Library with full CRUD operations.
 - ✅ User authentication (Login, Register, Password Reset).
 - ✅ Profile management and account deletion.
-- ✅ Automated CI/CD with GitHub Actions (Unit Tests & Linting).
+- ✅ Automated CI/CD with GitHub Actions (Linting, Unit Tests, and E2E Tests).
 
 ### Out of Scope (Future Updates):
 
@@ -137,7 +137,7 @@ For detailed testing documentation, see:
 ## Project Status
 
 **Current Status:** `MVP Development`
-The project has implemented core AI generation, flashcard management, and authentication. CI/CD is configured for unit tests and linting. A comprehensive suite of E2E tests is fully operational for manual execution. Testing coverage is being actively maintained and expanded.
+The project has implemented core AI generation, flashcard management, and authentication. CI/CD is fully configured for linting, unit tests, and E2E tests. A comprehensive suite of E2E tests is operational both locally and in the automated CI pipeline. Testing coverage is being actively maintained and expanded.
 
 ## License
 
