@@ -15,8 +15,8 @@ test.describe("Flashcards Library", () => {
     const loginPage = new LoginPage(page);
     await loginPage.goto();
 
-    const email = process.env.E2E_USERNAME!;
-    const password = process.env.E2E_PASSWORD!;
+    const email = process.env.E2E_USERNAME ?? "";
+    const password = process.env.E2E_PASSWORD ?? "";
 
     await loginPage.login(email, password);
     await loginPage.waitForSuccessfulLogin();

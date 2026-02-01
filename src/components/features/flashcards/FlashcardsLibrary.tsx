@@ -120,7 +120,9 @@ export function FlashcardsLibrary() {
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <Library className="w-6 h-6 text-primary" />
-            <h1 data-testid="library-title" className="text-3xl font-bold tracking-tight">Moje fiszki</h1>
+            <h1 data-testid="library-title" className="text-3xl font-bold tracking-tight">
+              Moje fiszki
+            </h1>
           </div>
           <p className="text-muted-foreground">
             Zarządzaj swoją bazą wiedzy. Przeglądaj, edytuj i usuwaj zapisane fiszki.

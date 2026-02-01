@@ -7,6 +7,7 @@ Data: 2026-01-31
 ## 📋 Wykonane zadania
 
 ### 1. ✅ Weryfikacja konfiguracji Playwright
+
 - Zweryfikowano konfigurację `playwright.config.ts`
 - Potwierdzono poprawne załadowanie zmiennych środowiskowych z `.env.test`
 - Sprawdzono instalację biblioteki `dotenv`
@@ -17,6 +18,7 @@ Data: 2026-01-31
 Dodano selektory do następujących komponentów:
 
 #### LoginForm.tsx
+
 - `login-form` - główny kontener
 - `login-email-input` - pole email
 - `login-password-input` - pole hasła
@@ -26,6 +28,7 @@ Dodano selektory do następujących komponentów:
 - `forgot-password-link` - link przypomnienia hasła
 
 #### AIGenerationForm.tsx
+
 - `ai-generation-form` - główny kontener
 - `source-text-input` - pole tekstowe
 - `generate-button` - przycisk generowania
@@ -34,6 +37,7 @@ Dodano selektory do następujących komponentów:
 - `active-proposals-warning` - ostrzeżenie
 
 #### ProposalItem.tsx
+
 - `proposal-item` - kontener propozycji
 - `proposal-front-text`, `proposal-back-text` - teksty (widok)
 - `proposal-front-input`, `proposal-back-input` - inputy (edycja)
@@ -41,11 +45,13 @@ Dodano selektory do następujących komponentów:
 - `proposal-edit-button`, `proposal-save-button`, `proposal-cancel-button` - edycja
 
 #### FlashcardItem.tsx
+
 - `flashcard-item` - kontener fiszki
 - `flashcard-front-text`, `flashcard-back-text` - teksty
 - `flashcard-edit-button`, `flashcard-delete-button` - akcje
 
 #### FlashcardsLibrary.tsx
+
 - `flashcards-library` - główny kontener
 - `flashcards-count` - licznik
 - `library-loading` - stan ładowania
@@ -77,6 +83,7 @@ Zbudowano 3 kompletne Page Object Models:
 Utworzono 28 testów E2E w 3 plikach:
 
 #### auth-login.spec.ts (10 testów)
+
 - Wyświetlanie formularza
 - Logowanie (success + error cases)
 - Walidacja pól
@@ -84,6 +91,7 @@ Utworzono 28 testów E2E w 3 plikach:
 - Stany UI
 
 #### flashcard-generation.spec.ts (8 testów)
+
 - Formularz generowania
 - Walidacja tekstu (min/max)
 - Generowanie przez AI
@@ -91,6 +99,7 @@ Utworzono 28 testów E2E w 3 plikach:
 - Nawigacja po zapisie
 
 #### flashcards-library.spec.ts (10 testów)
+
 - Wyświetlanie biblioteki
 - Operacje CRUD na fiszkach
 - Dialogi edycji/usuwania
@@ -100,6 +109,7 @@ Utworzono 28 testów E2E w 3 plikach:
 ### 5. ✅ Dokumentacja
 
 Utworzono kompletną dokumentację:
+
 - `tests/e2e/README.md` - 350+ linii szczegółowej dokumentacji
 - Opis wszystkich testów i scenariuszy
 - Instrukcje uruchamiania
@@ -120,6 +130,7 @@ Utworzono kompletną dokumentację:
 ## 🔧 Konfiguracja
 
 ### Playwright
+
 - ✅ Skonfigurowany z `dotenv` do odczytu `.env.test`
 - ✅ BaseURL: `http://localhost:3000`
 - ✅ Browser: Chromium (Desktop Chrome)
@@ -128,6 +139,7 @@ Utworzono kompletną dokumentację:
 - ✅ Artifacts: screenshots, video, traces
 
 ### Zmienne środowiskowe (.env.test)
+
 - ✅ `SUPABASE_URL` - konfiguracja bazy testowej
 - ✅ `SUPABASE_KEY` - klucz publiczny (zgodnie z wymaganiem)
 - ✅ `E2E_USER_ID` - ID użytkownika testowego
@@ -142,16 +154,18 @@ Utworzono kompletną dokumentację:
 ✅ Selektory `data-testid` wewnątrz komponentów  
 ✅ Page Object Model pattern  
 ✅ Tylko Chromium/Desktop Chrome  
-✅ Zgodność z `.cursor/rules/testing-e2e-playwright.mdc`  
+✅ Zgodność z `.cursor/rules/testing-e2e-playwright.mdc`
 
 ## 🚀 Jak uruchomić testy
 
 ### Krok 1: Zainstaluj przeglądarki
+
 ```bash
 npx playwright install chromium
 ```
 
 ### Krok 2: Uruchom testy
+
 ```bash
 # Wszystkie testy
 # Playwright AUTOMATYCZNIE uruchomi serwer z konfiguracją z .env.test!
@@ -171,6 +185,7 @@ npm run test:e2e -- --debug
 ```
 
 **WAŻNE:** Playwright automatycznie:
+
 1. ✅ Ładuje zmienne z `.env.test`
 2. ✅ Uruchamia serwer deweloperski z tymi zmiennymi
 3. ✅ Łączy się z bazą danych Supabase **w chmurze** (nie lokalną!)
@@ -181,18 +196,21 @@ npm run test:e2e -- --debug
 ## 📈 Następne kroki
 
 ### Przed pierwszym uruchomieniem:
+
 1. ✅ Zainstaluj przeglądarki: `npx playwright install chromium`
 2. ✅ Sprawdź czy `.env.test` zawiera poprawne dane Supabase **w chmurze**
 3. ✅ Upewnij się że użytkownik testowy istnieje w bazie Supabase w chmurze
 4. ✅ Uruchom testy: `npm run test:e2e` (Playwright sam uruchomi serwer!)
 
 **Playwright automatycznie zarządza serwerem:**
+
 - ✅ Uruchamia serwer z `.env.test` przed testami
 - ✅ Łączy aplikację z bazą Supabase w chmurze
 - ✅ Zamyka serwer po zakończeniu testów
 - ✅ Nie koliduje z ręcznie uruchomionym `npm run dev`
 
 ### Potencjalne rozszerzenia:
+
 - [ ] Dodać testy dla sesji nauki (gdy feature będzie gotowy)
 - [ ] Implementować test fixtures dla setup/teardown
 - [ ] Dodać visual regression testing
@@ -220,6 +238,7 @@ npm run test:e2e -- --debug
 ## 📞 Wsparcie
 
 W razie pytań lub problemów:
+
 1. Przeczytaj `tests/e2e/README.md`
 2. Sprawdź dokumentację Playwright: https://playwright.dev
 3. Przejrzyj przykładowe testy jako reference

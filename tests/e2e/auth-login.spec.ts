@@ -26,8 +26,8 @@ test.describe("Authentication - Login Flow", () => {
     const loginPage = new LoginPage(page);
 
     // Use credentials from .env.test
-    const email = process.env.E2E_USERNAME!;
-    const password = process.env.E2E_PASSWORD!;
+    const email = process.env.E2E_USERNAME ?? "";
+    const password = process.env.E2E_PASSWORD ?? "";
 
     // Fill and submit login form
     await loginPage.login(email, password);
@@ -82,8 +82,8 @@ test.describe("Authentication - Login Flow", () => {
   test("should show loading state during login", async ({ page }) => {
     const loginPage = new LoginPage(page);
 
-    const email = process.env.E2E_USERNAME!;
-    const password = process.env.E2E_PASSWORD!;
+    const email = process.env.E2E_USERNAME ?? "";
+    const password = process.env.E2E_PASSWORD ?? "";
 
     // Fill form
     await loginPage.fillCredentials(email, password);
@@ -126,8 +126,8 @@ test.describe("Authentication - Login Flow", () => {
     // Navigate to login with redirectTo parameter
     await page.goto("/login?redirectTo=/flashcards");
 
-    const email = process.env.E2E_USERNAME!;
-    const password = process.env.E2E_PASSWORD!;
+    const email = process.env.E2E_USERNAME ?? "";
+    const password = process.env.E2E_PASSWORD ?? "";
 
     // Login
     await loginPage.login(email, password);
@@ -142,16 +142,16 @@ test.describe("Authentication - Login Flow", () => {
   test("should disable form inputs during login", async ({ page }) => {
     const loginPage = new LoginPage(page);
 
-    const email = process.env.E2E_USERNAME!;
-    const password = process.env.E2E_PASSWORD!;
+    const email = process.env.E2E_USERNAME ?? "";
+    const password = process.env.E2E_PASSWORD ?? "";
 
     await loginPage.fillCredentials(email, password);
     await loginPage.submit();
 
     // Inputs should be disabled during submission
     // Note: This might be fast, but we can check if at least one is disabled
-    const emailDisabled = await loginPage.emailInput.isDisabled();
-    const passwordDisabled = await loginPage.passwordInput.isDisabled();
+    await loginPage.emailInput.isDisabled();
+    await loginPage.passwordInput.isDisabled();
     const buttonDisabled = await loginPage.submitButton.isDisabled();
 
     // At least the button should be disabled or we're already redirected

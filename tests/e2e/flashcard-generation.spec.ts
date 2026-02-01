@@ -15,7 +15,7 @@ function makeUniqueText(baseText: string): string {
 
 /**
  * E2E tests for AI flashcard generation flow
- * 
+ *
  * Prerequisites:
  * - User must exist in test database with credentials from .env.test
  * - OpenRouter API key must be valid in .env.test
@@ -26,8 +26,8 @@ test.describe("AI Flashcard Generation Flow", () => {
     const loginPage = new LoginPage(page);
     await loginPage.goto();
 
-    const email = process.env.E2E_USERNAME!;
-    const password = process.env.E2E_PASSWORD!;
+    const email = process.env.E2E_USERNAME ?? "";
+    const password = process.env.E2E_PASSWORD ?? "";
 
     await loginPage.login(email, password);
     await loginPage.waitForSuccessfulLogin();

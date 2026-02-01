@@ -42,23 +42,25 @@ export class LoginPage {
     // Wait for inputs to be ready and visible
     await this.emailInput.waitFor({ state: "visible" });
     await this.passwordInput.waitFor({ state: "visible" });
-    
+
     // Clear first then fill
     await this.emailInput.clear();
     await this.emailInput.fill(email);
-    
+
     await this.passwordInput.clear();
     await this.passwordInput.fill(password);
-    
+
     // Verify the values were filled correctly
     const emailValue = await this.emailInput.inputValue();
     const passwordValue = await this.passwordInput.inputValue();
-    
+
     if (emailValue !== email) {
-      console.error(`Email not filled correctly. Expected: ${email}, Got: ${emailValue}`);
+      // console.error(`Email not filled correctly. Expected: ${email}, Got: ${emailValue}`);
     }
     if (passwordValue !== password) {
-      console.error(`Password not filled correctly. Expected length: ${password.length}, Got length: ${passwordValue.length}`);
+      /* console.error(
+        `Password not filled correctly. Expected length: ${password.length}, Got length: ${passwordValue.length}`
+      ); */
     }
   }
 
@@ -95,7 +97,7 @@ export class LoginPage {
    * Get error message text
    */
   async getErrorText(): Promise<string> {
-    return await this.errorMessage.textContent() || "";
+    return (await this.errorMessage.textContent()) || "";
   }
 
   /**

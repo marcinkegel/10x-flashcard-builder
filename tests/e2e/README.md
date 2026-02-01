@@ -24,6 +24,7 @@ tests/e2e/
 ### Konfiguracja
 
 Testy używają konfiguracji z pliku `.env.test`:
+
 - `SUPABASE_URL` - URL do testowej bazy Supabase
 - `SUPABASE_KEY` - Klucz publiczny Supabase
 - `E2E_USER_ID` - ID użytkownika testowego
@@ -36,6 +37,7 @@ Testy używają konfiguracji z pliku `.env.test`:
 Wszystkie kluczowe elementy UI mają dodane selektory `data-testid` dla stabilności testów:
 
 ### LoginForm
+
 - `login-form` - cały formularz
 - `login-email-input` - pole email
 - `login-password-input` - pole hasła
@@ -45,6 +47,7 @@ Wszystkie kluczowe elementy UI mają dodane selektory `data-testid` dla stabilno
 - `forgot-password-link` - link do przypomnienia hasła
 
 ### AIGenerationForm
+
 - `ai-generation-form` - cały formularz
 - `source-text-input` - pole tekstowe źródła
 - `generate-button` - przycisk generowania
@@ -53,6 +56,7 @@ Wszystkie kluczowe elementy UI mają dodane selektory `data-testid` dla stabilno
 - `active-proposals-warning` - ostrzeżenie o aktywnych propozycjach
 
 ### ProposalItem
+
 - `proposal-item` - kontener propozycji
 - `proposal-front-text` - tekst przodu (widok)
 - `proposal-back-text` - tekst tyłu (widok)
@@ -65,6 +69,7 @@ Wszystkie kluczowe elementy UI mają dodane selektory `data-testid` dla stabilno
 - `proposal-cancel-button` - przycisk anuluj
 
 ### FlashcardItem
+
 - `flashcard-item` - kontener fiszki
 - `flashcard-front-text` - tekst przodu
 - `flashcard-back-text` - tekst tyłu
@@ -72,6 +77,7 @@ Wszystkie kluczowe elementy UI mają dodane selektory `data-testid` dla stabilno
 - `flashcard-delete-button` - przycisk usuwania
 
 ### FlashcardsLibrary
+
 - `flashcards-library` - główny kontener
 - `library-title` - nagłówek "Moje fiszki"
 - `flashcards-count` - licznik fiszek
@@ -80,6 +86,7 @@ Wszystkie kluczowe elementy UI mają dodane selektory `data-testid` dla stabilno
 - `retry-button` - przycisk ponowienia
 
 ### ManualFlashcardForm
+
 - `manual-front-input` - pole tekstowe przodu (ręczne)
 - `manual-back-input` - pole tekstowe tyłu (ręczne)
 - `manual-submit-button` - przycisk zapisu (ręczne)
@@ -138,6 +145,7 @@ Wszystkie kluczowe elementy UI mają dodane selektory `data-testid` dla stabilno
 Testy wykorzystują wzorzec Page Object Model dla lepszej maintainability:
 
 ### LoginPage
+
 ```typescript
 const loginPage = new LoginPage(page);
 await loginPage.goto();
@@ -146,6 +154,7 @@ await loginPage.waitForSuccessfulLogin();
 ```
 
 ### GeneratePage
+
 ```typescript
 const generatePage = new GeneratePage(page);
 await generatePage.goto();
@@ -157,6 +166,7 @@ await proposal.accept();
 ```
 
 ### FlashcardsLibraryPage
+
 ```typescript
 const libraryPage = new FlashcardsLibraryPage(page);
 await libraryPage.goto();
@@ -169,11 +179,13 @@ await flashcard.clickEdit();
 ### Wymagania wstępne
 
 1. Zainstaluj przeglądarki Playwright:
+
 ```bash
 npx playwright install chromium
 ```
 
 2. Upewnij się, że plik `.env.test` zawiera poprawne dane:
+
 ```env
 SUPABASE_URL=https://your-project.supabase.co
 SUPABASE_KEY=your_public_key
@@ -223,27 +235,31 @@ npm run test:e2e:report
 - **Video:** Zachowywane przy błędzie
 - **WebServer:** Automatycznie uruchamia `npm run dev` z zmiennymi z `.env.test`
 
-**WAŻNE:** Playwright automatycznie uruchamia serwer deweloperski z konfiguracją z `.env.test`. 
+**WAŻNE:** Playwright automatycznie uruchamia serwer deweloperski z konfiguracją z `.env.test`.
 Nie musisz ręcznie uruchamiać `npm run dev` - Playwright zrobi to za Ciebie z prawidłową konfiguracją!
 
 ## Best Practices
 
 ### 1. Stabilność testów
+
 - Używaj `data-testid` zamiast selektorów CSS/XPath
 - Dodawaj odpowiednie `waitFor` dla asynchronicznych operacji
 - Unikaj hardcoded timeouts - używaj `waitForVisible`, `waitForURL` itp.
 
 ### 2. Page Object Model
+
 - Każda strona ma dedykowany POM
 - POM zawiera wszystkie lokatory i akcje
 - Testy operują na wysokim poziomie abstrakcji
 
 ### 3. Test Data
+
 - Użyj dedykowanej testowej bazy danych
 - Izoluj dane testowe między testami
 - Cleanup po testach
 
 ### 4. Assertions
+
 - Używaj Playwright assertions (`expect` from @playwright/test)
 - Weryfikuj stan UI, a nie tylko obecność elementów
 - Testuj happy path i edge cases
@@ -251,22 +267,29 @@ Nie musisz ręcznie uruchamiać `npm run dev` - Playwright zrobi to za Ciebie z 
 ## Rozwiązywanie problemów
 
 ### Problem: Testy timeout
+
 **Rozwiązanie:** Sprawdź czy serwer deweloperski działa i zwiększ timeout w konfiguracji.
 
 ### Problem: Element not found
-**Rozwiązanie:** 
+
+**Rozwiązanie:**
+
 1. Sprawdź czy `data-testid` jest poprawnie dodany
 2. Dodaj `await element.waitFor()` przed interakcją
 3. Sprawdź czy element nie jest w Shadow DOM
 
 ### Problem: Flaky tests
+
 **Rozwiązanie:**
+
 1. Usuń `page.waitForTimeout()` - używaj dedykowanych wait
 2. Dodaj retry logic dla asynchronicznych operacji
 3. Sprawdź race conditions
 
 ### Problem: Przeglądarki nie zainstalowane
+
 **Rozwiązanie:**
+
 ```bash
 npx playwright install chromium
 ```
@@ -287,9 +310,10 @@ Po zakończeniu testów:
 
 ## Przyszły rozwój: Continuous Integration
 
-Obecnie testy E2E **nie są** częścią automatycznego pipeline'u CI/CD ze względu na wymagania dotyczące konfiguracji sekretów i dostępu do API w chmurze. 
+Obecnie testy E2E **nie są** częścią automatycznego pipeline'u CI/CD ze względu na wymagania dotyczące konfiguracji sekretów i dostępu do API w chmurze.
 
 W przyszłości planujemy:
+
 - Automatyczne uruchomienie przy PR i push do main (po skonfigurowaniu GitHub Actions Secrets)
 - Wyłączenie parallel execution na CI dla większej stabilności
 - Konfigurację 2 retries dla failed tests
@@ -298,6 +322,7 @@ W przyszłości planujemy:
 ## Dalszy rozwój
 
 ### Planowane usprawnienia
+
 - [ ] Dodać testy dla sesji nauki (gdy funkcja będzie zaimplementowana)
 - [ ] Dodać visual regression testing
 - [ ] Implementować test fixtures dla wspólnych setup/teardown
@@ -305,6 +330,7 @@ W przyszłości planujemy:
 - [ ] Rozszerzyć coverage o mobile viewports
 
 ### Możliwe rozszerzenia
+
 - API testing z Playwright
 - Component testing dla izolowanych komponentów
 - Accessibility testing z axe-core
@@ -313,6 +339,7 @@ W przyszłości planujemy:
 ## Kontakt i wsparcie
 
 Przy problemach z testami:
+
 1. Sprawdź dokumentację Playwright: https://playwright.dev
 2. Przejrzyj test logs i trace files
 3. Skontaktuj się z zespołem QA

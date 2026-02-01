@@ -133,12 +133,7 @@ export function ProposalItem({ proposal, onUpdate }: ProposalItemProps) {
               <RotateCcw className="w-4 h-4 mr-2" />
               Anuluj
             </Button>
-            <Button
-              data-testid="proposal-save-button"
-              size="sm"
-              className="flex-1"
-              onClick={handleSaveEdit}
-            >
+            <Button data-testid="proposal-save-button" size="sm" className="flex-1" onClick={handleSaveEdit}>
               <Save className="w-4 h-4 mr-2" />
               Zapisz edycję
             </Button>

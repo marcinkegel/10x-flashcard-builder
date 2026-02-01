@@ -38,7 +38,10 @@ export function FlashcardItem({ flashcard, onUpdate, onDelete, index = 0 }: Flas
 
           <div className="space-y-2">
             <h4 className="text-xs font-semibold uppercase text-muted-foreground tracking-tight">Tył</h4>
-            <p data-testid="flashcard-back-text" className="text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap">
+            <p
+              data-testid="flashcard-back-text"
+              className="text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap"
+            >
               {flashcard.back}
             </p>
           </div>

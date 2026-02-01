@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test } from "@playwright/test";
 import { LoginPage } from "./pages/LoginPage";
 import { FlashcardsPage } from "./pages/FlashcardsPage";
 import { Navbar } from "./pages/Navbar";
@@ -8,8 +8,8 @@ test.describe("Flashcard Creation and Library Management", () => {
   let flashcardsPage: FlashcardsPage;
   let navbar: Navbar;
 
-  const TEST_USER_EMAIL = process.env.E2E_USERNAME!;
-  const TEST_USER_PASSWORD = process.env.E2E_PASSWORD!;
+  const TEST_USER_EMAIL = process.env.E2E_USERNAME ?? "";
+  const TEST_USER_PASSWORD = process.env.E2E_PASSWORD ?? "";
 
   test.beforeEach(async ({ page }) => {
     loginPage = new LoginPage(page);

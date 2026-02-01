@@ -83,22 +83,22 @@ The main hurdle for students using spaced repetition is the high effort of manua
 
 ## Available Scripts
 
-| Script                    | Description                                                |
-| :------------------------ | :--------------------------------------------------------- |
-| `npm run dev`             | Starts the development server.                             |
-| `npm run build`           | Builds the application for production.                     |
-| `npm run preview`         | Locally previews the production build.                     |
-| `npm run lint`            | Runs ESLint to check for code quality issues.              |
-| `npm run lint:fix`        | Automatically fixes linting issues.                        |
-| `npm run format`          | Formats the codebase using Prettier.                       |
-| `npm run astro`           | Access the Astro CLI.                                      |
-| `npm run test`            | Runs unit tests with Vitest.                               |
-| `npm run test:watch`      | Runs unit tests in watch mode.                             |
-| `npm run test:ui`         | Opens Vitest UI for interactive testing.                   |
-| `npm run test:coverage`   | Generates test coverage report.                            |
-| `npm run test:e2e`        | Runs end-to-end tests with Playwright.                     |
-| `npm run test:e2e:ui`     | Opens Playwright UI for interactive E2E testing.           |
-| `npm run test:e2e:report` | Views the Playwright test report.                          |
+| Script                    | Description                                      |
+| :------------------------ | :----------------------------------------------- |
+| `npm run dev`             | Starts the development server.                   |
+| `npm run build`           | Builds the application for production.           |
+| `npm run preview`         | Locally previews the production build.           |
+| `npm run lint`            | Runs ESLint to check for code quality issues.    |
+| `npm run lint:fix`        | Automatically fixes linting issues.              |
+| `npm run format`          | Formats the codebase using Prettier.             |
+| `npm run astro`           | Access the Astro CLI.                            |
+| `npm run test`            | Runs unit tests with Vitest.                     |
+| `npm run test:watch`      | Runs unit tests in watch mode.                   |
+| `npm run test:ui`         | Opens Vitest UI for interactive testing.         |
+| `npm run test:coverage`   | Generates test coverage report.                  |
+| `npm run test:e2e`        | Runs end-to-end tests with Playwright.           |
+| `npm run test:e2e:ui`     | Opens Playwright UI for interactive E2E testing. |
+| `npm run test:e2e:report` | Views the Playwright test report.                |
 
 ## Testing
 

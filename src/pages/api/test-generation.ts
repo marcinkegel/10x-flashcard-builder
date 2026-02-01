@@ -16,8 +16,6 @@ export const GET: APIRoute = async ({ locals }) => {
   const sampleText = "To jest testowy tekst o długości ponad tysiąca znaków. ".repeat(20);
 
   try {
-    // eslint-disable-next-line no-console
-
     const user = locals.user;
     if (!user) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
