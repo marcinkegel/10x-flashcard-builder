@@ -263,7 +263,7 @@ tests/
 
 ## CI/CD Integration
 
-Currently, the automated CI/CD pipeline includes **Unit Tests and Linting**. E2E tests are excluded from the automated pipeline to avoid dependency on cloud secrets and external APIs, but they are fully operational for manual execution.
+Currently, the automated CI/CD pipeline includes **Linting, Unit Tests, and E2E Tests**. The pipeline is fully configured to run all tests automatically on pull requests and pushes to main branches.
 
 Tests run automatically on:
 
@@ -272,30 +272,36 @@ Tests run automatically on:
 
 ### GitHub Actions Workflow
 
-The workflow in `.github/workflows/tests.yml`:
+The workflow in `.github/workflows/pull-request.yml` includes:
 
-1. **Unit Tests Job**:
+1. **Linting Job**:
+   - Runs ESLint to ensure code quality.
+
+2. **Unit Tests Job**:
    - Runs Vitest tests
    - Generates coverage report
-   - Uploads to Codecov
+   - Uploads coverage to Codecov
 
-### Future E2E Integration
+3. **E2E Tests Job**:
+   - Runs Playwright tests in a headless Chromium environment
+   - Uses an `integration` environment with pre-configured secrets
+   - Uploads Playwright reports as artifacts (retained for 30 days)
 
-To enable E2E tests in CI/CD, the following GitHub repository secrets must be configured:
+4. **Status Comment Job**:
+   - Posts a summary comment on pull requests when all checks pass successfully.
 
-```bash
-# Supabase
-SUPABASE_URL=your_supabase_url
-SUPABASE_KEY=your_supabase_key
+### E2E Integration Requirements
 
-# OpenRouter
-OPENROUTER_API_KEY=your_openrouter_api_key
+For E2E tests to run in CI/CD, the following GitHub repository secrets and variables are configured:
 
-# E2E Test User
-E2E_USER_ID=your_test_user_id
-E2E_USERNAME=your_test_user_email
-E2E_PASSWORD=your_test_user_password
-```
+#### Secrets
+- `SUPABASE_KEY`: Public API key for the integration environment
+- `OPENROUTER_API_KEY`: API key for AI generation tests
+- `E2E_USERNAME`: Test user email
+- `E2E_PASSWORD`: Test user password
+
+#### Variables
+- `SUPABASE_URL`: API URL for the integration environment
 
 ---
 
