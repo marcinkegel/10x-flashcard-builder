@@ -1,0 +1,16 @@
+name: 'Setup'
+description: 'Checkout, setup Node.js and install dependencies'
+runs:
+  using: "composite"
+  steps:
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version-file: '.nvmrc'
+        cache: 'npm'
+
+    - name: Install dependencies
+      shell: bash
+      run: |
+        npm ci
+        npm install @rollup/rollup-linux-x64-gnu --no-save

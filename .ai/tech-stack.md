@@ -5,6 +5,9 @@ Frontend - Astro z React dla komponentów interaktywnych:
 - TypeScript 5 dla statycznego typowania kodu i lepszego wsparcia IDE
 - Tailwind 4 pozwala na wygodne stylowanie aplikacji
 - Shadcn/ui zapewnia bibliotekę dostępnych komponentów React, na których oprzemy UI
+- Sonner dla powiadomień toast
+- Lucide React dla ikon
+- Next-themes do obsługi motywów (light/dark mode)
 
 Backend - Supabase jako kompleksowe rozwiązanie backendowe:
 
@@ -22,6 +25,7 @@ CI/CD i Hosting:
 
 - Github Actions do tworzenia pipeline’ów CI/CD
 - DigitalOcean do hostowania aplikacji za pośrednictwem obrazu docker
+- Codecov do analizy i raportowania pokrycia testów
 
 Testy - Automatyzacja i zapewnienie jakości:
 
@@ -30,3 +34,9 @@ Testy - Automatyzacja i zapewnienie jakości:
 - React Testing Library do weryfikacji interakcji w komponentach UI
 - Happy-DOM jako lekkie środowisko DOM dla testów w środowisku Node.js
 - MSW (Mock Service Worker) do mockowania odpowiedzi API zewnętrznych (OpenRouter)
+- cross-env do obsługi zmiennych środowiskowych w skryptach
+
+Narzędzia:
+
+- ESLint i Prettier do zapewnienia jakości i formatowania kodu
+- Husky i lint-staged do automatyzacji zadań przed commitem
