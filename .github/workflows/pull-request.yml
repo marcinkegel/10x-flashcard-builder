@@ -1,8 +1,11 @@
 name: PR Quality Check
 
 on:
+  push:
+    branches: [main, master, develop]
   pull_request:
     branches: [main, master, develop]
+  workflow_dispatch:
 
 jobs:
   lint:
@@ -84,7 +87,7 @@ jobs:
   status-comment:
     name: Status Comment
     needs: [lint, unit-test, e2e-test]
-    if: success()
+    if: success() && github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
