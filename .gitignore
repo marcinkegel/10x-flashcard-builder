@@ -30,3 +30,6 @@ coverage/
 playwright-report/
 test-results/
 *.lcov
+
+# test run metadata
+tests/e2e/.test-start-time.json

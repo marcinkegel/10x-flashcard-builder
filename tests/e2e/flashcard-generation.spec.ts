@@ -1,6 +1,8 @@
 import { test, expect } from "@playwright/test";
 import { LoginPage } from "./pages/LoginPage";
 import { GeneratePage } from "./pages/GeneratePage";
+import { Navbar } from "./pages/Navbar";
+import { FlashcardsLibraryPage } from "./pages/FlashcardsLibraryPage";
 
 /**
  * Generate unique source text to avoid duplicate detection in database
@@ -239,7 +241,57 @@ test.describe("AI Flashcard Generation Flow", () => {
     expect(await firstProposal.isAccepted()).toBe(true);
   });
 
-  // NOTE: Test removed - navigation to library after saving was never implemented
-  // The application is designed to keep users on /generate page after saving,
-  // allowing them to generate more flashcards. There is no automatic redirect to /flashcards.
+  test("should generate, edit, accept and SAVE flashcard to library", async ({ page }) => {
+    test.setTimeout(45000); // Increase timeout for this complex test
+    const generatePage = new GeneratePage(page);
+    await generatePage.goto();
+
+    const baseText = `
+      Svelte (ID: ${Math.random().toString(36).substring(2, 9)}) to nowoczesny framework JavaScript, który kompiluje kod podczas budowania.
+      W przeciwieństwie do React czy Vue, Svelte nie używa Virtual DOM.
+      Zamiast tego, generuje kod, który bezpośrednio aktualizuje DOM, co jest bardzo wydajne.
+      
+      Reaktywność w Svelte jest wbudowana w język. Używa się prostych przypisań do zmiennych.
+      Bloki reaktywne zaczynają się od znaku dolara i dwukropka ($:).
+      
+      SvelteKit to oficjalny framework dla Svelte do budowania pełnych aplikacji webowych.
+      Obsługuje SSR (Server Side Rendering), routing i wiele innych funkcji.
+    `.repeat(2);
+
+    const validText = makeUniqueText(baseText);
+    await generatePage.fillSourceText(validText);
+    await generatePage.clickGenerate();
+    await generatePage.waitForProposals(35000);
+
+    // 1. Edit first proposal
+    const firstProposal = generatePage.getProposal(0);
+    const uniqueEdit = ` (edited-e2e-${Date.now()})`;
+    const originalFront = await firstProposal.getFrontText();
+    const newFront = originalFront + uniqueEdit;
+    const newBack = (await firstProposal.getBackText()) + uniqueEdit;
+
+    await firstProposal.edit(newFront, newBack);
+
+    // 2. Accept second proposal
+    const secondProposal = generatePage.getProposal(1);
+    await secondProposal.accept();
+
+    // 3. Save only accepted
+    // Wait for button to be fully interactive
+    await expect(generatePage.saveAcceptedButton).toBeEnabled({ timeout: 5000 });
+    await generatePage.page.waitForTimeout(500);
+    await generatePage.clickSaveAccepted();
+    await generatePage.waitForSavingToComplete();
+
+    // 4. Verify in Library
+    const navbar = new Navbar(page);
+    await navbar.gotoLibrary();
+
+    const libraryPage = new FlashcardsLibraryPage(page);
+    await libraryPage.waitForFlashcards();
+
+    // Check if our edited flashcard is there
+    const found = await page.getByText(newFront).isVisible();
+    expect(found).toBe(true);
+  });
 });

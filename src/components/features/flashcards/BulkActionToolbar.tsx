@@ -48,6 +48,7 @@ export function BulkActionToolbar({
             disabled={isSaving || anyEditing || acceptedCount === 0}
             onClick={() => onSave("accepted_only")}
             className="w-full md:w-auto"
+            data-testid="save-accepted-button"
           >
             <CheckCheck className="w-4 h-4 mr-2" />
             Zapisz tylko zatwierdzone ({acceptedCount})
@@ -57,6 +58,7 @@ export function BulkActionToolbar({
             disabled={isSaving || anyEditing || nonRejectedCount === 0}
             onClick={() => onSave("non_rejected")}
             className="w-full md:w-auto"
+            data-testid="save-all-button"
           >
             <Save className="w-4 h-4 mr-2" />
             Zapisz nieodrzucone ({nonRejectedCount})

@@ -1,6 +1,8 @@
 import { test, expect } from "@playwright/test";
 import { LoginPage } from "./pages/LoginPage";
 import { FlashcardsLibraryPage } from "./pages/FlashcardsLibraryPage";
+import { FlashcardsPage } from "./pages/FlashcardsPage";
+import { Navbar } from "./pages/Navbar";
 
 /**
  * E2E tests for Flashcards Library
@@ -161,95 +163,127 @@ test.describe("Flashcards Library", () => {
   });
 
   test("should edit flashcard successfully", async ({ page }) => {
-    const libraryPage = new FlashcardsLibraryPage(page);
-    await libraryPage.goto();
+    // 1. Create a unique flashcard first
+    const uniqueFrontText = `EDIT_TEST_${Date.now()}_${Math.random().toString(36).substring(7)}`;
+    const uniqueBackText = `BACK_${Date.now()}`;
 
+    const flashcardsPage = new FlashcardsPage(page);
+    await flashcardsPage.gotoCreate();
+    await flashcardsPage.createManualFlashcard(uniqueFrontText, uniqueBackText);
+
+    // 2. Navigate to library
+    const navbar = new Navbar(page);
+    await navbar.gotoLibrary();
+
+    const libraryPage = new FlashcardsLibraryPage(page);
+    await page.waitForLoadState("networkidle");
     await page.waitForTimeout(1000);
 
-    const hasFlashcards = (await libraryPage.getFlashcardsCount()) > 0;
+    // 3. Find our unique flashcard
+    const uniqueFlashcard = page
+      .getByTestId("flashcard-item")
+      .filter({ has: page.getByTestId("flashcard-front-text").filter({ hasText: uniqueFrontText }) });
 
-    if (hasFlashcards) {
-      const firstFlashcard = libraryPage.getFlashcard(0);
+    // Verify the flashcard exists
+    await expect(uniqueFlashcard).toBeVisible({ timeout: 5000 });
 
-      // Get original text
-      const originalFront = await firstFlashcard.getFrontText();
-      const originalBack = await firstFlashcard.getBackText();
+    // 4. Hover and click edit
+    await uniqueFlashcard.hover();
+    const editButton = uniqueFlashcard.getByTestId("flashcard-edit-button");
+    await expect(editButton).toBeVisible();
+    await editButton.click();
 
-      // Open edit dialog
-      await firstFlashcard.clickEdit();
+    // 5. Wait for edit dialog
+    const dialog = page.getByRole("dialog");
+    await expect(dialog).toBeVisible({ timeout: 2000 });
 
-      // Wait for dialog
-      const dialog = page.getByRole("dialog");
-      await expect(dialog).toBeVisible({ timeout: 2000 });
+    // 6. Edit text - add " (edited)" suffix
+    const frontInput = dialog.locator("textarea, input").first();
+    const backInput = dialog.locator("textarea, input").nth(1);
 
-      // Find input fields in dialog
-      const frontInput = dialog.locator("textarea, input").first();
-      const backInput = dialog.locator("textarea, input").nth(1);
+    const newFront = uniqueFrontText + " (edited)";
+    const newBack = uniqueBackText + " (edited)";
 
-      // Edit text - add " (edited)" suffix
-      const newFront = originalFront + " (edited)";
-      const newBack = originalBack + " (edited)";
+    await frontInput.fill(newFront);
+    await backInput.fill(newBack);
 
-      await frontInput.fill(newFront);
-      await backInput.fill(newBack);
+    // 7. Save changes
+    const saveButton = dialog.getByRole("button", { name: /zapisz/i });
+    await saveButton.click();
 
-      // Save changes
-      const saveButton = dialog.getByRole("button", { name: /zapisz/i });
-      await saveButton.click();
+    // Wait for dialog to close
+    await expect(dialog).not.toBeVisible({ timeout: 5000 });
 
-      // Wait for dialog to close
-      await expect(dialog).not.toBeVisible({ timeout: 5000 });
+    // Wait for the API call to complete
+    await page.waitForLoadState("networkidle");
+    await page.waitForTimeout(1000);
 
-      // Verify changes were applied (optimistic update)
-      await page.waitForTimeout(500);
-      const updatedFront = await firstFlashcard.getFrontText();
-      expect(updatedFront).toContain("(edited)");
-    }
+    // 8. Verify the edited flashcard is visible with new text
+    const editedFlashcard = page.getByTestId("flashcard-front-text").filter({ hasText: newFront });
+
+    await expect(editedFlashcard).toBeVisible({ timeout: 5000 });
+
+    // 9. Reload page to verify persistence
+    await page.reload();
+    await libraryPage.waitForFlashcards();
+
+    // Verify the edited flashcard still exists with new text
+    const persistedFlashcard = page.getByTestId("flashcard-front-text").filter({ hasText: newFront });
+
+    await expect(persistedFlashcard).toBeVisible({ timeout: 5000 });
   });
 
   test("should delete flashcard successfully", async ({ page }) => {
-    const libraryPage = new FlashcardsLibraryPage(page);
-    await libraryPage.goto();
+    // 1. Create a unique flashcard first
+    const uniqueFrontText = `DELETE_TEST_${Date.now()}_${Math.random().toString(36).substring(7)}`;
+    const uniqueBackText = `BACK_${Date.now()}`;
+
+    const flashcardsPage = new FlashcardsPage(page);
+    await flashcardsPage.gotoCreate();
+    await flashcardsPage.createManualFlashcard(uniqueFrontText, uniqueBackText);
+
+    // 2. Navigate to library
+    const navbar = new Navbar(page);
+    await navbar.gotoLibrary();
 
     // Wait for network to be idle (React hydration)
     await page.waitForLoadState("networkidle");
     await page.waitForTimeout(1000);
 
-    const initialCount = await libraryPage.getFlashcardsCount();
+    // 3. Find our unique flashcard
+    const uniqueFlashcard = page
+      .getByTestId("flashcard-item")
+      .filter({ has: page.getByTestId("flashcard-front-text").filter({ hasText: uniqueFrontText }) });
 
-    if (initialCount > 0) {
-      const firstFlashcard = libraryPage.getFlashcard(0);
+    // Verify the flashcard exists
+    await expect(uniqueFlashcard).toBeVisible({ timeout: 5000 });
 
-      // Wait for delete button to be ready
-      await expect(firstFlashcard.deleteButton).toBeVisible();
-      await expect(firstFlashcard.deleteButton).toBeEnabled();
+    // 4. Hover to show delete button and click it
+    await uniqueFlashcard.hover();
+    const deleteButton = uniqueFlashcard.getByTestId("flashcard-delete-button");
+    await expect(deleteButton).toBeVisible();
+    await expect(deleteButton).toBeEnabled();
+    await deleteButton.click();
 
-      // Click delete button
-      await firstFlashcard.clickDelete();
+    // 5. Confirm deletion
+    const dialog = page.getByRole("alertdialog");
+    await expect(dialog).toBeVisible({ timeout: 3000 });
 
-      // Confirm deletion - use alertdialog role for AlertDialog component
-      const dialog = page.getByRole("alertdialog");
-      await expect(dialog).toBeVisible({ timeout: 3000 });
+    const confirmButton = dialog.getByRole("button", { name: /usuń fiszkę/i });
+    await expect(confirmButton).toBeVisible();
+    await expect(confirmButton).toBeEnabled();
 
-      // Find the confirm button with the exact text
-      const confirmButton = dialog.getByRole("button", { name: /usuń fiszkę/i });
-      await expect(confirmButton).toBeVisible();
-      await expect(confirmButton).toBeEnabled();
-      await confirmButton.click();
+    // Wait for React hydration to complete before clicking
+    await page.waitForTimeout(500);
+    await confirmButton.click();
 
-      // Wait for dialog to close
-      await expect(dialog).not.toBeVisible({ timeout: 5000 });
+    // Wait for the API call to complete
+    await page.waitForLoadState("networkidle");
 
-      // Wait for optimistic update
-      await page.waitForTimeout(1000);
+    // 6. Wait for the specific flashcard to disappear from the DOM
+    const uniqueFlashcardLocator = page.getByTestId("flashcard-front-text").filter({ hasText: uniqueFrontText });
 
-      // Verify flashcard was removed
-      // Either count decreased or we see empty state (if it was the last one)
-      const newCount = await libraryPage.getFlashcardsCount();
-      const isEmpty = await libraryPage.isEmpty();
-
-      expect(newCount < initialCount || isEmpty).toBe(true);
-    }
+    await expect(uniqueFlashcardLocator).toHaveCount(0, { timeout: 5000 });
   });
 
   test("should handle empty library state", async ({ page }) => {
@@ -265,8 +299,9 @@ test.describe("Flashcards Library", () => {
       const emptyStateText = await page.textContent("body");
       expect(emptyStateText).toMatch(/(brak|nie masz|empty)/i);
 
-      // Should show link/button to create flashcards
-      const createLink = page.getByRole("link", { name: /(utwórz|generuj|dodaj)/i });
+      // Should show link/button to create flashcards (be specific to avoid strict mode violation)
+      // Use the one in the empty state, not the navbar
+      const createLink = page.getByRole("link", { name: /utwórz pierwsze fiszki/i });
       await expect(createLink).toBeVisible();
     }
   });

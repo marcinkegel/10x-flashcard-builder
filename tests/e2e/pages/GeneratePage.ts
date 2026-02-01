@@ -11,6 +11,8 @@ export class GeneratePage {
   readonly generationError: Locator;
   readonly activeProposalsWarning: Locator;
   readonly proposalItems: Locator;
+  readonly saveAcceptedButton: Locator;
+  readonly saveAllButton: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -20,6 +22,29 @@ export class GeneratePage {
     this.generationError = page.getByTestId("generation-error");
     this.activeProposalsWarning = page.getByTestId("active-proposals-warning");
     this.proposalItems = page.getByTestId("proposal-item");
+    this.saveAcceptedButton = page.getByTestId("save-accepted-button");
+    this.saveAllButton = page.getByTestId("save-all-button");
+  }
+
+  /**
+   * Click save accepted button
+   */
+  async clickSaveAccepted() {
+    await this.saveAcceptedButton.click();
+  }
+
+  /**
+   * Click save all button
+   */
+  async clickSaveAll() {
+    await this.saveAllButton.click();
+  }
+
+  /**
+   * Wait for saving to complete (buttons enabled again)
+   */
+  async waitForSavingToComplete() {
+    await expect(this.saveAllButton).toBeEnabled({ timeout: 10000 });
   }
 
   /**

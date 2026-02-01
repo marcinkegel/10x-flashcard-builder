@@ -4,6 +4,31 @@
 
 Ten dokument zawiera informacje o testach E2E (End-to-End) w projekcie 10x Flashcard Builder, zaimplementowanych przy użyciu Playwright.
 
+## Kluczowe zasady testowania
+
+### 🔑 Trzy złote zasady
+
+1. **Izolacja testów** - każdy test tworzy własne unikalne dane
+
+   ```typescript
+   const uniqueId = `TEST_${Date.now()}_${Math.random().toString(36).substring(7)}`;
+   ```
+
+2. **Global teardown** - cleanup dzieje się RAZ po wszystkich testach
+   - Usuwa tylko fiszki utworzone podczas testów (po timestampie)
+   - Zachowuje pre-existing data
+   - Brak race conditions między testami
+
+3. **Nie polegaj na istniejących danych** - znajdź elementy po unikalnych identyfikatorach
+
+   ```typescript
+   // ❌ ŹLE
+   const card = getFlashcard(0);
+
+   // ✅ DOBRZE
+   const card = page.getByText(uniqueId);
+   ```
+
 ## Struktura testów
 
 ### Pliki testowe
@@ -14,6 +39,10 @@ tests/e2e/
 │   ├── LoginPage.ts               # POM dla strony logowania
 │   ├── GeneratePage.ts            # POM dla strony generowania fiszek
 │   └── FlashcardsLibraryPage.ts   # POM dla biblioteki fiszek
+├── helpers/                        # Funkcje pomocnicze
+│   └── teardown.ts                # Cleanup - usuwa fiszki z testów
+├── global-setup.ts                # Zapisuje timestamp startu testów
+├── global-teardown.ts             # Usuwa fiszki utworzone po timestampie
 ├── auth-login.spec.ts             # Testy przepływu logowania (10 testów)
 ├── flashcard-generation.spec.ts   # Testy generowania fiszek AI (8 testów)
 └── flashcards-library.spec.ts     # Testy biblioteki fiszek (10 testów)
@@ -240,25 +269,161 @@ Nie musisz ręcznie uruchamiać `npm run dev` - Playwright zrobi to za Ciebie z 
 
 ## Best Practices
 
-### 1. Stabilność testów
+### 1. Test Teardown Strategy
+
+**WAŻNE:** Wszystkie testy E2E używają jednego wspólnego konta testowego użytkownika.
+
+#### Global Setup & Teardown (aktualne podejście)
+
+Aby uniknąć konfliktów podczas równoległego wykonywania testów i zachować istniejące dane:
+
+1. **Global setup** zapisuje timestamp rozpoczęcia testów
+2. **Testy działają równolegle** i tworzą unikalne dane
+3. **Global teardown** usuwa TYLKO fiszki utworzone podczas testów (po timestampie)
+
+```typescript
+// playwright.config.ts
+export default defineConfig({
+  globalSetup: "./tests/e2e/global-setup.ts", // Zapisuje timestamp
+  globalTeardown: "./tests/e2e/global-teardown.ts", // Usuwa tylko nowe fiszki
+  fullyParallel: true, // Testy działają równolegle bezpiecznie
+});
+```
+
+#### Jak to działa?
+
+1. **Global Setup** (przed testami):
+
+   ```typescript
+   // Zapisuje timestamp startu: 2026-02-01T15:30:00.000Z
+   ```
+
+2. **Testy** (tworzą fiszki):
+
+   ```typescript
+   // Test A tworzy fiszkę o 15:31:00
+   // Test B tworzy fiszkę o 15:32:00
+   // Test C tworzy fiszkę o 15:33:00
+   ```
+
+3. **Global Teardown** (po testach):
+   ```typescript
+   // Usuwa TYLKO fiszki z created_at >= 2026-02-01T15:30:00.000Z
+   // ✅ Zachowuje fiszki sprzed testów
+   ```
+
+#### Dlaczego to podejście?
+
+**Problem z Per-Test Teardown (ŹLE):**
+
+- ❌ Test A usuwa wszystkie fiszki w `afterAll`
+- ❌ Test B (działający równolegle) miał fiszki usunięte przez Test A
+- ❌ Test B pada, bo jego dane zniknęły
+
+**Rozwiązanie z Global Teardown (DOBRZE):**
+
+- ✅ Wszystkie testy działają równolegle bez wzajemnych zakłóceń
+- ✅ Każdy test tworzy unikatowo zidentyfikowane dane
+- ✅ Cleanup następuje raz na samym końcu
+- ✅ Brak race conditions
+- ✅ **Zachowuje fiszki istniejące przed testami**
+
+#### Konfiguracja Teardown
+
+Włącz/wyłącz teardown przez zmienną środowiskową:
+
+```bash
+# Włącz teardown (czyści dane po testach)
+E2E_TEARDOWN=true npm run test:e2e
+
+# Wyłącz teardown (zostawia dane do inspekcji)
+E2E_TEARDOWN=false npm run test:e2e
+```
+
+### 2. Stabilność testów i izolacja danych
+
+#### Używaj unikalnych identyfikatorów
+
+**Dla testów modyfikujących dane (edit, delete):**
+
+- ✅ Twórz własną unikalną fiszkę przed testem
+- ✅ Znajdź fiszkę po unikalnym identyfikatorze
+- ❌ NIE polegaj na istniejących danych lub indeksach
+
+**Przykład - test delete flashcard:**
+
+```typescript
+test("should delete flashcard successfully", async ({ page }) => {
+  // 1. Utwórz unikalną fiszkę
+  const uniqueFrontText = `DELETE_TEST_${Date.now()}_${Math.random().toString(36).substring(7)}`;
+  await flashcardsPage.createManualFlashcard(uniqueFrontText, "back text");
+
+  // 2. Znajdź fiszkę po unikalnym tekście
+  const uniqueFlashcard = page
+    .getByTestId("flashcard-item")
+    .filter({ has: page.getByTestId("flashcard-front-text").filter({ hasText: uniqueFrontText }) });
+
+  // 3. Wykonaj operację
+  await uniqueFlashcard.getByTestId("flashcard-delete-button").click();
+
+  // 4. Weryfikuj że TWOJA fiszka została usunięta
+  await expect(uniqueFlashcard).toHaveCount(0);
+});
+```
+
+**Dlaczego to ważne?**
+
+- ✅ Test nie zależy od kolejności sortowania
+- ✅ Test działa niezależnie od innych testów (parallel safe)
+- ✅ Test nie wpływa na inne testy
+- ✅ Test jest powtarzalny i przewidywalny
+
+#### Selektory i czekanie
 
 - Używaj `data-testid` zamiast selektorów CSS/XPath
 - Dodawaj odpowiednie `waitFor` dla asynchronicznych operacji
 - Unikaj hardcoded timeouts - używaj `waitForVisible`, `waitForURL` itp.
+- Czekaj na `networkidle` po operacjach API
 
-### 2. Page Object Model
-
-- Każda strona ma dedykowany POM
-- POM zawiera wszystkie lokatory i akcje
-- Testy operują na wysokim poziomie abstrakcji
-
-### 3. Test Data
+### 3. Page Object Model
 
 - Użyj dedykowanej testowej bazy danych
 - Izoluj dane testowe między testami
 - Cleanup po testach
 
-### 4. Assertions
+### 3. Page Object Model
+
+- Każda strona ma dedykowany POM
+- POM zawiera wszystkie lokatory i akcje
+- Testy operują na wysokim poziomie abstrakcji
+
+### 4. Test Data
+
+- Użyj dedykowanej testowej bazy danych
+- **Testy tworzą unikatowe dane** używając timestampów i losowych ID
+- **Global teardown** czyści wszystko RAZ po zakończeniu wszystkich testów
+
+### 4. Test Data
+
+- Użyj dedykowanej testowej bazy danych
+- **Testy tworzą unikatowe dane** używając timestampów i losowych ID
+- **Testy modyfikujące dane (edit, delete) tworzą własne fiszki** zamiast używać istniejących
+- **Global teardown** czyści wszystko RAZ po zakończeniu wszystkich testów
+
+**Przykłady unikalnych identyfikatorów:**
+
+```typescript
+// Test delete
+const uniqueId = `DELETE_TEST_${Date.now()}_${Math.random().toString(36).substring(7)}`;
+
+// Test edit
+const uniqueId = `EDIT_TEST_${Date.now()}_${Math.random().toString(36).substring(7)}`;
+
+// Test generation
+const uniqueSuffix = `\n\n--- Test run: ${timestamp}-${random} ---\n`;
+```
+
+### 5. Assertions
 
 - Używaj Playwright assertions (`expect` from @playwright/test)
 - Weryfikuj stan UI, a nie tylko obecność elementów
@@ -278,13 +443,44 @@ Nie musisz ręcznie uruchamiać `npm run dev` - Playwright zrobi to za Ciebie z 
 2. Dodaj `await element.waitFor()` przed interakcją
 3. Sprawdź czy element nie jest w Shadow DOM
 
-### Problem: Flaky tests
+### Problem: Flaky tests (niestabilne testy)
 
-**Rozwiązanie:**
+**Objawy:**
 
-1. Usuń `page.waitForTimeout()` - używaj dedykowanych wait
-2. Dodaj retry logic dla asynchronicznych operacji
-3. Sprawdź race conditions
+- Test pada losowo
+- Działa lokalnie, ale pada na CI
+- "Element not found" lub timeout errors
+
+**Najczęstsze przyczyny i rozwiązania:**
+
+1. **Test zależy od istniejących danych lub kolejności**
+
+   ```typescript
+   // ❌ ŹLE - zależy od indeksu
+   const firstFlashcard = libraryPage.getFlashcard(0);
+   await firstFlashcard.clickEdit();
+
+   // ✅ DOBRZE - tworzy własne dane
+   const uniqueText = `TEST_${Date.now()}`;
+   await createFlashcard(uniqueText);
+   const myFlashcard = page.getByText(uniqueText);
+   await myFlashcard.clickEdit();
+   ```
+
+2. **Zbyt krótkie timeouty**
+
+   ```typescript
+   // ❌ ŹLE
+   await page.waitForTimeout(100);
+
+   // ✅ DOBRZE
+   await expect(element).toBeVisible({ timeout: 5000 });
+   await page.waitForLoadState("networkidle");
+   ```
+
+3. **Race conditions z innymi testami**
+   - Używaj unikalnych identyfikatorów dla danych testowych
+   - Nie usuwaj danych w `afterEach` - użyj global teardown
 
 ### Problem: Przeglądarki nie zainstalowane
 
