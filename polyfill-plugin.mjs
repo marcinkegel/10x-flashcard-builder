@@ -86,14 +86,20 @@ if (typeof MessageChannel === "undefined") {
     name: "polyfill-injector",
     enforce: "post",
     generateBundle(options, bundle) {
-      // Inject polyfill into the worker entry point
+      // Inject polyfill into all worker chunks
       for (const [fileName, file] of Object.entries(bundle)) {
-        if (
-          file.type === "chunk" &&
-          (fileName.includes("index.js") || fileName.includes("_worker.js") || fileName.includes("entry"))
-        ) {
-          // Prepend polyfill to the chunk code
-          file.code = polyfillCode + file.code;
+        if (file.type === "chunk") {
+          // Inject into entry points and all chunks that might use MessageChannel
+          if (
+            fileName.includes("index.js") ||
+            fileName.includes("_worker.js") ||
+            fileName.includes("entry") ||
+            fileName.includes("_@astro-renderers") ||
+            fileName.includes("react")
+          ) {
+            // Prepend polyfill to the chunk code
+            file.code = polyfillCode + file.code;
+          }
         }
       }
     },
