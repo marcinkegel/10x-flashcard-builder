@@ -24,8 +24,8 @@ AI - Komunikacja z modelami przez usługę Openrouter.ai:
 CI/CD i Hosting:
 
 - Github Actions do tworzenia pipeline’ów CI/CD
-- DigitalOcean do hostowania aplikacji za pośrednictwem obrazu docker
 - Codecov do analizy i raportowania pokrycia testów
+- Cloudflare Pages do hostowania aplikacji (SSR z Workers) 
 
 Testy - Automatyzacja i zapewnienie jakości:
 
