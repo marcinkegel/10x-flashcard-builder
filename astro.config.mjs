@@ -15,8 +15,7 @@ export default defineConfig({
   vite: {
     plugins: [tailwindcss(), polyfillPlugin()],
     ssr: {
-      external: ["node:async_hooks"],
-      noExternal: ["react", "react-dom"],
+      external: ["node:async_hooks", "node:crypto"],
     },
     resolve: {
       alias: {
