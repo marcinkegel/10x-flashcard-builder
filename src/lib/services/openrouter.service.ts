@@ -54,7 +54,11 @@ export class OpenRouterService {
 
   constructor(config?: { model?: string }) {
     // In Cloudflare Pages, environment variables are injected at build time
-    this.apiKey = import.meta.env.OPENROUTER_API_KEY;
+    // Fallback to process.env for runtime access with nodejs_compat
+    this.apiKey =
+      import.meta.env.OPENROUTER_API_KEY ||
+      (typeof process !== "undefined" ? process.env.OPENROUTER_API_KEY : "") ||
+      "";
     this.defaultModel = config?.model || "openai/gpt-4o-mini";
 
     if (!this.apiKey) {
