@@ -2,17 +2,4 @@ name = "10x-flashcard-builder"
 compatibility_date = "2024-11-21"
 pages_build_output_dir = "./dist"
 
-# Environment variables for production
-[env.production.vars]
-# SUPABASE_URL is set in Cloudflare dashboard
-# SUPABASE_KEY is set in Cloudflare dashboard
-# OPENROUTER_API_KEY is set in Cloudflare dashboard
-
-# KV namespaces for sessions
-[[kv_namespaces]]
-binding = "SESSION"
-id = ""  # This will be replaced with actual KV namespace ID in Cloudflare dashboard
-
-[env.production.kv_namespaces]
-binding = "SESSION"
-id = ""  # This will be replaced with actual KV namespace ID in Cloudflare dashboard
+# Environment variables and KV bindings are configured in Cloudflare Dashboard
