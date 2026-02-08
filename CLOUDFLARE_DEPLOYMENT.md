@@ -146,6 +146,13 @@ git push origin master
 - Sprawdź czy KV namespace jest poprawnie podpięty
 - Sprawdź binding `SESSION` w ustawieniach Functions
 
+### Błąd "MessageChannel is not defined"
+
+Ten problem został już rozwiązany w projekcie poprzez dodanie polyfilla dla React 19. Jeśli nadal go widzisz:
+- Upewnij się, że plik `src/polyfills.ts` istnieje
+- Sprawdź czy `src/middleware/index.ts` importuje polyfill
+- Przebuduj projekt: `npm run build`
+
 ## Dodatkowe informacje
 
 - Każdy push do gałęzi `master` będzie automatycznie wdrażał nową wersję

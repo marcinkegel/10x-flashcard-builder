@@ -13,10 +13,25 @@ export default defineConfig({
   server: { port: 3000 },
   vite: {
     plugins: [tailwindcss()],
+    ssr: {
+      external: ["node:async_hooks"],
+      noExternal: ["react", "react-dom"],
+    },
+    resolve: {
+      alias: {
+        // Inject polyfills for Cloudflare Workers
+        "react-dom/server": "react-dom/server.browser",
+      },
+    },
   },
   adapter: cloudflare({
     platformProxy: {
       enabled: true,
+    },
+    runtime: {
+      mode: "local",
+      type: "pages",
+      polyfills: true,
     },
   }),
 });
