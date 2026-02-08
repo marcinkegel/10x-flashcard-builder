@@ -17,12 +17,6 @@ export default defineConfig({
     ssr: {
       external: ["node:async_hooks", "node:crypto"],
     },
-    resolve: {
-      alias: {
-        // Use browser-compatible React DOM server for Cloudflare Workers
-        "react-dom/server": "react-dom/server.browser",
-      },
-    },
   },
   adapter: cloudflare({
     imageService: "compile",
