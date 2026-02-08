@@ -14,9 +14,10 @@ const getEnv = (key: string) => {
   return undefined;
 };
 
-export const supabaseClient = getEnv("SUPABASE_URL")
-  ? createClient<Database>(getEnv("SUPABASE_URL")!, getEnv("SUPABASE_KEY")!)
-  : null;
+const defaultUrl = getEnv("SUPABASE_URL");
+const defaultKey = getEnv("SUPABASE_KEY");
+
+export const supabaseClient = defaultUrl && defaultKey ? createClient<Database>(defaultUrl, defaultKey) : null;
 
 export type SupabaseClient = NonNullable<typeof supabaseClient>;
 
