@@ -52,14 +52,16 @@ export class OpenRouterService {
   private readonly baseUrl: string = "https://openrouter.ai/api/v1";
   private readonly defaultModel: string;
 
-  constructor(config?: { model?: string; runtime?: Record<string, string> }) {
-    // Get API key from runtime (Cloudflare) or build-time env (local dev)
-    const runtime = config?.runtime;
-    this.apiKey = (runtime && runtime.OPENROUTER_API_KEY) || import.meta.env.OPENROUTER_API_KEY;
+  constructor(config?: { model?: string }) {
+    // In Cloudflare Pages, environment variables are injected at build time
+    this.apiKey = import.meta.env.OPENROUTER_API_KEY;
     this.defaultModel = config?.model || "openai/gpt-4o-mini";
 
     if (!this.apiKey) {
-      throw new Error("Missing OPENROUTER_API_KEY in environment variables");
+      throw new Error(
+        "Missing OPENROUTER_API_KEY in environment variables. " +
+          "Make sure it's set in Cloudflare Pages Dashboard (Settings > Environment variables > Production)"
+      );
     }
   }
 

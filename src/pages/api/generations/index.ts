@@ -61,9 +61,8 @@ export const POST: APIRoute = async (context) => {
       );
     }
 
-    // 3. Call generation service with runtime env
-    const runtime = locals.runtime as Record<string, string> | undefined;
-    const generationData = await GenerationService.generateFlashcards(locals.supabase, user.id, result.data, runtime);
+    // 3. Call generation service (env vars injected at build time)
+    const generationData = await GenerationService.generateFlashcards(locals.supabase, user.id, result.data);
 
     // 4. Return success response
     const response: ApiResponse<GenerationResponseDTO> = {

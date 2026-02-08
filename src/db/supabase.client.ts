@@ -4,20 +4,6 @@ import { createClient } from "@supabase/supabase-js";
 
 import type { Database } from "./database.types";
 
-// Get environment variables from runtime (Cloudflare) or build-time (import.meta.env)
-// In Cloudflare Workers, these will be undefined at module level, so we'll get them from context
-const getEnvVar = (key: string, runtime?: Record<string, string>): string => {
-  // Try runtime first (Cloudflare env binding)
-  if (runtime && runtime[key]) {
-    return runtime[key];
-  }
-  // Fallback to build-time env (for local dev)
-  if (import.meta.env[key]) {
-    return import.meta.env[key];
-  }
-  throw new Error(`Environment variable ${key} is not defined`);
-};
-
 // For non-SSR contexts - only works in local dev, not in Cloudflare
 // In production, always use createSupabaseServerInstance with runtime context
 export const supabaseClient = import.meta.env.SUPABASE_URL
@@ -40,13 +26,18 @@ export function parseCookieHeader(cookieHeader: string): { name: string; value: 
   });
 }
 
-export const createSupabaseServerInstance = (context: {
-  headers: Headers;
-  cookies: AstroCookies;
-  runtime?: Record<string, string>;
-}) => {
-  const supabaseUrl = getEnvVar("SUPABASE_URL", context.runtime);
-  const supabaseKey = getEnvVar("SUPABASE_KEY", context.runtime);
+export const createSupabaseServerInstance = (context: { headers: Headers; cookies: AstroCookies }) => {
+  // In Cloudflare Pages, environment variables are injected at build time into import.meta.env
+  // They are set in Cloudflare Dashboard and available during deployment
+  const supabaseUrl = import.meta.env.SUPABASE_URL;
+  const supabaseKey = import.meta.env.SUPABASE_KEY;
+
+  if (!supabaseUrl || !supabaseKey) {
+    throw new Error(
+      "SUPABASE_URL and SUPABASE_KEY must be set in Cloudflare Pages Dashboard " +
+        "(Settings > Environment variables > Production)"
+    );
+  }
 
   const supabase = createServerClient<Database>(supabaseUrl, supabaseKey, {
     cookieOptions,
@@ -63,9 +54,17 @@ export const createSupabaseServerInstance = (context: {
   return supabase;
 };
 
-export const createSupabaseAdminInstance = (runtime?: Record<string, string>) => {
-  const supabaseUrl = getEnvVar("SUPABASE_URL", runtime);
-  const supabaseServiceRoleKey = getEnvVar("SUPABASE_SERVICE_ROLE_KEY", runtime);
+export const createSupabaseAdminInstance = () => {
+  // In Cloudflare Pages, environment variables are injected at build time
+  const supabaseUrl = import.meta.env.SUPABASE_URL;
+  const supabaseServiceRoleKey = import.meta.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!supabaseUrl || !supabaseServiceRoleKey) {
+    throw new Error(
+      "SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must be set in Cloudflare Pages Dashboard " +
+        "(Settings > Environment variables > Production)"
+    );
+  }
 
   return createClient<Database>(supabaseUrl, supabaseServiceRoleKey, {
     auth: {

@@ -19,9 +19,8 @@ export const POST: APIRoute = async (context) => {
 
   const userId = user.id;
 
-  // 2. Use Admin instance to delete user data and the user
-  const runtime = locals.runtime as Record<string, string> | undefined;
-  const supabaseAdmin = createSupabaseAdminInstance(runtime);
+  // 2. Use Admin instance to delete user data and the user (env vars injected at build time)
+  const supabaseAdmin = createSupabaseAdminInstance();
 
   // Explicitly delete user data first to ensure GDPR compliance if cascades fail
   // We do this in parallel for better performance
