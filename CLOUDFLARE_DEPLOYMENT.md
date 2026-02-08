@@ -76,7 +76,9 @@ Ten dokument opisuje kroki niezbędne do skonfigurowania automatycznego wdrażan
 
 5. Kliknij **Save**
 
-## Krok 6: Skonfiguruj KV Binding
+## Krok 6: Skonfiguruj KV Binding i Runtime Compatibility
+
+### KV Namespace dla sesji
 
 1. W projekcie Cloudflare Pages przejdź do **Settings** > **Functions**
 2. W sekcji **KV namespace bindings** kliknij **Add binding**
@@ -85,15 +87,32 @@ Ten dokument opisuje kroki niezbędne do skonfigurowania automatycznego wdrażan
    - **KV namespace**: Wybierz namespace utworzony w Kroku 3
 4. Kliknij **Save**
 
-## Krok 7: Zaktualizuj wrangler.toml (opcjonalnie)
+### Runtime Compatibility Flags
 
-W pliku `wrangler.toml` w głównym katalogu projektu zaktualizuj ID namespace:
+W projekcie Cloudflare Pages przejdź do **Settings** > **Compatibility Flags**:
+
+1. **Compatibility Date**: Ustaw na najnowszą dostępną datę (np. `2024-11-21` lub nowszą)
+2. **Compatibility Flags**: Dodaj `nodejs_compat`
+   - Ta flaga włącza kompatybilność z Node.js API
+   - Umożliwia automatyczne populowanie `process.env` ze zmiennych Cloudflare
+   - Zapewnia lepszą kompatybilność z npm packages
+
+**Uwaga**: Flaga `nodejs_compat` jest już skonfigurowana w `wrangler.toml`, ale dobrą praktyką jest również ustawienie jej w Cloudflare Dashboard dla spójności.
+
+## Krok 7: Weryfikacja konfiguracji wrangler.toml
+
+Plik `wrangler.toml` w głównym katalogu projektu powinien zawierać:
 
 ```toml
-[[kv_namespaces]]
-binding = "SESSION"
-id = "TWOJE_KV_NAMESPACE_ID"  # ID z Kroku 3
+name = "10x-flashcard-builder"
+compatibility_date = "2024-11-21"
+compatibility_flags = ["nodejs_compat"]
+pages_build_output_dir = "./dist"
+
+# Environment variables and KV bindings are configured in Cloudflare Dashboard
 ```
+
+**Uwaga**: KV namespace bindings są konfigurowane w Cloudflare Dashboard (Krok 6), nie w `wrangler.toml`.
 
 ## Krok 8: Pierwsza deployment
 
@@ -148,10 +167,16 @@ git push origin master
 
 ### Błąd "MessageChannel is not defined"
 
-Ten problem został już rozwiązany w projekcie poprzez dodanie polyfilla dla React 19. Jeśli nadal go widzisz:
-- Upewnij się, że plik `src/polyfills.ts` istnieje
-- Sprawdź czy `src/middleware/index.ts` importuje polyfill
+Ten problem został rozwiązany w projekcie poprzez:
+1. Dodanie polyfilla dla React 19 (`src/polyfills.ts`)
+2. Automatyczne wstrzykiwanie polyfilla na początku worker bundle za pomocą Vite plugin (`polyfill-plugin.mjs`)
+3. Polyfill jest teraz ładowany automatycznie przed jakimkolwiek innym kodem
+
+Jeśli nadal widzisz ten błąd:
+- Upewnij się, że plik `polyfill-plugin.mjs` istnieje w głównym katalogu projektu
+- Sprawdź czy plugin jest zaimportowany i użyty w `astro.config.mjs`
 - Przebuduj projekt: `npm run build`
+- Sprawdź czy polyfill pojawia się na początku pliku `dist/_worker.js/index.js`
 
 ## Dodatkowe informacje
 

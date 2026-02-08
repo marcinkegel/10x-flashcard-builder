@@ -1,5 +1,10 @@
 name = "10x-flashcard-builder"
 compatibility_date = "2024-11-21"
+compatibility_flags = ["nodejs_compat"]
 pages_build_output_dir = "./dist"
 
 # Environment variables and KV bindings are configured in Cloudflare Dashboard
+# nodejs_compat flag enables Node.js compatibility features including:
+# - process.env support (auto-populated from Cloudflare env vars)
+# - Basic Node.js APIs (crypto, buffer, util)
+# - Better npm package compatibility
