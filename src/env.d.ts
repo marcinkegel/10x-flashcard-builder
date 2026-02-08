@@ -10,6 +10,9 @@ declare global {
         email: string;
       } | null;
       supabase: SupabaseClient;
+      runtime?: {
+        env: Record<string, string>;
+      };
     }
   }
 }

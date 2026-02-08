@@ -52,10 +52,12 @@ export class OpenRouterService {
   private readonly baseUrl: string = "https://openrouter.ai/api/v1";
   private readonly defaultModel: string;
 
-  constructor(config?: { model?: string }) {
+  constructor(config?: { model?: string; env?: Record<string, string> }) {
     // In Cloudflare Pages, environment variables are injected at build time
     // Fallback to process.env for runtime access with nodejs_compat
+    // or use the provided runtime environment
     this.apiKey =
+      config?.env?.OPENROUTER_API_KEY ||
       import.meta.env.OPENROUTER_API_KEY ||
       (typeof process !== "undefined" ? process.env.OPENROUTER_API_KEY : "") ||
       "";

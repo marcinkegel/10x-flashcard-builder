@@ -62,7 +62,14 @@ export const POST: APIRoute = async (context) => {
     }
 
     // 3. Call generation service (env vars injected at build time)
-    const generationData = await GenerationService.generateFlashcards(locals.supabase, user.id, result.data);
+    // @ts-expect-error - Cloudflare runtime is injected by the adapter
+    const runtimeEnv = context.locals.runtime?.env;
+    const generationData = await GenerationService.generateFlashcards(
+      locals.supabase,
+      user.id,
+      result.data,
+      runtimeEnv
+    );
 
     // 4. Return success response
     const response: ApiResponse<GenerationResponseDTO> = {

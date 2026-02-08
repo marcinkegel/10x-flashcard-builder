@@ -103,7 +103,8 @@ export const GenerationService = {
   generateFlashcards: async (
     supabase: SupabaseClient,
     userId: string,
-    command: GenerateFlashcardsCommand
+    command: GenerateFlashcardsCommand,
+    env?: Record<string, string>
   ): Promise<GenerationResponseDTO> => {
     const sourceText = command.source_text;
     const sourceTextLength = sourceText.length;
@@ -149,7 +150,7 @@ export const GenerationService = {
 
     try {
       // 3. Call OpenRouter - Initialize service (env vars injected at build time)
-      const openRouter = new OpenRouterService();
+      const openRouter = new OpenRouterService({ env });
 
       const result = await openRouter.generateChatCompletion<{ proposals: GenerationProposalDTO[] }>({
         systemPrompt: FLASHCARD_SYSTEM_PROMPT,

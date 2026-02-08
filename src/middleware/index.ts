@@ -18,9 +18,13 @@ const PUBLIC_PATHS = [
 export const onRequest = defineMiddleware(async (context, next) => {
   const { locals, cookies, url, request, redirect } = context;
 
+  // @ts-expect-error - Cloudflare runtime is injected by the adapter
+  const runtimeEnv = context.locals.runtime?.env;
+
   const supabase = createSupabaseServerInstance({
     cookies,
     headers: request.headers,
+    env: runtimeEnv,
   });
 
   locals.supabase = supabase;
