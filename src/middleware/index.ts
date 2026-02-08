@@ -15,13 +15,22 @@ const PUBLIC_PATHS = [
   "/api/auth/update-password",
 ];
 
-export const onRequest = defineMiddleware(async ({ locals, cookies, url, request, redirect }, next) => {
+export const onRequest = defineMiddleware(async (context, next) => {
+  const { locals, cookies, url, request, redirect } = context;
+
+  // Get runtime environment variables from Cloudflare binding
+  // In Cloudflare Workers, env is available at runtime.env
+  const runtime = (locals.runtime as { env?: Record<string, string> })?.env || {};
+
   const supabase = createSupabaseServerInstance({
     cookies,
     headers: request.headers,
+    runtime,
   });
 
   locals.supabase = supabase;
+  // Store runtime for use in API routes
+  locals.runtime = runtime;
 
   // IMPORTANT: Always get user session first before any other operations
   const {

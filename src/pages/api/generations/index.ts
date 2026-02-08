@@ -24,7 +24,9 @@ const generateSchema = z.object({
  *
  * Response: ApiResponse<GenerationResponseDTO>
  */
-export const POST: APIRoute = async ({ request, locals }) => {
+export const POST: APIRoute = async (context) => {
+  const { request, locals } = context;
+
   try {
     // 1. Authenticate user
     const user = locals.user;
@@ -59,8 +61,9 @@ export const POST: APIRoute = async ({ request, locals }) => {
       );
     }
 
-    // 3. Call generation service
-    const generationData = await GenerationService.generateFlashcards(locals.supabase, user.id, result.data);
+    // 3. Call generation service with runtime env
+    const runtime = locals.runtime as Record<string, string> | undefined;
+    const generationData = await GenerationService.generateFlashcards(locals.supabase, user.id, result.data, runtime);
 
     // 4. Return success response
     const response: ApiResponse<GenerationResponseDTO> = {

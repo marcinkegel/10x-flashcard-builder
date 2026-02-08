@@ -1,7 +1,8 @@
 import type { APIRoute } from "astro";
 import { createSupabaseAdminInstance } from "@/db/supabase.client";
 
-export const POST: APIRoute = async ({ locals }) => {
+export const POST: APIRoute = async (context) => {
+  const { locals } = context;
   const supabase = locals.supabase;
 
   // 1. Verify user is logged in and get their ID
@@ -19,7 +20,8 @@ export const POST: APIRoute = async ({ locals }) => {
   const userId = user.id;
 
   // 2. Use Admin instance to delete user data and the user
-  const supabaseAdmin = createSupabaseAdminInstance();
+  const runtime = locals.runtime as Record<string, string> | undefined;
+  const supabaseAdmin = createSupabaseAdminInstance(runtime);
 
   // Explicitly delete user data first to ensure GDPR compliance if cascades fail
   // We do this in parallel for better performance

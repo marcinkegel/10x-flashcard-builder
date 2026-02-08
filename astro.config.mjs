@@ -26,13 +26,10 @@ export default defineConfig({
     },
   },
   adapter: cloudflare({
-    platformProxy: {
-      enabled: true,
-    },
+    imageService: "compile",
     runtime: {
-      mode: "local",
+      mode: "off",
       type: "pages",
-      polyfills: true,
     },
   }),
 });

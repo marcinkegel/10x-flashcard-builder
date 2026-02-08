@@ -7,7 +7,6 @@ import { OpenRouterService, FLASHCARD_SYSTEM_PROMPT, FLASHCARD_RESPONSE_SCHEMA }
  * Service responsible for managing the flashcard generation process.
  * Handles deduplication, database logging, and coordination with AI models.
  */
-const openRouter = new OpenRouterService();
 const MODEL_NAME = "openai/gpt-4o-mini";
 
 /**
@@ -97,13 +96,15 @@ export const GenerationService = {
    * @param supabase - Supabase client instance from context.locals
    * @param userId - ID of the authenticated user
    * @param command - Object containing the source text
+   * @param runtime - Runtime environment variables (Cloudflare binding)
    * @throws ApiError if validation fails, duplicate is found, or DB/AI error occurs
    * @returns GenerationResponseDTO containing proposals and metadata
    */
   generateFlashcards: async (
     supabase: SupabaseClient,
     userId: string,
-    command: GenerateFlashcardsCommand
+    command: GenerateFlashcardsCommand,
+    runtime?: Record<string, string>
   ): Promise<GenerationResponseDTO> => {
     const sourceText = command.source_text;
     const sourceTextLength = sourceText.length;
@@ -148,7 +149,8 @@ export const GenerationService = {
     }
 
     try {
-      // 3. Call OpenRouter
+      // 3. Call OpenRouter - Initialize service with runtime env
+      const openRouter = new OpenRouterService({ runtime });
 
       const result = await openRouter.generateChatCompletion<{ proposals: GenerationProposalDTO[] }>({
         systemPrompt: FLASHCARD_SYSTEM_PROMPT,

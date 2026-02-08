@@ -52,9 +52,10 @@ export class OpenRouterService {
   private readonly baseUrl: string = "https://openrouter.ai/api/v1";
   private readonly defaultModel: string;
 
-  constructor(config?: { model?: string }) {
-    // In Astro, server-side environment variables are accessed via import.meta.env
-    this.apiKey = import.meta.env.OPENROUTER_API_KEY;
+  constructor(config?: { model?: string; runtime?: Record<string, string> }) {
+    // Get API key from runtime (Cloudflare) or build-time env (local dev)
+    const runtime = config?.runtime;
+    this.apiKey = (runtime && runtime.OPENROUTER_API_KEY) || import.meta.env.OPENROUTER_API_KEY;
     this.defaultModel = config?.model || "openai/gpt-4o-mini";
 
     if (!this.apiKey) {
