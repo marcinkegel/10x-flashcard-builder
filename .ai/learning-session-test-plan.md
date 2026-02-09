@@ -72,48 +72,54 @@ Ten dokument szczegółowo opisuje scenariusze testowe dla widoku Sesji Nauki, p
   1. Odśwież stronę sesji kilkukrotnie.
 - **Oczekiwany rezultat:** Za każdym razem kolejność kart powinna być inna (dzięki `sort=random` w API i shuffle na froncie).
 
-## 6. Testy Jednostkowe (Vitest)
+## 6. Testy Jednostkowe (Vitest) - ZAIMPLEMENTOWANE
 
-Te testy skupiają się na izolowanej logice biznesowej oraz poprawności renderowania komponentów.
+Te testy skupiają się na izolowanej logice biznesowej oraz poprawności renderowania komponentów. Wszystkie poniższe testy zostały zaimplementowane i przechodzą pomyślnie.
 
-### T-UNI-01: Hook `useLearningSession` - Inicjalizacja
+### Lokalizacja plików testowych:
+- Hook: `tests/unit/hooks/useLearningSession.test.ts`
+- Komponenty: `tests/unit/components/features/session/*.test.tsx`
+
+### T-UNI-01: Hook `useLearningSession` - Inicjalizacja (ZREALIZOWANO)
 - **Cel:** Sprawdzenie poprawności stanu początkowego.
 - **Przypadki testowe:**
-  - Stan `queue` powinien odpowiadać przekazanej tablicy fiszek.
-  - `completedCardsCount` powinien wynosić 0.
-  - `isFlipped` powinien być `false`.
-  - `totalInitialCards` powinien być zgodny z długością tablicy wejściowej.
+  - Stan `queue` odpowiada przekazanej tablicy fiszek.
+  - `completedCardsCount` wynosi 0.
+  - `isFlipped` jest `false`.
+  - `totalInitialCards` jest zgodny z długością tablicy wejściowej.
 
-### T-UNI-02: Hook `useLearningSession` - Logika kolejkowania (Znam)
+### T-UNI-02: Hook `useLearningSession` - Logika kolejkowania (Znam) (ZREALIZOWANO)
 - **Cel:** Weryfikacja akcji "Znam".
 - **Przypadki testowe:**
-  - Wywołanie `handleKnown` powinno usunąć pierwszą kartę z `queue`.
-  - `completedCardsCount` powinien wzrosnąć o 1.
-  - Jeśli karta była nowa (0 powtórzeń), `firstTimeCorrect` w statystykach powinien wzrosnąć.
+  - Wywołanie `handleKnown` usuwa pierwszą kartę z `queue`.
+  - `completedCardsCount` wzrasta o 1.
+  - Jeśli karta była nowa (0 powtórzeń), `firstTimeCorrect` w statystykach wzrasta.
 
-### T-UNI-03: Hook `useLearningSession` - Logika kolejkowania (Powtórz)
+### T-UNI-03: Hook `useLearningSession` - Logika kolejkowania (Powtórz) (ZREALIZOWANO)
 - **Cel:** Weryfikacja akcji "Powtórz".
 - **Przypadki testowe:**
-  - Wywołanie `handleRepeat` powinno przenieść pierwszą kartę na koniec `queue`.
-  - Licznik `repeatCount` danej karty powinien wzrosnąć o 1.
-  - `totalRepeats` w statystykach sesji powinien wzrosnąć.
-  - `completedCardsCount` nie powinien się zmienić.
+  - Wywołanie `handleRepeat` przenosi pierwszą kartę na koniec `queue`.
+  - Licznik `repeatCount` danej karty wzrasta o 1.
+  - `totalRepeats` w statystykach sesji wzrasta.
+  - `completedCardsCount` nie zmienia się.
 
-### T-UNI-04: Komponent `StudyCard` - Renderowanie i Flip
+### T-UNI-04: Komponent `StudyCard` - Renderowanie i Flip (ZREALIZOWANO)
 - **Cel:** Sprawdzenie czy komponent poprawnie reaguje na propsy.
 - **Przypadki testowe:**
-  - Czy wyświetla treść `front` gdy `isFlipped` jest `false`.
-  - Czy wyświetla treść `back` gdy `isFlipped` jest `true`.
-  - Czy wywołuje `onClick` po kliknięciu w kontener.
+  - Wyświetlanie treści `front` gdy `isFlipped` jest `false`.
+  - Wyświetlanie treści `back` gdy `isFlipped` jest `true`.
+  - Wywołanie `onClick` po kliknięciu w kontener.
+  - Obsługa klawiszy `Spacja` i `Enter`.
 
-### T-UNI-05: Komponent `SessionHeader` - Fazy sesji
+### T-UNI-05: Komponent `SessionHeader` - Fazy sesji (ZREALIZOWANO)
 - **Cel:** Weryfikacja wyświetlania postępu.
 - **Przypadki testowe:**
-  - Czy wyświetla "Karta X z Y" w fazie podstawowej (`isRepeatPhase: false`).
-  - Czy wyświetla "Powtórka kart" w fazie powtórek (`isRepeatPhase: true`).
+  - Wyświetlanie "Karta X z Y" w fazie podstawowej (`isRepeatPhase: false`).
+  - Wyświetlanie "Powtórka kart" w fazie powtórek (`isRepeatPhase: true`).
 
-### T-UNI-06: Komponent `SessionSummary` - Obliczenia
+### T-UNI-06: Komponent `SessionSummary` - Obliczenia (ZREALIZOWANO)
 - **Cel:** Weryfikacja poprawności wyświetlanych statystyk.
 - **Przypadki testowe:**
-  - Czy poprawnie oblicza procent "Bez powtórzeń" na podstawie `firstTimeCorrect` i `totalCards`.
-  - Czy wyświetla poprawną sumę powtórzeń.
+  - Obliczanie procentu "Bez powtórzeń" na podstawie `firstTimeCorrect` i `totalCards`.
+  - Wyświetlanie poprawnej sumy powtórzeń.
+  - Obsługa przycisków "Nowa sesja" i "Wróć do biblioteki".

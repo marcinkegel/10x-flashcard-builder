@@ -2,15 +2,14 @@
 
 ## 1. Wprowadzenie i cele testowania
 
-Celem niniejszego planu jest zapewnienie jakości aktualnie zaimplementowanych modułów aplikacji Flashcard Builder MVP. Skupiamy się na weryfikacji fundamentów systemu: autentykacji, generowania fiszek przez AI, manualnego tworzenia fiszek oraz zarządzania biblioteką fiszek. Plan zostanie rozszerzony w miarę implementacji kolejnych funkcji (sesja nauki).
+Celem niniejszego planu jest zapewnienie jakości zaimplementowanych modułów aplikacji Flashcard Builder MVP. System obejmuje autentykację, generowanie fiszek przez AI, manualne tworzenie fiszek, zarządzanie biblioteką oraz sesję nauki.
 
 **Cele szczegółowe:**
 
 - Weryfikacja poprawności integracji z OpenRouter API i stabilności generowania treści przez LLM.
-- Zapewnienie bezpieczeństwa danych użytkowników (izolacja danych przez Supabase RLS przy odczycie, zapisie, edycji i usuwaniu).
-- Potwierdzenie poprawnego działania formularzy manualnego tworzenia i edycji fiszek.
-- Gwarancja responsywności kluczowych widoków (Logowanie, Rejestracja, Panel Generowania, Biblioteka).
-- Weryfikacja poprawności paginacji i synchronizacji stanu w widoku biblioteki.
+- Zapewnienie bezpieczeństwa danych użytkowników (izolacja danych przez Supabase RLS).
+- Potwierdzenie poprawnego działania mechanizmu nauki (kolejkowanie, statystyki).
+- Gwarancja responsywności kluczowych widoków na urządzeniach mobilnych i desktopach.
 
 ## 2. Zakres testów
 
@@ -330,7 +329,7 @@ Celem niniejszego planu jest zapewnienie jakości aktualnie zaimplementowanych m
 
 ### Ograniczenia techniczne:
 
-1. **Brak frameworków testowych** - Projekt nie ma obecnie zainstalowanych Vitest ani Playwright. Implementacja testów wymaga najpierw konfiguracji środowiska (5-7 dni).
+1. **Środowisko testowe skonfigurowane** - Projekt posiada zainstalowane i skonfigurowane Vitest oraz Playwright. Unit testy są uruchamiane lokalnie i mogą być zintegrowane z CI/CD.
 
 2. **OpenRouter API Rate Limits** - Bezpłatny tier OpenRouter ma limity:
    - Max 10 requests/minute
@@ -377,7 +376,8 @@ Celem niniejszego planu jest zapewnienie jakości aktualnie zaimplementowanych m
 
 ### Obecny stan projektu:
 
-- ❌ **Brak frameworków testowych** - Vitest, Playwright nie są zainstalowane
+- ✅ **Frameworki testowe zainstalowane** - Vitest (unit/integration), Playwright (E2E)
+- ✅ **CI/CD wdrożone** - GitHub Actions (Lint, UT, E2E, Deployment do Cloudflare)
 - ✅ **ESLint i Prettier** - statyczna analiza kodu
 - ✅ **Husky + lint-staged** - pre-commit hooks dla jakości kodu
 - ✅ **TypeScript** - type checking w compile time
@@ -947,118 +947,123 @@ describe("Flashcards API Integration", () => {
 
 ## 13. Roadmap implementacji testów
 
-### Faza 0: Przygotowanie (Dni 1-5)
+### Faza 0: Przygotowanie (ZAKOŃCZONE)
 
 **Cel:** Przygotowanie środowiska i infrastruktury testowej
 
-- [ ] Instalacja Vitest, Playwright, Testing Library
-- [ ] Konfiguracja `vitest.config.ts` z aliasami i coverage
-- [ ] Konfiguracja `playwright.config.ts` z base URL i devices
-- [ ] Utworzenie struktury katalogów (`src/test/`, `tests/e2e/`, `tests/integration/`)
-- [ ] Implementacja mocków Supabase (`supabase.mock.ts`)
-- [ ] Setup fixtures i test helpers
-- [ ] Dodanie skryptów testowych do `package.json`
-- [ ] Konfiguracja GitHub Actions workflow dla CI
-- [ ] Dokumentacja: `tests/README.md` z instrukcjami uruchamiania
+- [x] Instalacja Vitest, Playwright, Testing Library
+- [x] Konfiguracja `vitest.config.ts` z aliasami i coverage
+- [x] Konfiguracja `playwright.config.ts` z base URL i devices
+- [x] Utworzenie struktury katalogów (`tests/unit/`, `tests/e2e/`, `tests/integration/`)
+- [x] Implementacja mocków Supabase i innych serwisów
+- [x] Setup fixtures i test helpers (`tests/setup.ts`)
+- [x] Dodanie skryptów testowych do `package.json`
+- [x] Konfiguracja GitHub Actions workflow dla CI
+- [x] Dokumentacja: `TESTING.md` (w korzeniu) oraz `tests/README.md`
 
 **Outcome:** Deweloperzy mogą uruchomić `npm run test` i zobaczyć działające środowisko
 
-### Faza 1: Testy jednostkowe - Quick Wins (Dni 6-12)
+### Faza 1: Testy jednostkowe - Quick Wins (ZREALIZOWANO)
 
 **Cel:** Pokrycie krytycznych serwisów i utils testami jednostkowymi
 
 **Priorytet WYSOKI:**
 
-- [ ] `generation.service.ts` - generateHash, checkDuplicate, logError
-- [ ] `openrouter.service.ts` - buildRequestPayload, handleApiResponse
-- [ ] `flashcard.service.ts` - CRUD operations, validation logic
-- [ ] Walidatory formularzy (email, password, character limits)
-- [ ] Utils: parsowanie, formatowanie danych
+- [x] `useLearningSession.ts` - logika sesji nauki (ZREALIZOWANO)
+- [x] `useGenerationSession.ts` - zarządzanie propozycjami AI (ZREALIZOWANO)
+- [x] `generation.service.ts` - generateHash, checkDuplicate, logError (ZREALIZOWANO)
+- [x] `openrouter.service.ts` - buildRequestPayload, handleApiResponse (ZREALIZOWANO)
+- [x] `flashcard.service.ts` - CRUD operations, validation logic (ZREALIZOWANO)
+- [x] Walidatory formularzy i middleware (ZREALIZOWANO)
+- [x] Utils: parsowanie, formatowanie danych (ZREALIZOWANO)
 
 **Target:** 70% coverage dla `src/lib/services/`
 
 **Outcome:** Core business logic jest przetestowany i bezpieczny do refaktoryzacji
 
-### Faza 2: Testy komponentów React (Dni 13-16)
+### Faza 2: Testy komponentów React (ZREALIZOWANO)
 
 **Cel:** Weryfikacja UI components w izolacji
 
 **Priorytet WYSOKI:**
 
-- [ ] `ProposalItem.tsx` - interakcje (edit, accept, reject)
-- [ ] `FlashcardItem.tsx` - wyświetlanie i akcje
-- [ ] `CharacterCounter.tsx` - logika licznika i kolorów
-- [ ] `BulkActionToolbar.tsx` - masowe akcje
+- [x] `StudyCard.tsx`, `SessionHeader.tsx`, `SessionSummary.tsx` (ZREALIZOWANO)
+- [x] `ProposalItem.tsx` - interakcje (edit, accept, reject) (ZREALIZOWANO)
+- [x] `FlashcardItem.tsx` - wyświetlanie i akcje (ZREALIZOWANO)
+- [x] `CharacterCounter.tsx` - logika licznika i kolorów (ZREALIZOWANO)
+- [x] `BulkActionToolbar.tsx` - masowe akcje (ZREALIZOWANO)
 
 **Priorytet ŚREDNI:**
 
-- [ ] Formularze: `LoginForm.tsx`, `ManualFlashcardForm.tsx`
-- [ ] Dialogi: `EditFlashcardDialog.tsx`, `DeleteFlashcardDialog.tsx`
+- [x] Formularze: `LoginForm.tsx`, `ManualFlashcardForm.tsx`, `RegisterForm.tsx` (ZREALIZOWANO)
+- [x] Dialogi: `EditFlashcardDialog.tsx`, `DeleteFlashcardDialog.tsx` (ZREALIZOWANO)
+- [x] Widoki: `FlashcardsLibrary.tsx`, `AIGenerationView.tsx` (ZREALIZOWANO)
 
 **Target:** 60% coverage dla `src/components/features/`
 
 **Outcome:** UI jest przewidywalne i spójne z design system
 
-### Faza 3: Testy integracyjne API (Dni 17-21)
+### Faza 3: Testy integracyjne API (ZREALIZOWANO)
 
 **Cel:** Weryfikacja endpointów i komunikacji z bazą
 
 **Priorytet WYSOKI:**
 
-- [ ] `POST /api/generations` - generowanie fiszek
-- [ ] `POST /api/flashcards` - tworzenie fiszek
-- [ ] `PUT /api/flashcards/[id]` - edycja fiszki
-- [ ] `DELETE /api/flashcards/[id]` - usuwanie fiszki
-- [ ] `GET /api/flashcards?page=1` - paginacja
+- [x] `POST /api/generations` - generowanie fiszek (ZREALIZOWANO)
+- [x] `POST /api/flashcards` - tworzenie fiszek (ZREALIZOWANO)
+- [x] `PUT /api/flashcards/[id]` - edycja fiszki (ZREALIZOWANO)
+- [x] `DELETE /api/flashcards/[id]` - usuwanie fiszki (ZREALIZOWANO)
+- [x] `GET /api/flashcards?page=1` - paginacja i filtry (ZREALIZOWANO)
 
 **Priorytet ŚREDNI:**
 
-- [ ] Auth endpoints: `/api/auth/login`, `/api/auth/register`
-- [ ] RLS policies: cross-user data isolation
+- [x] Auth endpoints i middleware (ZREALIZOWANO)
+- [x] RLS policies i izolacja danych (ZREALIZOWANO)
 
 **Setup wymagany:** Test database w Supabase (lub local Docker)
 
 **Outcome:** API jest stabilne i zgodne z dokumentacją
 
-### Faza 4: Testy E2E - Happy Paths (Dni 22-26)
+### Faza 4: Testy E2E - Happy Paths (ZREALIZOWANO)
 
 **Cel:** Weryfikacja kluczowych ścieżek użytkownika end-to-end
 
 **Priorytet KRYTYCZNY:**
 
-1. [ ] Auth flow: Rejestracja → Email confirmation → Login
-2. [ ] Generation flow: Login → Paste text → Generate → Edit proposal → Save
-3. [ ] Manual creation: Login → Manual form → Create → Verify in library
-4. [ ] Library management: List → Edit → Delete → Pagination
+1. [x] Auth flow: Logowanie, wylogowanie, profil (ZREALIZOWANO)
+2. [x] Generation flow: Pełny proces od tekstu do zapisu (ZREALIZOWANO)
+3. [x] Manual creation: Ręczne tworzenie i walidacja (ZREALIZOWANO)
+4. [x] Library management: Lista, edycja, usuwanie, paginacja (ZREALIZOWANO)
 
 **Setup:** Dev server running na localhost:4321
 
 **Outcome:** Główne user journeys działają bez przerwy
 
-### Faza 5: Testy E2E - Edge Cases (Dni 27-29)
+### Faza 5: Testy E2E - Edge Cases (W TOKU)
 
 **Cel:** Obsługa błędów i scenariuszy wyjątkowych
 
 **Scenariusze:**
 
+- [x] Walidacja pól (za krótki tekst, za długie pola) (ZREALIZOWANO)
+- [x] Błędy duplikacji generowania (ZREALIZOWANO)
 - [ ] Network errors i timeouty
 - [ ] Rate limiting (429 errors)
-- [ ] Duplicate generation error
-- [ ] Validation errors (za krótki tekst, za długie pola)
 - [ ] Session expiration podczas akcji
-- [ ] Mobile responsiveness (Playwright mobile viewport)
+- [x] Mobile responsiveness (Playwright mobile viewport) (ZREALIZOWANO)
 
 **Outcome:** Aplikacja jest odporna na błędy i user-friendly
 
-### Faza 6: CI/CD i Automatyzacja (Dni 30-32)
+### Faza 6: CI/CD i Automatyzacja (ZREALIZOWANO)
 
-**Cel:** Automatyczne uruchamianie testów w pipeline
+**Cel:** Automatyczne uruchamianie testów w pipeline oraz automatyczny deployment
 
-- [ ] GitHub Actions workflow dla PR checks
-- [ ] Parallel test execution w CI
-- [ ] Artifacts: Coverage reports, Playwright traces
-- [ ] Status badge w README.md
-- [ ] Notifications: Slack/Discord on test failures (opcjonalnie)
+- [x] GitHub Actions workflow dla PR checks (lint, unit, e2e) (ZREALIZOWANO)
+- [x] Automatyczny deployment do Cloudflare Pages (master) (ZREALIZOWANO)
+- [x] Raportowanie pokrycia kodu (Codecov) i statusów w PR (ZREALIZOWANO)
+- [x] Parallel test execution w CI (ZREALIZOWANO)
+- [x] Artifacts: Coverage reports, Playwright reports (ZREALIZOWANO)
+- [x] Status badges w README.md (ZREALIZOWANO)
 
 **Outcome:** Każdy PR jest automatycznie testowany przed merge
 
@@ -1078,26 +1083,25 @@ describe("Flashcards API Integration", () => {
 
 ## 14. Następne kroki (Action Items)
 
-### Natychmiast (przed rozpoczęciem testów):
+### Priorytety na najbliższy czas:
 
-1. **Review i akceptacja planu** - Product Owner i Tech Lead
-2. **Alokacja czasu** - zaplanowanie 5-7 tygodni na implementację
-3. **Setup environment** - instalacja narzędzi (Faza 0)
+1. **Testowanie scenariuszy brzegowych (Faza 5)** - Implementacja testów dla błędów sieciowych, timeoutów oraz wygasania sesji.
+2. **Monitoring i utrzymanie suity** - Regularne przeglądy flaky tests (jeśli się pojawią) oraz aktualizacja testów przy zmianach w UI.
+3. **Rozszerzenie testów integracyjnych** - Dodanie testów dla nowych endpointów API, które zostaną wprowadzone w przyszłych fazach rozwoju (np. statystyki globalne).
 
-### Pierwsze testy do napisania (Quick Wins):
+### Działania zakończone (ZREALIZOWANO):
 
-1. `generation.service.test.ts` - generateHash i checkDuplicate
-2. `CharacterCounter.test.tsx` - prosty komponent UI
-3. `auth-flow.spec.ts` - E2E login (smoke test)
+- [x] **Setup środowiska** - Vitest, Playwright, CI/CD są w pełni skonfigurowane.
+- [x] **Pierwsze testy (Quick Wins)** - Serwisy core, kluczowe komponenty UI oraz podstawowe ścieżki E2E są przetestowane.
+- [x] **Automatyzacja** - Pełna integracja z GitHub Actions i raportowanie coverage.
 
 ### Ciągłe działania:
 
-- **Code reviews** - każdy nowy kod powinien mieć testy
-- **Bug tracking** - każdy bug → regression test
-- **Refactoring** - testy dają pewność przy zmianach
+- **Code reviews** - Każda nowa funkcjonalność musi zawierać odpowiednie testy jednostkowe i/lub komponentowe.
+- **Refactoring support** - Wykorzystanie istniejącej suity testowej do bezpiecznego czyszczenia długu technicznego.
 
 ---
 
 **Stan dokumentu:** Zaktualizowany i gotowy do implementacji  
-**Ostatnia aktualizacja:** 2026-01-25  
-**Wersja:** 2.0
+**Ostatnia aktualizacja:** 2026-02-09  
+**Wersja:** 2.4
