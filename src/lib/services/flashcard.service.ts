@@ -54,7 +54,7 @@ export const FlashcardService = {
       // "utilizing the fact that with no specified sorting and limit, the database returns data in a nearly random way"
       // Wait, the plan actually says we should add support for sort=random.
       // Let's use the PostgreSQL random() function via a trick or just fetch and shuffle.
-      // Actually, we can use .order('random' as any) if we have a view or function, 
+      // Actually, we can use .order('random' as any) if we have a view or function,
       // but the simplest way to get random cards in Supabase without RPC is not straightforward.
       // Let's stick to the plan's suggestion of "default sort being nearly random" or implement a simple shuffle.
     }

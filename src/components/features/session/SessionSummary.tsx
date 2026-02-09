@@ -1,7 +1,7 @@
-import React from 'react';
-import { Button } from '@/components/ui/button';
-import { Trophy, RotateCcw, Home, Target, Repeat, Layers } from 'lucide-react';
-import type { SessionStatsVM } from '@/types';
+import React from "react";
+import { Button } from "@/components/ui/button";
+import { Trophy, RotateCcw, Home, Target, Repeat, Layers } from "lucide-react";
+import type { SessionStatsVM } from "@/types";
 
 interface SessionSummaryProps {
   stats: SessionStatsVM;
@@ -17,7 +17,7 @@ export const SessionSummary: React.FC<SessionSummaryProps> = ({ stats, onRestart
       <div className="bg-primary/10 p-6 rounded-full mb-6 ring-8 ring-primary/5 animate-bounce">
         <Trophy className="h-12 w-12 text-primary" />
       </div>
-      
+
       <h1 className="text-3xl font-bold mb-2 tracking-tight">Świetna robota!</h1>
       <p className="text-muted-foreground mb-8">Ukończyłeś sesję nauki i przyswoiłeś nową wiedzę.</p>
 
@@ -27,7 +27,7 @@ export const SessionSummary: React.FC<SessionSummaryProps> = ({ stats, onRestart
           <p className="text-2xl font-bold">{stats.totalCards}</p>
           <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Fiszki</p>
         </div>
-        
+
         <div className="bg-card border rounded-xl p-4 shadow-sm flex flex-col items-center">
           <Target className="h-5 w-5 text-green-500 mb-2" />
           <p className="text-2xl font-bold">{accuracy}%</p>

@@ -1,14 +1,13 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { useLearningSession } from '@/components/hooks/useLearningSession';
-import { StudyCard } from './StudyCard';
-import { SessionHeader } from './SessionHeader';
-import { SessionControls } from './SessionControls';
-import { SessionSummary } from './SessionSummary';
-import { Button } from '@/components/ui/button';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Skeleton } from '@/components/ui/skeleton';
-import { RotateCcw, Home, AlertCircle, PlusCircle } from 'lucide-react';
-import type { ApiResponse, PaginatedData, FlashcardDTO, SessionFlashcardVM } from '@/types';
+import React, { useEffect, useState, useCallback } from "react";
+import { useLearningSession } from "@/components/hooks/useLearningSession";
+import { StudyCard } from "./StudyCard";
+import { SessionHeader } from "./SessionHeader";
+import { SessionControls } from "./SessionControls";
+import { SessionSummary } from "./SessionSummary";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { RotateCcw, Home, AlertCircle, PlusCircle } from "lucide-react";
+import type { ApiResponse, PaginatedData, FlashcardDTO, SessionFlashcardVM } from "@/types";
 
 // Helper to shuffle array
 const shuffleArray = <T,>(array: T[]): T[] => {
@@ -22,31 +21,24 @@ const shuffleArray = <T,>(array: T[]): T[] => {
 
 export const LearningSessionContainer: React.FC = () => {
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<{ message: string; type: 'empty' | 'error' } | null>(null);
+  const [error, setError] = useState<{ message: string; type: "empty" | "error" } | null>(null);
   const [initialCards, setInitialCards] = useState<SessionFlashcardVM[]>([]);
 
-  const {
-    state,
-    currentCard,
-    isFinished,
-    flipCard,
-    handleKnown,
-    handleRepeat,
-    resetSession,
-  } = useLearningSession(initialCards);
+  const { state, currentCard, isFinished, flipCard, handleKnown, handleRepeat, resetSession } =
+    useLearningSession(initialCards);
 
   const fetchFlashcards = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch('/api/flashcards?limit=12&sort=random');
+      const response = await fetch("/api/flashcards?limit=12&sort=random");
       const result: ApiResponse<PaginatedData<FlashcardDTO>> = await response.json();
 
       if (result.success && result.data) {
         if (result.data.items.length === 0) {
-          setError({ 
-            message: 'Brak fiszek w bibliotece. Dodaj kilka fiszek, aby rozpocząć naukę.', 
-            type: 'empty' 
+          setError({
+            message: "Brak fiszek w bibliotece. Dodaj kilka fiszek, aby rozpocząć naukę.",
+            type: "empty",
           });
         } else {
           const mappedCards: SessionFlashcardVM[] = shuffleArray(result.data.items).map((card) => ({
@@ -60,15 +52,15 @@ export const LearningSessionContainer: React.FC = () => {
           resetSession(mappedCards);
         }
       } else {
-        setError({ 
-          message: result.error?.message || 'Nie udało się pobrać fiszek.', 
-          type: 'error' 
+        setError({
+          message: result.error?.message || "Nie udało się pobrać fiszek.",
+          type: "error",
         });
       }
     } catch (err) {
-      setError({ 
-        message: 'Wystąpił błąd podczas łączenia z API.', 
-        type: 'error' 
+      setError({
+        message: err instanceof Error ? err.message : "Wystąpił nieoczekiwany błąd podczas łączenia z API.",
+        type: "error",
       });
     } finally {
       setLoading(false);
@@ -77,31 +69,31 @@ export const LearningSessionContainer: React.FC = () => {
 
   useEffect(() => {
     fetchFlashcards();
-  }, []);
+  }, [fetchFlashcards]);
 
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (isFinished || loading || error) return;
 
-      if (e.code === 'Space') {
+      if (e.code === "Space") {
         e.preventDefault();
         flipCard();
       } else if (state.isFlipped) {
-        if (e.key === '1') {
+        if (e.key === "1") {
           handleRepeat();
-        } else if (e.key === '2') {
+        } else if (e.key === "2") {
           handleKnown();
         }
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isFinished, loading, error, state.isFlipped, flipCard, handleRepeat, handleKnown]);
 
   const handleExit = () => {
-    window.location.href = '/flashcards';
+    window.location.href = "/flashcards";
   };
 
   if (loading) {
@@ -120,24 +112,26 @@ export const LearningSessionContainer: React.FC = () => {
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center h-full max-w-md mx-auto p-6 text-center animate-in fade-in slide-in-from-bottom-4 duration-500">
-        <div className={error.type === 'empty' ? 'bg-primary/10 p-6 rounded-full mb-6' : 'bg-destructive/10 p-6 rounded-full mb-6'}>
-          {error.type === 'empty' ? (
+        <div
+          className={
+            error.type === "empty" ? "bg-primary/10 p-6 rounded-full mb-6" : "bg-destructive/10 p-6 rounded-full mb-6"
+          }
+        >
+          {error.type === "empty" ? (
             <PlusCircle className="h-12 w-12 text-primary" />
           ) : (
             <AlertCircle className="h-12 w-12 text-destructive" />
           )}
         </div>
-        
+
         <h2 className="text-2xl font-bold mb-3">
-          {error.type === 'empty' ? 'Twoja biblioteka jest pusta' : 'Wystąpił problem'}
+          {error.type === "empty" ? "Twoja biblioteka jest pusta" : "Wystąpił problem"}
         </h2>
-        <p className="text-muted-foreground mb-8 text-lg leading-relaxed">
-          {error.message}
-        </p>
-        
+        <p className="text-muted-foreground mb-8 text-lg leading-relaxed">{error.message}</p>
+
         <div className="flex flex-col gap-3 w-full">
-          {error.type === 'empty' ? (
-            <Button onClick={() => window.location.href = '/generate'} className="w-full h-12 text-lg">
+          {error.type === "empty" ? (
+            <Button onClick={() => (window.location.href = "/generate")} className="w-full h-12 text-lg">
               <PlusCircle className="mr-2 h-5 w-5" /> Generuj pierwsze fiszki
             </Button>
           ) : (
@@ -154,13 +148,7 @@ export const LearningSessionContainer: React.FC = () => {
   }
 
   if (isFinished) {
-    return (
-      <SessionSummary 
-        stats={state.sessionStats} 
-        onRestart={fetchFlashcards} 
-        onExit={handleExit} 
-      />
-    );
+    return <SessionSummary stats={state.sessionStats} onRestart={fetchFlashcards} onExit={handleExit} />;
   }
 
   const progress = (state.completedCardsCount / state.totalInitialCards) * 100;
@@ -169,17 +157,17 @@ export const LearningSessionContainer: React.FC = () => {
 
   return (
     <div className="flex flex-col h-full bg-background overflow-hidden">
-      <SessionHeader 
-        currentCount={state.completedCardsCount + 1} 
-        totalCount={state.totalInitialCards} 
+      <SessionHeader
+        currentCount={state.completedCardsCount + 1}
+        totalCount={state.totalInitialCards}
         isRepeatPhase={isRepeatPhase}
-        onExit={handleExit} 
+        onExit={handleExit}
       />
 
       {/* Progress Bar Container */}
       <div className="w-full h-1.5 bg-muted shrink-0 relative">
-        <div 
-          className="h-full bg-primary transition-all duration-500 ease-out shadow-[0_0_10px_rgba(var(--primary),0.5)]" 
+        <div
+          className="h-full bg-primary transition-all duration-500 ease-out shadow-[0_0_10px_rgba(var(--primary),0.5)]"
           style={{ width: `${progress}%` }}
         />
       </div>
@@ -194,7 +182,7 @@ export const LearningSessionContainer: React.FC = () => {
               onClick={flipCard}
             />
 
-            <SessionControls 
+            <SessionControls
               isFlipped={state.isFlipped}
               onFlip={flipCard}
               onKnown={handleKnown}

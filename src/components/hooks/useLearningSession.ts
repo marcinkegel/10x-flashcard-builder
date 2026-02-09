@@ -1,5 +1,5 @@
-import { useState, useCallback, useMemo } from 'react';
-import type { SessionFlashcardVM, SessionStateVM, SessionStatsVM } from '@/types';
+import { useState, useCallback, useMemo } from "react";
+import type { SessionFlashcardVM, SessionStateVM } from "@/types";
 
 export const useLearningSession = (initialFlashcards: SessionFlashcardVM[]) => {
   const [state, setState] = useState<SessionStateVM>({
@@ -28,7 +28,7 @@ export const useLearningSession = (initialFlashcards: SessionFlashcardVM[]) => {
     setState((prev) => {
       const isFirstAttempt = currentCard.repeatCount === 0;
       const newQueue = prev.queue.slice(1);
-      
+
       return {
         ...prev,
         queue: newQueue,
@@ -36,8 +36,8 @@ export const useLearningSession = (initialFlashcards: SessionFlashcardVM[]) => {
         completedCardsCount: prev.completedCardsCount + 1,
         sessionStats: {
           ...prev.sessionStats,
-          firstTimeCorrect: isFirstAttempt 
-            ? prev.sessionStats.firstTimeCorrect + 1 
+          firstTimeCorrect: isFirstAttempt
+            ? prev.sessionStats.firstTimeCorrect + 1
             : prev.sessionStats.firstTimeCorrect,
         },
       };
