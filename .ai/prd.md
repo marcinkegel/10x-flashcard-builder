@@ -31,11 +31,14 @@ Głównym problemem osób korzystających z metody spaced repetition jest wysoki
 - Walidacja formularzy po stronie klienta z czytelnymi komunikatami o błędach.
 - Możliwość usunięcia konta wraz ze wszystkimi powiązanymi danymi zgodnie z RODO.
 
-4. Integracja z algorytmem powtórek
+4. Sesja nauki i powtórki
 
-- Wykorzystanie zewnętrznej biblioteki open-source do zarządzania harmonogramem nauki.
-- Automatyczne przypisywanie nowych fiszek do harmonogramu po ich utworzeniu (manualnym lub przez AI).
-- Brak zaawansowanych powiadomień w wersji MVP.
+- Dedykowany, minimalistyczny widok sesji nauki ("/session").
+- System losuje maksymalnie 12 fiszek z biblioteki użytkownika.
+- Mechanizm kolejkowania: fiszki oznaczone jako "Powtórz" trafiają na koniec kolejki.
+- Interaktywna karta 3D z efektem obrotu (front/tył).
+- Obsługa skrótów klawiszowych (Spacja, 1, 2) dla szybkiej nauki.
+- Podsumowanie sesji ze statystykami (liczba kart, skuteczność "bez powtórzeń", suma powtórzeń).
 
 5. Statystyki i analityka
 
@@ -137,14 +140,18 @@ Kryteria akceptacji:
 4. Edycja podlega tym samym limitom znaków co tworzenie manualne.
 
 ID: US-007
-Tytuł: Sesja nauki z algorytmem powtórek
-Opis: Jako zalogowany użytkownik chcę, aby dodane fiszki były dostępne w widoku "Sesja nauki" opartym na zewnętrznym algorytmie, aby móc efektywnie się uczyć (spaced repetition).
+Tytuł: Sesja nauki
+Opis: Jako zalogowany użytkownik chcę przeprowadzić sesję nauki, aby utrwalić wiedzę z moich fiszek.
 Kryteria akceptacji:
 
-1. W widoku "Sesja nauki" algorytm przygotowuje dla mnie sesję nauki fiszek
-2. Na start wyświetlany jest przód fiszki. Kliknięcie w kartę powoduje jej wizualne odwrócenie i pokazanie tyłu.
-3. Użytkownik ocenia zgodnie z oczekiwaniami algorytmu na ile przyswoił fiszkę
-4. Następnie algorytm pokazuje kolejną fiszkę w ramach sesji nauki
+1. System losuje do 12 fiszek z biblioteki (sortowanie losowe przez API).
+2. Widok jest minimalistyczny ("distraction-free"), bez standardowego headera i sidebaru.
+3. Wyświetlana jest interaktywna karta 3D. Kliknięcie w kartę lub naciśnięcie Spacji powoduje jej obrót (animacja flip).
+4. Pod kartą dostępne są przyciski: "Powtórz" (skrót '1') i "Znam" (skrót '2'). Przyciski są widoczne dopiero po odwróceniu karty.
+5. Kliknięcie "Powtórz" przenosi kartę na koniec aktualnej kolejki. Sesja trwa, dopóki wszystkie karty nie zostaną oznaczone jako "Znam".
+6. Pasek postępu (progress bar) pokazuje wizualnie postęp sesji. Po zakończeniu bazowej liczby kart (np. 12/12), licznik zmienia się w informację o fazie powtórek.
+7. Po oznaczeniu ostatniej karty jako "Znam", wyświetlane jest podsumowanie ze statystykami: liczba kart, procent kart zaliczonych bez ani jednego powtórzenia oraz całkowita liczba kliknięć "Powtórz".
+8. Jeśli biblioteka jest pusta, wyświetlany jest dedykowany komunikat z linkiem do generatora fiszek.
 
 ID: US-008
 Tytuł: Usuwanie konta (RODO)

@@ -19,9 +19,10 @@ The main hurdle for students using spaced repetition is the high effort of manua
 
 ### Key Features:
 
-- **AI Generation:** Transform long notes or book fragments into flashcards in seconds using OpenRouter.
-- **Review System:** Accept, edit, or reject AI-generated flashcard proposals before adding them to your library.
-- **Manual Management:** Full CRUD operations for custom flashcards with real-time character limits.
+- ✅ **AI Generation:** Transform long notes or book fragments into flashcards in seconds using OpenRouter.
+- ✅ **Learning Session:** Active recall study mode with 3D card flips, keyboard shortcuts, and intelligent re-queuing for missed cards.
+- ✅ **Review System:** Accept, edit, or reject AI-generated flashcard proposals before adding them to your library.
+- ✅ **Manual Management:** Full CRUD operations for custom flashcards with real-time character limits.
 - **User System:** Secure authentication via Supabase (Login, Register, Password Reset, Profile Management).
 - **Data Privacy:** GDPR-compliant account deletion functionality.
 - **Responsive Design:** Modern, mobile-friendly UI built with Tailwind CSS and Shadcn/ui.
@@ -119,6 +120,7 @@ For detailed testing documentation, see:
 ### Included in MVP:
 
 - ✅ AI flashcard generation (1k-10k char input) via OpenRouter.
+- ✅ Learning Session with 3D flip animation and keyboard shortcuts.
 - ✅ Review system (Accept/Edit/Reject AI proposals).
 - ✅ Manual flashcard creation (200 char front / 500 char back limit).
 - ✅ Flashcard Library with full CRUD operations.
@@ -128,7 +130,7 @@ For detailed testing documentation, see:
 
 ### Out of Scope (Future Updates):
 
-- Spaced repetition study sessions (in progress).
+- Spaced repetition algorithm integration (backend scheduling).
 - External file imports (PDF, DOCX).
 - Deck sharing between users.
 - Native mobile applications.

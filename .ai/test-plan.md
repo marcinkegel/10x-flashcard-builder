@@ -22,12 +22,12 @@ Celem niniejszego planu jest zapewnienie jakości aktualnie zaimplementowanych m
 - Masowe operacje na propozycjach AI (BulkActionToolbar - akceptacja, odrzucanie, zapis zbiorczy).
 - Ręczne tworzenie nowych fiszek (formularz z licznikami znaków).
 - Zarządzanie biblioteką fiszek (przeglądanie listy z paginacją, edycja treści, usuwanie).
+- Sesja nauki (losowanie fiszek, mechanizm kolejkowania "Powtórz", podsumowanie statystyk). Szczegółowy plan: [.ai/learning-session-test-plan.md](.ai/learning-session-test-plan.md)
 - Procedura trwałego usuwania konta.
 
 ### Funkcje wyłączone z zakresu (Jeszcze niezaimplementowane):
 
-- **Sesja nauki (Spaced Repetition):** Brak widoku sesji i integracji z algorytmem.
-- **Statystyki:** Brak widoku podsumowującego efektywność AI dla użytkownika.
+- **Statystyki globalne:** Brak widoku podsumowującego efektywność nauki w czasie.
 - Importowanie plików zewnętrznych (PDF, DOCX).
 
 ## 3. Typy testów do przeprowadzenia
@@ -262,7 +262,25 @@ Celem niniejszego planu jest zapewnienie jakości aktualnie zaimplementowanych m
   - Usuwanie wszystkich fiszek → wyświetlenie `EmptyState`.
   - Edycja z pustym polem → walidacja i błąd "Pole nie może być puste".
 
-### ST-04: Procedura usuwania konta (RODO)
+### ST-04: Sesja nauki (Learning Session)
+
+- **Cel:** Weryfikacja przepływu nauki, mechanizmu kolejkowania i statystyk.
+- **Warunki wstępne:** Użytkownik posiada min. 5 fiszek w bibliotece.
+- **Kroki:**
+  1. Wejście w widok "Nauka" (`/session`).
+  2. Sprawdzenie czy karta wyświetla "FRONT".
+  3. Kliknięcie w kartę lub naciśnięcie Spacji (obrót na "TYŁ").
+  4. Kliknięcie "Powtórz" (lub klawisz '1').
+  5. Sprawdzenie czy karta wróciła na przód i czy licznik sesji uwzględnia powtórkę.
+  6. Kliknięcie "Znam" (lub klawisz '2') dla wszystkich pozostałych kart.
+  7. Weryfikacja ekranu podsumowania (SessionSummary).
+- **Oczekiwany rezultat:**
+  - Karta oznaczona jako "Powtórz" pojawia się ponownie na końcu kolejki.
+  - Licznik kart zmienia się w "Powtórka kart" po przejściu wszystkich bazowych kart.
+  - Podsumowanie wyświetla poprawne dane (np. 1 powtórzenie, odpowiedni % bez powtórzeń).
+  - Przyciski "Nowa sesja" i "Wróć do biblioteki" działają poprawnie.
+
+### ST-05: Procedura usuwania konta (RODO)
 
 - **Warunek wstępny:** Użytkownik zalogowany z aktywnym kontem zawierającym dane (fiszki, generacje).
 - **Kroki:**
