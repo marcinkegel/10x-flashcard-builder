@@ -1,4 +1,4 @@
-import { Page } from "@playwright/test";
+import { type Page } from "@playwright/test";
 
 export class Navbar {
   constructor(private page: Page) {}
@@ -11,11 +11,19 @@ export class Navbar {
     return this.page.getByTestId("nav-library-desktop").or(this.page.getByTestId("nav-library-mobile"));
   }
 
+  get sessionLink() {
+    return this.page.getByTestId("nav-session-desktop").or(this.page.getByTestId("nav-session-mobile"));
+  }
+
   async gotoGenerate() {
     await this.generateLink.click();
   }
 
   async gotoLibrary() {
     await this.libraryLink.click();
+  }
+
+  async gotoSession() {
+    await this.sessionLink.click();
   }
 }
