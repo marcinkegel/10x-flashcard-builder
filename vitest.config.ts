@@ -36,10 +36,10 @@ export default defineConfig({
         "src/components/ui/**", // Shadcn/ui components (third-party)
       ],
       thresholds: {
-        lines: 55,
-        functions: 55,
-        branches: 55,
-        statements: 55,
+        lines: 60,
+        functions: 60,
+        branches: 59,
+        statements: 60,
       },
     },
 
