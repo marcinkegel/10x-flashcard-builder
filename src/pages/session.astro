@@ -1,0 +1,10 @@
+---
+import SessionLayout from "../layouts/SessionLayout.astro";
+import LearningSessionContainer from "../components/features/session/LearningSessionContainer";
+
+export const prerender = false;
+---
+
+<SessionLayout title="Sesja Nauki | 10x Flashcard Builder">
+  <LearningSessionContainer client:only="react" />
+</SessionLayout>

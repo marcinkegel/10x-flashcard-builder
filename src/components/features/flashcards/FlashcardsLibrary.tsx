@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { FlashcardList } from "./FlashcardList";
 import { PaginationControl } from "./PaginationControl";
 import { EmptyState } from "./EmptyState";
-import { Library, AlertCircle, RefreshCw } from "lucide-react";
+import { Library, AlertCircle, RefreshCw, PlayCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import type { FlashcardDTO, ApiResponse, PaginatedData, PaginationDTO } from "@/types";
@@ -128,14 +128,26 @@ export function FlashcardsLibrary() {
             Zarządzaj swoją bazą wiedzy. Przeglądaj, edytuj i usuwaj zapisane fiszki.
           </p>
         </div>
-        {pagination && pagination.total > 0 && (
-          <div
-            data-testid="flashcards-count"
-            className="text-sm text-muted-foreground bg-muted/50 px-3 py-1 rounded-full w-fit"
-          >
-            Razem: <span className="font-semibold text-foreground">{pagination.total}</span>
-          </div>
-        )}
+        <div className="flex flex-wrap items-center gap-3">
+          {pagination && pagination.total > 0 && (
+            <>
+              <Button
+                data-testid="start-session-button"
+                className="bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20"
+                onClick={() => (window.location.href = "/session")}
+              >
+                <PlayCircle className="w-4 h-4 mr-2" />
+                Rozpocznij naukę
+              </Button>
+              <div
+                data-testid="flashcards-count"
+                className="text-sm text-muted-foreground bg-muted/50 px-3 py-1 rounded-full w-fit h-9 flex items-center"
+              >
+                Razem: <span className="font-semibold text-foreground ml-1">{pagination.total}</span>
+              </div>
+            </>
+          )}
+        </div>
       </div>
 
       {flashcards.length === 0 ? (

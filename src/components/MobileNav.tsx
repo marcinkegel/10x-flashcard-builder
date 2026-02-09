@@ -57,6 +57,14 @@ export function MobileNav({ userEmail }: MobileNavProps) {
             Moje fiszki
           </a>
           <a
+            href="/session"
+            data-testid="nav-session-mobile"
+            className="text-lg font-medium transition-colors hover:text-primary ml-2"
+            onClick={() => setOpen(false)}
+          >
+            Nauka
+          </a>
+          <a
             href="/profile"
             data-testid="nav-profile-mobile"
             className="text-lg font-medium transition-colors hover:text-primary ml-2"

@@ -176,3 +176,30 @@ export type GenerationErrorLogDTO = Tables<"generation_error_logs">;
  */
 
 export type FlashcardSourceType = Database["public"]["Enums"]["flashcard_source_type"];
+
+/**
+ * LEARNING SESSION
+ */
+
+export interface SessionFlashcardVM {
+  id: string;
+  front: string;
+  back: string;
+  repeatCount: number; // ile razy użytkownik kliknął "Powtórz" dla tej karty
+  wasAlwaysCorrect: boolean; // czy od początku kliknięto "Znam"
+}
+
+export interface SessionStatsVM {
+  totalCards: number;
+  firstTimeCorrect: number; // Liczba fiszek zaliczonych bez ani jednego powtórzenia
+  totalRepeats: number; // Sumaryczna liczba kliknięć "Powtórz"
+}
+
+export interface SessionStateVM {
+  queue: SessionFlashcardVM[];
+  currentIndex: number;
+  isFlipped: boolean;
+  completedCardsCount: number;
+  totalInitialCards: number;
+  sessionStats: SessionStatsVM;
+}
