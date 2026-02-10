@@ -26,6 +26,7 @@ export const SessionControls: React.FC<SessionControlsProps> = ({
             className="flex-1 h-full text-lg font-semibold border-2 hover:bg-muted"
             onClick={onRepeat}
             disabled={disabled}
+            data-testid="session-repeat-button"
           >
             <span className="mr-2 text-xs opacity-60 bg-muted px-2 py-0.5 rounded border shadow-sm">1</span>
             Powtórz
@@ -34,6 +35,7 @@ export const SessionControls: React.FC<SessionControlsProps> = ({
             className="flex-1 h-full text-lg font-semibold bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-600/20"
             onClick={onKnown}
             disabled={disabled}
+            data-testid="session-known-button"
           >
             <span className="mr-2 text-xs opacity-60 bg-white/20 px-2 py-0.5 rounded border border-white/30 shadow-sm">
               2
@@ -47,6 +49,7 @@ export const SessionControls: React.FC<SessionControlsProps> = ({
           className="w-full h-full text-lg font-semibold shadow-lg shadow-primary/10"
           onClick={onFlip}
           disabled={disabled}
+          data-testid="session-show-answer-button"
         >
           Pokaż odpowiedź
           <span className="ml-2 text-xs opacity-60 bg-white/20 px-2 py-0.5 rounded border border-white/30 shadow-sm ml-4">
