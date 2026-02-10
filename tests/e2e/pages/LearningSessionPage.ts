@@ -80,17 +80,11 @@ export class LearningSessionPage {
     this.progressBar = page.getByTestId("session-progress-bar");
 
     // Study Card
-    this.studyCard = page.locator("div[role='button']").filter({ has: page.getByText(/FRONT|TYŁ/i) });
-    this.cardFrontLabel = page.getByText("FRONT");
-    this.cardBackLabel = page.getByText("TYŁ");
-    this.cardFrontText = page
-      .locator("p")
-      .filter({ has: page.locator("..").filter({ has: page.getByText("FRONT") }) })
-      .nth(1);
-    this.cardBackText = page
-      .locator("p")
-      .filter({ has: page.locator("..").filter({ has: page.getByText("TYŁ") }) })
-      .nth(1);
+    this.studyCard = page.getByTestId("study-card");
+    this.cardFrontLabel = page.getByTestId("study-card-front-label");
+    this.cardBackLabel = page.getByTestId("study-card-back-label");
+    this.cardFrontText = page.getByTestId("study-card-front-content");
+    this.cardBackText = page.getByTestId("study-card-back-content");
     this.flipHint = page.getByText("Kliknij, aby odwrócić");
 
     // Session Controls - use data-testid for reliability
