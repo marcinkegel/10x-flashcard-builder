@@ -1,5 +1,7 @@
 # 10x Flashcard Builder
 
+[![Live Demo](https://img.shields.io/badge/demo-live-brightgreen)](https://10x-flashcard-builder.pages.dev/)
+
 ## Table of Contents
 
 - [Project Description](#project-description)
@@ -41,7 +43,8 @@ The main hurdle for students using spaced repetition is the high effort of manua
 
 - **Supabase:** PostgreSQL database, Authentication (GoTrue), and SSR-ready client integration.
 - **OpenRouter.ai:** Unified API to access various LLMs for flashcard generation.
-- **GitHub Actions:** Automated CI/CD pipeline for running unit tests and linting on push.
+- **GitHub Actions:** Automated CI/CD pipeline for running unit tests, linting, and deploying to Cloudflare Pages on push to `master`.
+- **Cloudflare Pages:** Hosting platform with SSR support via Cloudflare Workers.
 - **Husky & lint-staged:** Pre-commit hooks for code quality.
 
 ## Getting Started Locally
@@ -127,6 +130,7 @@ For detailed testing documentation, see:
 - ✅ User authentication (Login, Register, Password Reset).
 - ✅ Profile management and account deletion.
 - ✅ Automated CI/CD with GitHub Actions (Linting, Unit Tests, and E2E Tests).
+- ✅ Automated deployment to [Cloudflare Pages](https://10x-flashcard-builder.pages.dev/) on push to `master`.
 
 ### Out of Scope (Future Updates):
 
