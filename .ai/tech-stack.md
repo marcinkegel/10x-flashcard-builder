@@ -25,7 +25,7 @@ CI/CD i Hosting:
 
 - Github Actions do tworzenia pipeline’ów CI/CD
 - Codecov do analizy i raportowania pokrycia testów
-- Cloudflare Pages do hostowania aplikacji (SSR z Workers) 
+- Cloudflare Pages do hostowania aplikacji (SSR z Workers) - [https://10x-flashcard-builder.pages.dev/](https://10x-flashcard-builder.pages.dev/) 
 
 Testy - Automatyzacja i zapewnienie jakości:
 

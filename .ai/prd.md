@@ -194,3 +194,12 @@ Aplikacja wdraża wielopoziomową strategię testów automatycznych w celu zapew
    - Pełne scenariusze użytkownika (User Journeys) w przeglądarce.
    - Testy krytycznych ścieżek: Rejestracja/Logowanie, Generowanie AI, Zarządzanie Biblioteką.
    - Weryfikacja responsywności (Desktop/Mobile) oraz obsługi błędów API.
+
+## 8. Infrastruktura i Wdrożenie
+
+- **Hosting**: Cloudflare Pages z obsługą SSR (Cloudflare Workers).
+- **Adres aplikacji**: [https://10x-flashcard-builder.pages.dev/](https://10x-flashcard-builder.pages.dev/)
+- **CI/CD**: GitHub Actions - automatyczny potok wdrażający każdą zmianę z gałęzi `master` na produkcję po pomyślnym przejściu testów (lint, unit, e2e).
+- **Zarządzanie sesjami**: Cloudflare KV (dla przechowywania danych sesji w środowisku brzegowym).
+- **Baza danych i Auth**: Supabase.
+- **AI**: OpenRouter API.
