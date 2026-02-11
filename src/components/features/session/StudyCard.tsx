@@ -23,6 +23,7 @@ export const StudyCard: React.FC<StudyCardProps> = ({ front, back, isFlipped, on
       role="button"
       tabIndex={0}
       aria-label={isFlipped ? "Odwróć na przód" : "Odwróć na tył"}
+      data-testid="study-card"
     >
       <div
         className={cn(
@@ -34,10 +35,16 @@ export const StudyCard: React.FC<StudyCardProps> = ({ front, back, isFlipped, on
         <div className="absolute inset-0 backface-hidden">
           <Card className="w-full h-full flex items-center justify-center p-8 text-center bg-card border-2">
             <CardContent className="flex flex-col items-center justify-center h-full pt-6 px-4 sm:px-8">
-              <span className="text-xs sm:text-sm font-medium text-muted-foreground mb-4 opacity-70 tracking-widest uppercase">
+              <span
+                className="text-xs sm:text-sm font-medium text-muted-foreground mb-4 opacity-70 tracking-widest uppercase"
+                data-testid="study-card-front-label"
+              >
                 FRONT
               </span>
-              <p className="text-xl sm:text-2xl md:text-3xl font-semibold leading-tight break-words overflow-y-auto max-h-[70%] scrollbar-hide">
+              <p
+                className="text-xl sm:text-2xl md:text-3xl font-semibold leading-tight break-words overflow-y-auto max-h-[70%] scrollbar-hide"
+                data-testid="study-card-front-content"
+              >
                 {front}
               </p>
               <p className="mt-auto text-[10px] sm:text-xs text-muted-foreground animate-pulse">
@@ -51,8 +58,16 @@ export const StudyCard: React.FC<StudyCardProps> = ({ front, back, isFlipped, on
         <div className="absolute inset-0 backface-hidden rotate-y-180">
           <Card className="w-full h-full flex items-center justify-center p-8 text-center bg-muted/50 border-2 border-primary/20 shadow-inner">
             <CardContent className="flex flex-col items-center justify-center h-full pt-6 px-4 sm:px-8">
-              <span className="text-xs sm:text-sm font-medium text-primary mb-4 tracking-widest uppercase">TYŁ</span>
-              <p className="text-xl sm:text-2xl md:text-3xl font-semibold leading-tight break-words overflow-y-auto max-h-[80%] scrollbar-hide">
+              <span
+                className="text-xs sm:text-sm font-medium text-primary mb-4 tracking-widest uppercase"
+                data-testid="study-card-back-label"
+              >
+                TYŁ
+              </span>
+              <p
+                className="text-xl sm:text-2xl md:text-3xl font-semibold leading-tight break-words overflow-y-auto max-h-[80%] scrollbar-hide"
+                data-testid="study-card-back-content"
+              >
                 {back}
               </p>
             </CardContent>

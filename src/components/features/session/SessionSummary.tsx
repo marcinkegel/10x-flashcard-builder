@@ -46,10 +46,19 @@ export const SessionSummary: React.FC<SessionSummaryProps> = ({ stats, onRestart
       </div>
 
       <div className="flex flex-col gap-3 w-full">
-        <Button onClick={onRestart} className="w-full h-12 text-lg shadow-lg shadow-primary/20">
+        <Button
+          onClick={onRestart}
+          className="w-full h-12 text-lg shadow-lg shadow-primary/20"
+          data-testid="session-new-session-button"
+        >
           <RotateCcw className="mr-2 h-5 w-5" /> Nowa sesja
         </Button>
-        <Button onClick={onExit} variant="outline" className="w-full h-12 text-lg">
+        <Button
+          onClick={onExit}
+          variant="outline"
+          className="w-full h-12 text-lg"
+          data-testid="session-back-to-library-button"
+        >
           <Home className="mr-2 h-5 w-5" /> Wróć do biblioteki
         </Button>
       </div>

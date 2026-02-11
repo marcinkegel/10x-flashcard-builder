@@ -35,6 +35,7 @@ export const SessionHeader: React.FC<SessionHeaderProps> = ({ currentCount, tota
         size="sm"
         onClick={onExit}
         className="text-muted-foreground hover:text-foreground hover:bg-muted"
+        data-testid="session-exit-button"
       >
         <X className="mr-2 h-4 w-4" /> Wyjdź
       </Button>
